@@ -1,0 +1,478 @@
+swagger: '2.0'
+info:
+  version: 0.3.0
+  title: JMusicBot
+  license:
+    name: MIT
+    url: 'http://opensource.org/licenses/MIT'
+basePath: /v1
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /user:
+    post:
+      operationId: registerUser
+      summary: Registers a new user
+      produces:
+        - text/plain; charset=utf-8
+      description: >-
+        Adds a new guest user to the database. The user is identified by his
+        username.
+      parameters:
+        - name: userName
+          in: header
+          description: The desired user name
+          type: string
+          required: true
+        - name: uuid
+          in: header
+          description: >-
+            A uuid (or device ID) to authenticate the user while he doesn't have
+            a password
+          type: string
+          format: password
+          required: true
+      responses:
+        '201':
+          description: An authorization token
+          schema:
+            type: string
+            format: password
+        '409':
+          description: Username already in use
+          schema:
+            type: string
+    put:
+      operationId: changePassword
+      summary: Sets a new password
+      produces:
+        - text/plain; charset=utf-8
+      description: >-
+        Sets a new password for the caller. If the user was a guest account,
+        this makes him a full user.
+      parameters:
+        - name: Authorization
+          in: header
+          description: An authorization token
+          type: string
+          format: password
+          required: true
+        - name: oldPassword
+          in: header
+          description: The users old password. Only required if the user is no guest
+          type: string
+          format: password
+          required: false
+        - name: password
+          in: header
+          description: A password
+          type: string
+          format: password
+          required: true
+      responses:
+        '200':
+          description: A new Authorization token
+          schema:
+            type: string
+            format: password
+        '400':
+          description: Invalid new password
+          schema:
+            type: string
+        '401':
+          description: Invalid token
+          schema:
+            type: string
+        '403':
+          description: Wrong old password
+          schema:
+            type: string
+    delete:
+      operationId: deleteUser
+      summary: Deletes a user
+      produces:
+        - text/plain; charset=utf-8
+      description: Deletes the user associated with the Authorization token.
+      parameters:
+        - name: Authorization
+          in: header
+          description: An authorization token
+          type: string
+          format: password
+          required: true
+      responses:
+        '204':
+          description: Successfully deleted
+        '401':
+          description: Invalid token
+          schema:
+            type: string
+    get:
+      operationId: login
+      summary: Retrieves a token for a user
+      produces:
+        - text/plain; charset=utf-8
+      description: >-
+        Retrieves an Authorization token for a user. Either a password or a UUID
+        must be supplied. Not both.
+      parameters:
+        - name: userName
+          in: header
+          description: The user to log in as
+          type: string
+          required: true
+        - name: password
+          in: header
+          description: The users password. Guest users should use the uuid parameter.
+          type: string
+          format: password
+          required: false
+        - name: uuid
+          in: header
+          description: >-
+            The UUID (or device ID) authenticating this guest user. Full users
+            should use the password parameter.
+          type: string
+          format: password
+          required: false
+      responses:
+        '200':
+          description: An authorization token
+          schema:
+            type: string
+            format: password
+        '400':
+          description: Wrong password/uuid
+          schema:
+            type: string
+        '401':
+          description: Needs password or uuid parameter
+          schema:
+            type: string
+        '404':
+          description: Unknown user
+          schema:
+            type: string
+  /player:
+    get:
+      operationId: getPlayerState
+      summary: Returns the current player state
+      description: >-
+        Returns the current player state. If the state is PLAY or PAUSE, it also
+        contains the current song.
+      responses:
+        '200':
+          description: A PlayerState
+          schema:
+            $ref: '#/definitions/PlayerState'
+  /player/pause:
+    put:
+      operationId: pausePlayer
+      summary: Pauses the player
+      description: >-
+        Pauses the current playback. If the current player state is not PLAY,
+        does nothing.
+      responses:
+        '200':
+          description: A PlayerState
+          schema:
+            $ref: '#/definitions/PlayerState'
+  /player/play:
+    put:
+      operationId: resumePlayer
+      summary: Resumes the player
+      description: >-
+        Pauses the current playback. If the current player state is not PAUSE,
+        does nothing.
+      responses:
+        '200':
+          description: A PlayerState
+          schema:
+            $ref: '#/definitions/PlayerState'
+  /player/next:
+    put:
+      operationId: nextSong
+      summary: Skips to the next song
+      description: Skips the current song and plays the next song.
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authorization token with 'skip' permission
+          type: string
+          format: password
+          required: true
+      responses:
+        '200':
+          description: A PlayerState
+          schema:
+            $ref: '#/definitions/PlayerState'
+        '401':
+          description: Missing Authorization token
+          schema:
+            type: string
+        '403':
+          description: Not authorized
+          schema:
+            type: string
+  /player/queue:
+    get:
+      operationId: getQueue
+      summary: Returns the current player queue
+      responses:
+        '200':
+          description: A list of Songs
+          schema:
+            $ref: '#/definitions/Queue'
+    put:
+      operationId: enqueue
+      summary: Adds a Song to the queue
+      description: >-
+        Adds the specified Song to the current queue. If the queue already
+        contains the Song, it won't be added.
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authorization token
+          type: string
+          format: password
+          required: true
+        - name: songId
+          in: query
+          description: The song's ID
+          type: string
+          required: true
+        - name: providerId
+          in: query
+          description: The ID of the provider the song is from
+          type: string
+          required: true
+      responses:
+        '200':
+          description: The new queue
+          schema:
+            $ref: '#/definitions/Queue'
+        '400':
+          $ref: '#/responses/ParameterIsMissingResponse'
+        '404':
+          $ref: '#/responses/SongNotFoundResponse'
+    delete:
+      operationId: dequeue
+      summary: Removes a Song from the queue
+      description: >-
+        Removes the specified Song from the current queue. If the queue did not
+        contain the song, nothing is done.
+      parameters:
+        - name: Authorization
+          in: header
+          description: Authorization token with 'skip' permission
+          type: string
+          format: password
+          required: true
+        - name: queueEntry
+          in: body
+          schema:
+            $ref: '#/definitions/QueueEntry'
+          description: the queue entry to dequeue
+          required: true
+      responses:
+        '200':
+          description: The new queue
+          schema:
+            $ref: '#/definitions/Queue'
+        '400':
+          $ref: '#/responses/ParameterIsMissingResponse'
+        '403':
+          description: Not authorized
+          schema:
+            type: string
+        '404':
+          $ref: '#/responses/SongNotFoundResponse'
+  /provider:
+    get:
+      operationId: getProviders
+      summary: Returns a list of all available providers
+      responses:
+        '200':
+          description: A list of unique provider IDs
+          schema:
+            type: array
+            items:
+              type: string
+              example: spotify
+  '/provider/{providerId}':
+    get:
+      operationId: searchSong
+      summary: Searches for songs
+      parameters:
+        - name: providerId
+          in: path
+          type: string
+          description: The provider with which to search
+          required: true
+        - name: query
+          in: query
+          description: A search query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: A list of results
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Song'
+        '400':
+          $ref: '#/responses/ParameterIsMissingResponse'
+        '404':
+          description: Invalid provider ID
+          schema:
+            type: string
+            example: Invalid provider
+  '/provider/{providerId}/{songId}':
+    get:
+      operationId: lookupSong
+      summary: Looks up a song
+      description: Looks up a song using its ID and a provider ID
+      parameters:
+        - name: songId
+          in: path
+          description: A song ID
+          type: string
+          required: true
+        - name: providerId
+          in: path
+          description: A provider ID
+          type: string
+          required: true
+      responses:
+        '200':
+          description: The looked up song
+          schema:
+            $ref: '#/definitions/Song'
+        '400':
+          $ref: '#/responses/ParameterIsMissingResponse'
+        '404':
+          $ref: '#/responses/SongNotFoundResponse'
+  /suggester:
+    get:
+      operationId: getSuggesters
+      summary: Returns a list of all available suggesters
+      responses:
+        '200':
+          description: A list of unique suggester IDs
+          schema:
+            type: array
+            items:
+              type: string
+              example: spotify
+  '/suggester/{suggesterId}':
+    get:
+      operationId: suggestSong
+      summary: Returns a list of suggestions
+      parameters:
+        - name: suggesterId
+          in: path
+          description: A suggester ID
+          type: string
+          required: true
+        - name: max
+          in: query
+          description: The maximum size of the response. Defaults to 16.
+          type: integer
+          required: false
+      responses:
+        '200':
+          description: A list of suggested songs
+          schema:
+            type: array
+            maxItems: 64
+            items:
+              $ref: '#/definitions/Song'
+        '404':
+          description: Suggester not found
+          schema:
+            type: string
+            example: 'Suggester not found: Napster'
+definitions:
+  Song:
+    type: object
+    required:
+      - id
+      - providerId
+      - title
+      - description
+    properties:
+      id:
+        type: string
+      providerId:
+        type: string
+        example: spotify
+      title:
+        type: string
+        description: 'The title of a song, most important identifier for human readers'
+        example: Never gonna give you up
+        minLength: 1
+      description:
+        type: string
+        description: The description of a song. Might be the artist. May also be empty.
+        minLength: 0
+        example: Rick Astley
+      albumArtUrl:
+        type: string
+        description: The URL pointing to an album art for this song
+        example: 'http://example.com/image.png'
+  PlayerState:
+    type: object
+    required:
+      - state
+    properties:
+      state:
+        type: string
+        enum:
+          - PLAY
+          - PAUSE
+          - STOP
+          - ERROR
+      songEntry:
+        $ref: '#/definitions/SongEntry'
+  SongEntry:
+    type: object
+    required:
+      - song
+    properties:
+      song:
+        $ref: '#/definitions/Song'
+      userName:
+        description: >-
+          The user who put the song in the queue. May be missing if it was auto
+          suggested.
+        type: string
+  QueueEntry:
+    type: object
+    required:
+      - song
+      - userName
+    properties:
+      song:
+        $ref: '#/definitions/Song'
+      userName:
+        description: The user who put the song in the queue
+        type: string
+  Queue:
+    type: array
+    maxItems: 64
+    items:
+      $ref: '#/definitions/QueueEntry'
+responses:
+  ParameterIsMissingResponse:
+    description: A parameter is missing
+    schema:
+      type: string
+      example: 'Missing parameter: PARAMETER_NAME'
+  SongNotFoundResponse:
+    description: The song could not be found
+    schema:
+      type: string
+      example: Song not found.

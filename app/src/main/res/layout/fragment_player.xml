@@ -1,0 +1,74 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="@color/colorPrimary"
+  tools:context="com.github.bjoernpetersen.q.ui.fragments.PlayerFragment">
+
+  <ImageView
+    android:id="@+id/album_art"
+    android:layout_width="75dp"
+    android:layout_height="75dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <LinearLayout
+    android:id="@+id/song_info"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintLeft_toRightOf="@id/album_art"
+    app:layout_constraintRight_toLeftOf="@+id/play_pause"
+    app:layout_constraintVertical_bias="0"
+    app:layout_constraintTop_toTopOf="parent">
+    <TextView
+      android:id="@+id/song_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ellipsize="marquee"
+      android:marqueeRepeatLimit="marquee_forever"
+      android:scrollHorizontally="true"
+      android:singleLine="true"
+      android:textColor="@android:color/white" />
+    <TextView
+      android:id="@+id/song_description"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ellipsize="marquee"
+      android:marqueeRepeatLimit="marquee_forever"
+      android:scrollHorizontally="true"
+      android:singleLine="true"
+      android:textColor="@android:color/white" />
+    <TextView
+      android:id="@+id/song_queuer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:ellipsize="marquee"
+      android:marqueeRepeatLimit="marquee_forever"
+      android:scrollHorizontally="true"
+      android:singleLine="true"
+      android:textColor="@android:color/white" />
+  </LinearLayout>
+
+  <ImageButton
+    android:id="@+id/play_pause"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="@android:color/transparent"
+    android:contentDescription="@string/play_pause"
+    android:src="@drawable/ic_play_circle_filled"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintDimensionRatio="1.0"/>
+
+</android.support.constraint.ConstraintLayout>
