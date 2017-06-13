@@ -149,7 +149,7 @@ public class PlayerFragment extends Fragment {
               });
             }
 
-            // update current song info
+            // update current entry info
             TextView title = (TextView) view.findViewById(R.id.song_title);
             TextView description = (TextView) view.findViewById(R.id.song_description);
             TextView queuer = (TextView) view.findViewById(R.id.song_queuer);

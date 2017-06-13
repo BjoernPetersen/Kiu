@@ -306,7 +306,7 @@ public final class Connection {
 
   /**
    * Removes a Song from the queue Removes the specified Song from the current queue. If the queue
-   * did not contain the song, nothing is done.
+   * did not contain the entry, nothing is done.
    *
    * @param queueEntry the queue entry to dequeue (required)
    * @return List&lt;QueueEntry&gt;
@@ -320,7 +320,7 @@ public final class Connection {
 
   /**
    * Removes a Song from the queue Removes the specified Song from the current queue. If the queue
-   * did not contain the song, nothing is done.
+   * did not contain the entry, nothing is done.
    *
    * @param queueEntry the queue entry to dequeue (required)
    * @return ApiResponse&lt;List&lt;QueueEntry&gt;&gt;
@@ -334,7 +334,7 @@ public final class Connection {
 
   /**
    * Removes a Song from the queue (asynchronously) Removes the specified Song from the current
-   * queue. If the queue did not contain the song, nothing is done.
+   * queue. If the queue did not contain the entry, nothing is done.
    *
    * @param queueEntry the queue entry to dequeue (required)
    * @param callback The callback to be executed when the API call finishes
@@ -350,8 +350,8 @@ public final class Connection {
   /**
    * Build call for enqueue
    *
-   * @param songId The song&#39;s ID (required)
-   * @param providerId The ID of the provider the song is from (required)
+   * @param songId The entry&#39;s ID (required)
+   * @param providerId The ID of the provider the entry is from (required)
    * @param progressListener Progress listener
    * @param progressRequestListener Progress request listener
    * @return Call to execute
@@ -369,8 +369,8 @@ public final class Connection {
    * Adds a Song to the queue Adds the specified Song to the current queue. If the queue already
    * contains the Song, it won&#39;t be added.
    *
-   * @param songId The song&#39;s ID (required)
-   * @param providerId The ID of the provider the song is from (required)
+   * @param songId The entry&#39;s ID (required)
+   * @param providerId The ID of the provider the entry is from (required)
    * @return List&lt;QueueEntry&gt;
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
@@ -384,8 +384,8 @@ public final class Connection {
    * Adds a Song to the queue Adds the specified Song to the current queue. If the queue already
    * contains the Song, it won&#39;t be added.
    *
-   * @param songId The song&#39;s ID (required)
-   * @param providerId The ID of the provider the song is from (required)
+   * @param songId The entry&#39;s ID (required)
+   * @param providerId The ID of the provider the entry is from (required)
    * @return ApiResponse&lt;List&lt;QueueEntry&gt;&gt;
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
@@ -399,8 +399,8 @@ public final class Connection {
    * Adds a Song to the queue (asynchronously) Adds the specified Song to the current queue. If the
    * queue already contains the Song, it won&#39;t be added.
    *
-   * @param songId The song&#39;s ID (required)
-   * @param providerId The ID of the provider the song is from (required)
+   * @param songId The entry&#39;s ID (required)
+   * @param providerId The ID of the provider the entry is from (required)
    * @param callback The callback to be executed when the API call finishes
    * @return The request call
    * @throws ApiException If fail to process the API call, e.g. serializing the request body object
@@ -427,7 +427,7 @@ public final class Connection {
 
   /**
    * Returns the current player state Returns the current player state. If the state is PLAY or
-   * PAUSE, it also contains the current song.
+   * PAUSE, it also contains the current entry.
    *
    * @return PlayerState
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
@@ -439,7 +439,7 @@ public final class Connection {
 
   /**
    * Returns the current player state Returns the current player state. If the state is PLAY or
-   * PAUSE, it also contains the current song.
+   * PAUSE, it also contains the current entry.
    *
    * @return ApiResponse&lt;PlayerState&gt;
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
@@ -451,7 +451,7 @@ public final class Connection {
 
   /**
    * Returns the current player state (asynchronously) Returns the current player state. If the
-   * state is PLAY or PAUSE, it also contains the current song.
+   * state is PLAY or PAUSE, it also contains the current entry.
    *
    * @param callback The callback to be executed when the API call finishes
    * @return The request call
@@ -677,7 +677,7 @@ public final class Connection {
   /**
    * Build call for lookupSong
    *
-   * @param songId A song ID (required)
+   * @param songId A entry ID (required)
    * @param providerId A provider ID (required)
    * @param progressListener Progress listener
    * @param progressRequestListener Progress request listener
@@ -691,10 +691,10 @@ public final class Connection {
   }
 
   /**
-   * Looks up a song
-   * Looks up a song using its ID and a provider ID
+   * Looks up a entry
+   * Looks up a entry using its ID and a provider ID
    *
-   * @param songId A song ID (required)
+   * @param songId A entry ID (required)
    * @param providerId A provider ID (required)
    * @return Song
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
@@ -706,10 +706,10 @@ public final class Connection {
   }
 
   /**
-   * Looks up a song
-   * Looks up a song using its ID and a provider ID
+   * Looks up a entry
+   * Looks up a entry using its ID and a provider ID
    *
-   * @param songId A song ID (required)
+   * @param songId A entry ID (required)
    * @param providerId A provider ID (required)
    * @return ApiResponse&lt;Song&gt;
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
@@ -721,10 +721,10 @@ public final class Connection {
   }
 
   /**
-   * Looks up a song (asynchronously)
-   * Looks up a song using its ID and a provider ID
+   * Looks up a entry (asynchronously)
+   * Looks up a entry using its ID and a provider ID
    *
-   * @param songId A song ID (required)
+   * @param songId A entry ID (required)
    * @param providerId A provider ID (required)
    * @param callback The callback to be executed when the API call finishes
    * @return The request call
@@ -750,8 +750,8 @@ public final class Connection {
   }
 
   /**
-   * Skips to the next song
-   * Skips the current song and plays the next song.
+   * Skips to the next entry
+   * Skips the current entry and plays the next entry.
    *
    * @return PlayerState
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
@@ -763,8 +763,8 @@ public final class Connection {
   }
 
   /**
-   * Skips to the next song
-   * Skips the current song and plays the next song.
+   * Skips to the next entry
+   * Skips the current entry and plays the next entry.
    *
    * @return ApiResponse&lt;PlayerState&gt;
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
@@ -776,8 +776,8 @@ public final class Connection {
   }
 
   /**
-   * Skips to the next song (asynchronously)
-   * Skips the current song and plays the next song.
+   * Skips to the next entry (asynchronously)
+   * Skips the current entry and plays the next entry.
    *
    * @param callback The callback to be executed when the API call finishes
    * @return The request call
@@ -907,8 +907,8 @@ public final class Connection {
    * Build call for removeSuggestion
    *
    * @param suggesterId the ID of the suggester (required)
-   * @param songId The ID of the song to remove (required)
-   * @param providerId The ID of the provider of the song to remove (required)
+   * @param songId The ID of the entry to remove (required)
+   * @param providerId The ID of the provider of the entry to remove (required)
    * @param progressListener Progress listener
    * @param progressRequestListener Progress request listener
    * @return Call to execute
@@ -924,11 +924,11 @@ public final class Connection {
   }
 
   /**
-   * Removes a song from the suggestions
+   * Removes a entry from the suggestions
    *
    * @param suggesterId the ID of the suggester (required)
-   * @param songId The ID of the song to remove (required)
-   * @param providerId The ID of the provider of the song to remove (required)
+   * @param songId The ID of the entry to remove (required)
+   * @param providerId The ID of the provider of the entry to remove (required)
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
    */
@@ -938,11 +938,11 @@ public final class Connection {
   }
 
   /**
-   * Removes a song from the suggestions
+   * Removes a entry from the suggestions
    *
    * @param suggesterId the ID of the suggester (required)
-   * @param songId The ID of the song to remove (required)
-   * @param providerId The ID of the provider of the song to remove (required)
+   * @param songId The ID of the entry to remove (required)
+   * @param providerId The ID of the provider of the entry to remove (required)
    * @return ApiResponse&lt;Void&gt;
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
@@ -954,11 +954,11 @@ public final class Connection {
   }
 
   /**
-   * Removes a song from the suggestions (asynchronously)
+   * Removes a entry from the suggestions (asynchronously)
    *
    * @param suggesterId the ID of the suggester (required)
-   * @param songId The ID of the song to remove (required)
-   * @param providerId The ID of the provider of the song to remove (required)
+   * @param songId The ID of the entry to remove (required)
+   * @param providerId The ID of the provider of the entry to remove (required)
    * @param callback The callback to be executed when the API call finishes
    * @return The request call
    * @throws ApiException If fail to process the API call, e.g. serializing the request body object

@@ -1,26 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   tools:context="com.github.bjoernpetersen.q.ui.MainActivity">
 
-  <FrameLayout
+  <ScrollView
     android:id="@+id/center_frame"
     android:layout_width="0dp"
     android:layout_height="0dp"
     android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:layout_marginBottom="8dp"
-    android:background="#00FF00"
+    app:layout_constraintBottom_toTopOf="@+id/current_song"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toTopOf="@+id/current_song"/>
+    app:layout_constraintTop_toTopOf="parent">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical">
+      <FrameLayout
+        android:id="@+id/song_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+        <Button
+          android:id="@+id/search_button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="SEARCH" />
+        <Button
+          android:id="@+id/suggest_button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="SUGGEST" />
+      </LinearLayout>
+    </LinearLayout>
+  </ScrollView>
 
   <FrameLayout
     android:id="@+id/current_song"
@@ -28,6 +54,6 @@
     android:layout_height="wrap_content"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"/>
+    app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
