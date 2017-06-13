@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class SongFragment extends Fragment {
 
-  private static final String ARG_SONG_LIST = "column-count";
+  private static final String ARG_SONG_LIST = "song-list";
   private ArrayList<Song> songs;
   private OnListFragmentInteractionListener mListener;
 

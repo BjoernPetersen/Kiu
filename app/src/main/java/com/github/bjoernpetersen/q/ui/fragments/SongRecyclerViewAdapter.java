@@ -92,7 +92,9 @@ public class SongRecyclerViewAdapter extends
       this.view = view;
       albumArtView = (ImageView) view.findViewById(R.id.album_art);
       titleView = (TextView) view.findViewById(R.id.song_title);
+      titleView.setSelected(true);
       descriptionView = (TextView) view.findViewById(R.id.song_description);
+      descriptionView.setSelected(true);
       // TODO lengthView = (TextView) view.findViewById(R.id.song_length);
       addButton = (Button) view.findViewById(R.id.add_button);
     }

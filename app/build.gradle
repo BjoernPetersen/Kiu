@@ -41,8 +41,13 @@ dependencies {
     compile 'com.auth0.android:jwtdecode:1.1.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
     testCompile 'junit:junit:4.12'
 }
+
+
+
+
 
 
 

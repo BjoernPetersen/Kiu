@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/root"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:padding="5dp"
+  tools:context="com.github.bjoernpetersen.q.ui.LoginActivity">
+
+  <EditText
+    android:id="@+id/username"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:hint="@string/username_hint"
+    android:textAppearance="?android:textAppearanceLarge"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <EditText
+    android:id="@+id/password"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:hint="@string/enter_your_password"
+    android:inputType="textPassword"
+    android:textAppearance="?android:textAppearanceLarge"
+    android:visibility="gone"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/username" />
+
+  <Button
+    android:id="@+id/login_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/login"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/password" />
+</android.support.constraint.ConstraintLayout>

@@ -29,10 +29,15 @@ public final class Configuration {
         .apply();
   }
 
-  public void setUserName(@NonNull String userName) {
+  void setUserName(@NonNull String userName) {
+    userName = userName.trim();
     preferences.edit()
         .putString(USERNAME_KEY, userName)
         .apply();
+  }
+
+  public boolean hasUserName() {
+    return getUserName().isPresent();
   }
 
   public void setHost(@NonNull String host) {
@@ -50,7 +55,14 @@ public final class Configuration {
         .apply();
   }
 
-  void setPassword(@NonNull String password) {
+  /**
+   * Sets a password. This should only be used before logging in / registering. Afterwards use
+   * {@link Connection#upgrade(String)}.
+   *
+   * @param password a password
+   */
+  public void setPassword(@NonNull String password) {
+    password = password.trim();
     preferences.edit()
         .putString(PASSWORD_KEY, password)
         .apply();

@@ -7,24 +7,24 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
-import com.github.bjoernpetersen.jmusicbot.client.model.SongEntry;
+import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.ui.fragments.QueueFragment.ListFragmentInteractionListener;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link SongEntry} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link QueueEntry} and makes a call to the
  * specified {@link ListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class QueueRecyclerViewAdapter extends
     RecyclerView.Adapter<QueueRecyclerViewAdapter.ViewHolder> {
 
-  private final List<SongEntry> mValues;
+  private final List<QueueEntry> mValues;
   private final ListFragmentInteractionListener mListener;
 
-  public QueueRecyclerViewAdapter(List<SongEntry> items,
+  public QueueRecyclerViewAdapter(List<QueueEntry> items,
       ListFragmentInteractionListener listener) {
     mValues = items;
     mListener = listener;
@@ -39,7 +39,7 @@ public class QueueRecyclerViewAdapter extends
 
   @Override
   public void onBindViewHolder(final ViewHolder holder, int position) {
-    SongEntry entry = holder.entry = mValues.get(position);
+    QueueEntry entry = holder.entry = mValues.get(position);
     Song song = entry.getSong();
     Picasso.with(holder.view.getContext())
         .load(song.getAlbumArtUrl())
@@ -47,11 +47,7 @@ public class QueueRecyclerViewAdapter extends
         .into(holder.albumArtView);
     setContent(holder.titleView, song.getTitle());
     setContent(holder.descriptionView, song.getDescription());
-    String userName = entry.getUserName();
-    if (userName == null || userName.isEmpty()) {
-      userName = holder.view.getResources().getString(R.string.suggested);
-    }
-    setContent(holder.queuerView, userName);
+    setContent(holder.queuerView, entry.getUserName());
 
     holder.view.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -87,14 +83,16 @@ public class QueueRecyclerViewAdapter extends
     public final TextView descriptionView;
     // TODO public final TextView lengthView;
     public final TextView queuerView;
-    public SongEntry entry;
+    public QueueEntry entry;
 
     public ViewHolder(View view) {
       super(view);
       this.view = view;
       albumArtView = (ImageView) view.findViewById(R.id.album_art);
       titleView = (TextView) view.findViewById(R.id.song_title);
+      titleView.setSelected(true);
       descriptionView = (TextView) view.findViewById(R.id.song_description);
+      descriptionView.setSelected(true);
       //TODO   lengthView = (TextView) view.findViewById(R.id.song_length);
       queuerView = (TextView) view.findViewById(R.id.song_queuer);
     }

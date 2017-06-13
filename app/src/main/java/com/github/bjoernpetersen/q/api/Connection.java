@@ -99,13 +99,39 @@ public final class Connection {
       }
     }
 
-    ApiKey guestKey = register(userName);
+    ApiKey guestKey;
+    try {
+      guestKey = register(userName);
+    } catch (ApiException e) {
+      if (e.getCode() == 409) {
+        // Username is already in use, try to log in
+        guestKey = tryLogin(userName);
+        if (guestKey.getUserType() == UserType.FULL) {
+          return guestKey;
+        }
+      } else {
+        throw e;
+      }
+    }
 
     Optional<String> password = getConfiguration().getPassword();
     if (password.isPresent()) {
       return upgrade(guestKey, password.get());
     } else {
       return guestKey;
+    }
+  }
+
+  private ApiKey tryLogin(String userName) throws ApiException {
+    try {
+      return retrieveGuestApiKey(userName);
+    } catch (ApiException e) {
+      if (e.getCode() == 401 && getConfiguration().getPassword().isPresent()) {
+        // Needs password
+        return retrieveFullApiKey(userName);
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -134,12 +160,23 @@ public final class Connection {
     }
   }
 
+  public boolean isFullUser() {
+    return apiKey != null && apiKey.getUserType() == UserType.FULL;
+  }
+
+  public void setUsername(String username) throws ApiException {
+    getConfiguration().setUserName(username);
+    apiKey = null;
+    getApiKey();
+  }
+
   public void upgrade(@NonNull String password) throws ApiException {
     ApiKey apiKey = getApiKey();
     if (apiKey.getUserType() == UserType.FULL) {
       throw new IllegalStateException();
     }
 
+    password = password.trim();
     Configuration config = getConfiguration();
     config.updateApiKey(this.apiKey = upgrade(apiKey, password));
     config.setPassword(password);
@@ -238,27 +275,13 @@ public final class Connection {
   }
 
   /**
-   * Build call for deleteUser
-   *
-   * @param progressListener Progress listener
-   * @param progressRequestListener Progress request listener
-   * @return Call to execute
-   * @throws ApiException If fail to serialize the request body object
-   */
-  private Call deleteUserCall(String authorization,
-      ProgressListener progressListener,
-      ProgressRequestListener progressRequestListener) throws ApiException {
-    return api.deleteUserCall(getToken(), progressListener, progressRequestListener);
-  }
-
-  /**
    * Deletes a user
    * Deletes the user associated with the Authorization token.
    *
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
    */
-  private void deleteUser(String authorization) throws ApiException {
+  private void deleteUser() throws ApiException {
     api.deleteUser(getToken());
   }
 
@@ -270,38 +293,8 @@ public final class Connection {
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
    */
-  private ApiResponse<Void> deleteUserWithHttpInfo(
-      String authorization) throws ApiException {
+  private ApiResponse<Void> deleteUserWithHttpInfo() throws ApiException {
     return api.deleteUserWithHttpInfo(getToken());
-  }
-
-  /**
-   * Deletes a user (asynchronously)
-   * Deletes the user associated with the Authorization token.
-   *
-   * @param callback The callback to be executed when the API call finishes
-   * @return The request call
-   * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-   */
-  private Call deleteUserAsync(String authorization,
-      ApiCallback<Void> callback) throws ApiException {
-    return api.deleteUserAsync(getToken(), callback);
-  }
-
-  /**
-   * Build call for dequeue
-   *
-   * @param queueEntry the queue entry to dequeue (required)
-   * @param progressListener Progress listener
-   * @param progressRequestListener Progress request listener
-   * @return Call to execute
-   * @throws ApiException If fail to serialize the request body object
-   */
-  public Call dequeueCall(String authorization,
-      QueueEntry queueEntry,
-      ProgressListener progressListener,
-      ProgressRequestListener progressRequestListener) throws ApiException {
-    return api.dequeueCall(getToken(), queueEntry, progressListener, progressRequestListener);
   }
 
   /**
@@ -313,8 +306,7 @@ public final class Connection {
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
    */
-  public List<QueueEntry> dequeue(
-      String authorization, QueueEntry queueEntry) throws ApiException {
+  public List<QueueEntry> dequeue(QueueEntry queueEntry) throws ApiException {
     return api.dequeue(getToken(), queueEntry);
   }
 
@@ -328,41 +320,8 @@ public final class Connection {
    * response body
    */
   public ApiResponse<List<QueueEntry>> dequeueWithHttpInfo(
-      String authorization, QueueEntry queueEntry) throws ApiException {
+      QueueEntry queueEntry) throws ApiException {
     return api.dequeueWithHttpInfo(getToken(), queueEntry);
-  }
-
-  /**
-   * Removes a Song from the queue (asynchronously) Removes the specified Song from the current
-   * queue. If the queue did not contain the entry, nothing is done.
-   *
-   * @param queueEntry the queue entry to dequeue (required)
-   * @param callback The callback to be executed when the API call finishes
-   * @return The request call
-   * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-   */
-  public Call dequeueAsync(String authorization,
-      QueueEntry queueEntry,
-      ApiCallback<List<QueueEntry>> callback) throws ApiException {
-    return api.dequeueAsync(getToken(), queueEntry, callback);
-  }
-
-  /**
-   * Build call for enqueue
-   *
-   * @param songId The entry&#39;s ID (required)
-   * @param providerId The ID of the provider the entry is from (required)
-   * @param progressListener Progress listener
-   * @param progressRequestListener Progress request listener
-   * @return Call to execute
-   * @throws ApiException If fail to serialize the request body object
-   */
-  public Call enqueueCall(String songId,
-      String providerId,
-      ProgressListener progressListener,
-      ProgressRequestListener progressRequestListener) throws ApiException {
-    return api
-        .enqueueCall(getToken(), songId, providerId, progressListener, progressRequestListener);
   }
 
   /**
@@ -375,8 +334,7 @@ public final class Connection {
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
    */
-  public List<QueueEntry> enqueue(
-      String authorization, String songId, String providerId) throws ApiException {
+  public List<QueueEntry> enqueue(String songId, String providerId) throws ApiException {
     return api.enqueue(getToken(), songId, providerId);
   }
 
@@ -390,25 +348,9 @@ public final class Connection {
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
    */
-  public ApiResponse<List<QueueEntry>> enqueueWithHttpInfo(
-      String authorization, String songId, String providerId) throws ApiException {
+  public ApiResponse<List<QueueEntry>> enqueueWithHttpInfo(String songId, String providerId)
+      throws ApiException {
     return api.enqueueWithHttpInfo(getToken(), songId, providerId);
-  }
-
-  /**
-   * Adds a Song to the queue (asynchronously) Adds the specified Song to the current queue. If the
-   * queue already contains the Song, it won&#39;t be added.
-   *
-   * @param songId The entry&#39;s ID (required)
-   * @param providerId The ID of the provider the entry is from (required)
-   * @param callback The callback to be executed when the API call finishes
-   * @return The request call
-   * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-   */
-  public Call enqueueAsync(String songId,
-      String providerId,
-      ApiCallback<List<QueueEntry>> callback) throws ApiException {
-    return api.enqueueAsync(getToken(), songId, providerId, callback);
   }
 
   /**
@@ -736,20 +678,6 @@ public final class Connection {
   }
 
   /**
-   * Build call for nextSong
-   *
-   * @param progressListener Progress listener
-   * @param progressRequestListener Progress request listener
-   * @return Call to execute
-   * @throws ApiException If fail to serialize the request body object
-   */
-  public Call nextSongCall(String authorization,
-      ProgressListener progressListener,
-      ProgressRequestListener progressRequestListener) throws ApiException {
-    return api.nextSongCall(getToken(), progressListener, progressRequestListener);
-  }
-
-  /**
    * Skips to the next entry
    * Skips the current entry and plays the next entry.
    *
@@ -757,8 +685,7 @@ public final class Connection {
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
    */
-  public PlayerState nextSong(
-      String authorization) throws ApiException {
+  public PlayerState nextSong() throws ApiException {
     return api.nextSong(getToken());
   }
 
@@ -770,22 +697,8 @@ public final class Connection {
    * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the
    * response body
    */
-  public ApiResponse<PlayerState> nextSongWithHttpInfo(
-      String authorization) throws ApiException {
+  public ApiResponse<PlayerState> nextSongWithHttpInfo() throws ApiException {
     return api.nextSongWithHttpInfo(getToken());
-  }
-
-  /**
-   * Skips to the next entry (asynchronously)
-   * Skips the current entry and plays the next entry.
-   *
-   * @param callback The callback to be executed when the API call finishes
-   * @return The request call
-   * @throws ApiException If fail to process the API call, e.g. serializing the request body object
-   */
-  public Call nextSongAsync(String authorization,
-      ApiCallback<PlayerState> callback) throws ApiException {
-    return api.nextSongAsync(getToken(), callback);
   }
 
   /**

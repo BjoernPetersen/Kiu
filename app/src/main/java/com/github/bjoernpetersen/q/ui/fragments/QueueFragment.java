@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
-import com.github.bjoernpetersen.jmusicbot.client.model.SongEntry;
+import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.q.R;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class QueueFragment extends Fragment {
 
   private static final String ITEMS_KEY = QueueFragment.class.getName() + "items";
 
-  private ArrayList<SongEntry> items;
+  private ArrayList<QueueEntry> items;
   private ListFragmentInteractionListener mListener;
 
   /**
