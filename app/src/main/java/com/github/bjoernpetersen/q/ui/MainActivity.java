@@ -11,9 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
@@ -28,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements
 
   private static final String TAG = MainActivity.class.getSimpleName();
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -38,14 +36,11 @@ public class MainActivity extends AppCompatActivity implements
         .add(R.id.current_song, new PlayerFragment())
         .add(R.id.song_list, QueueFragment.newInstance())
         .commit();
+  }
 
-    Button button = (Button) findViewById(R.id.search_button);
-    button.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        onSearchClick();
-      }
-    });
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
   }
 
   @Override
@@ -140,13 +135,13 @@ public class MainActivity extends AppCompatActivity implements
   }
 
   @Override
-  public void onSearchClick() {
+  public void showSearch() {
     Intent intent = new Intent(this, SearchActivity.class);
     startActivity(intent);
   }
 
   @Override
-  public void onSuggestClick() {
+  public void showSuggestions() {
 
   }
 

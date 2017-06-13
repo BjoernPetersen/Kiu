@@ -19,6 +19,7 @@ import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
+import com.github.bjoernpetersen.q.QueueState;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.api.Connection;
 import com.github.bjoernpetersen.q.api.UiCallback;
@@ -179,6 +180,7 @@ public class SearchActivity extends AppCompatActivity implements
         try {
           List<QueueEntry> queueEntries = Connection.get(SearchActivity.this)
               .enqueue(song.getId(), song.getProviderId());
+          QueueState.getInstance().set(queueEntries);
         } catch (ApiException e) {
           e.printStackTrace();
         }

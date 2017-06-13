@@ -4,14 +4,22 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.github.bjoernpetersen.jmusicbot.client.model.Song;
+import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
+import com.github.bjoernpetersen.jmusicbot.client.model.Song;
+import com.github.bjoernpetersen.q.QueueState;
 import com.github.bjoernpetersen.q.R;
+import com.github.bjoernpetersen.q.api.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A fragment representing a list of Items.
@@ -21,10 +29,14 @@ import java.util.List;
  */
 public class QueueFragment extends Fragment {
 
+  private static final String TAG = QueueFragment.class.getSimpleName();
   private static final String ITEMS_KEY = QueueFragment.class.getName() + "items";
 
   private ArrayList<QueueEntry> items;
   private ListFragmentInteractionListener mListener;
+  private QueueState.Listener queueListener;
+  private ScheduledExecutorService updater;
+  private ScheduledFuture<?> updateTask;
 
   /**
    * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,6 +63,15 @@ public class QueueFragment extends Fragment {
     if (this.items == null) {
       this.items = new ArrayList<>();
     }
+
+    updater = Executors.newSingleThreadScheduledExecutor();
+  }
+
+  @Override
+  public void onDestroy() {
+    updater.shutdown();
+    updater = null;
+    super.onDestroy();
   }
 
   @Override
@@ -63,8 +84,32 @@ public class QueueFragment extends Fragment {
       Context context = view.getContext();
       RecyclerView recyclerView = (RecyclerView) view;
       recyclerView.setAdapter(new QueueRecyclerViewAdapter(items, mListener));
+    } else {
+      throw new IllegalStateException();
     }
+
     return view;
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    updateQueue(QueueState.getInstance().get());
+    QueueState.getInstance().addListener(queueListener = new QueueState.Listener() {
+      @Override
+      public void onChange(List<QueueEntry> oldQueue, List<QueueEntry> newQueue) {
+        updateQueue(newQueue);
+      }
+    });
+    updateTask = updater.scheduleWithFixedDelay(new UpdateTask(), 0, 2, TimeUnit.SECONDS);
+  }
+
+  @Override
+  public void onStop() {
+    updateTask.cancel(true);
+    QueueState.getInstance().removeListener(queueListener);
+    queueListener = null;
+    super.onStop();
   }
 
   @Override
@@ -90,6 +135,41 @@ public class QueueFragment extends Fragment {
     mListener = null;
   }
 
+  private void updateQueue(List<QueueEntry> queue) {
+    items.clear();
+    items.addAll(queue);
+    items.add(null);
+    RecyclerView recyclerView = (RecyclerView) getView();
+    if (recyclerView == null) {
+      return;
+    }
+    recyclerView.getAdapter().notifyDataSetChanged();
+  }
+
+  private class UpdateTask implements Runnable {
+
+    @Override
+    public void run() {
+      try {
+        final List<QueueEntry> queue = Connection.get(getContext()).getQueue();
+        View view = getView();
+        if (view == null) {
+          return;
+        }
+        view.post(new Runnable() {
+          @Override
+          public void run() {
+            QueueState.getInstance().set(queue);
+          }
+        });
+      } catch (ApiException e) {
+        Log.w(TAG, "Could not get queue", e);
+      } catch (RuntimeException e) {
+        Log.e(TAG, "FUCK", e);
+      }
+    }
+  }
+
   /**
    * This interface must be implemented by activities that contain this
    * fragment to allow an interaction in this fragment to be communicated
@@ -102,10 +182,10 @@ public class QueueFragment extends Fragment {
    */
   public interface ListFragmentInteractionListener {
 
-    void onSearchClick();
-
-    void onSuggestClick();
-
     void onSongClick(Song song);
+
+    void showSearch();
+
+    void showSuggestions();
   }
 }

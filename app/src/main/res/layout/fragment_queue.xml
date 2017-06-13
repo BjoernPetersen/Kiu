@@ -1,62 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/root"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:paddingTop="5dp"
-  android:paddingBottom="5dp">
+  android:layout_height="wrap_content">
+  <android.support.constraint.ConstraintLayout
+    android:id="@+id/actual_entry"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
-  <ImageView
-    android:id="@+id/album_art"
-    android:layout_width="60dp"
-    android:layout_height="60dp"
-    android:layout_marginLeft="5dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+      android:id="@+id/album_art"
+      android:layout_width="60dp"
+      android:layout_height="60dp"
+      android:layout_marginLeft="5dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintLeft_toLeftOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="5dp"
+      android:orientation="vertical"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintLeft_toRightOf="@id/album_art"
+      app:layout_constraintTop_toTopOf="parent">
+      <TextView
+        android:id="@+id/song_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true" />
+      <TextView
+        android:id="@+id/song_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true" />
+      <!-- TODO make visible-->
+      <TextView
+        android:id="@+id/song_length"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:visibility="gone" />
+      <TextView
+        android:id="@+id/song_queuer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true" />
+    </LinearLayout>
+  </android.support.constraint.ConstraintLayout>
 
   <LinearLayout
+    android:id="@+id/add_buttons"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
-    android:orientation="vertical"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintLeft_toRightOf="@id/album_art"
-    app:layout_constraintTop_toTopOf="parent">
-    <TextView
-      android:id="@+id/song_title"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:ellipsize="marquee"
-      android:marqueeRepeatLimit="marquee_forever"
-      android:scrollHorizontally="true"
-      android:singleLine="true" />
-    <TextView
-      android:id="@+id/song_description"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:ellipsize="marquee"
-      android:marqueeRepeatLimit="marquee_forever"
-      android:scrollHorizontally="true"
-      android:singleLine="true" />
-    <!-- TODO make visible-->
-    <TextView
-      android:id="@+id/song_length"
-      android:visibility="gone"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:ellipsize="marquee"
-      android:marqueeRepeatLimit="marquee_forever"
-      android:scrollHorizontally="true"
-      android:singleLine="true" />
-    <TextView
-      android:id="@+id/song_queuer"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:ellipsize="marquee"
-      android:marqueeRepeatLimit="marquee_forever"
-      android:scrollHorizontally="true"
-      android:singleLine="true" />
+    android:layout_gravity="center_horizontal"
+    android:orientation="horizontal">
+    <ImageButton
+      android:id="@+id/search_button"
+      android:layout_width="70dp"
+      android:layout_height="70dp"
+      android:layout_marginRight="5dp"
+      android:background="@android:color/transparent"
+      android:contentDescription="@string/search"
+      android:longClickable="true"
+      android:scaleType="fitCenter"
+      android:src="@drawable/ic_add_circle" />
+    <ImageButton
+      android:id="@+id/suggest_button"
+      android:layout_width="70dp"
+      android:layout_height="70dp"
+      android:layout_marginLeft="5dp"
+      android:background="@android:color/transparent"
+      android:contentDescription="@string/suggest"
+      android:longClickable="true"
+      android:scaleType="fitCenter"
+      android:src="@drawable/ic_stars" />
   </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+</FrameLayout>
