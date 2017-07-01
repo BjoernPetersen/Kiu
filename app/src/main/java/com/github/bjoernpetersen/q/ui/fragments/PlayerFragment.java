@@ -116,7 +116,7 @@ public class PlayerFragment extends Fragment {
       try {
         updatedState(Connection.get(getContext()).getPlayerState());
       } catch (ApiException e) {
-        Log.w(getClass().getSimpleName(), "Error updating player fragment", e);
+        Log.v(getClass().getSimpleName(), "Error updating player fragment", e);
       }
     }
 

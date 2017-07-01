@@ -170,9 +170,9 @@ public class QueueFragment extends Fragment {
           }
         });
       } catch (ApiException e) {
-        Log.w(TAG, "Could not get queue", e);
+        Log.v(TAG, "Could not get queue", e);
       } catch (RuntimeException e) {
-        Log.e(TAG, "FUCK", e);
+        Log.wtf(TAG, "FUCK", e);
       }
     }
   }
