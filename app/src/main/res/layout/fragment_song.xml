@@ -3,9 +3,10 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:id="@+id/root"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content"
+  android:layout_height="65dp"
   android:paddingTop="5dp"
-  android:paddingBottom="5dp">
+  android:paddingBottom="5dp"
+  android:background="@android:color/white">
 
   <ImageView
     android:id="@+id/album_art"

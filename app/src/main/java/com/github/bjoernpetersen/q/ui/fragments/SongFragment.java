@@ -3,7 +3,10 @@ package com.github.bjoernpetersen.q.ui.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ItemDecoration;
+import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +66,11 @@ public class SongFragment extends Fragment {
       Context context = view.getContext();
       RecyclerView recyclerView = (RecyclerView) view;
       recyclerView.setAdapter(new SongRecyclerViewAdapter(songs, mListener));
+      DividerItemDecoration decoration = new DividerItemDecoration(
+          recyclerView.getContext(),
+          DividerItemDecoration.VERTICAL
+      );
+      recyclerView.addItemDecoration(decoration);
     }
     return view;
   }

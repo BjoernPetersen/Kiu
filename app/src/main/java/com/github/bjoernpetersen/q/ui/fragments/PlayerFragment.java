@@ -163,9 +163,13 @@ public class PlayerFragment extends Fragment {
             }
 
             Song song = songEntry.getSong();
-            title.setText(song.getTitle());
+            if (!title.getText().equals(song.getTitle())) {
+              title.setText(song.getTitle());
+            }
             String songDescription = song.getDescription();
-            description.setText(songDescription);
+            if (!description.getText().equals(songDescription)) {
+              description.setText(songDescription);
+            }
             if (songDescription.isEmpty()) {
               description.setVisibility(View.GONE);
             } else {
@@ -173,10 +177,12 @@ public class PlayerFragment extends Fragment {
             }
 
             String userName = songEntry.getUserName();
-            if (userName == null) {
-              queuer.setText(getString(R.string.suggested));
-            } else {
-              queuer.setText(userName);
+            if (!queuer.getText().equals(userName)) {
+              if (userName == null) {
+                queuer.setText(getString(R.string.suggested));
+              } else {
+                queuer.setText(userName);
+              }
             }
 
             String albumArtUrl = song.getAlbumArtUrl();

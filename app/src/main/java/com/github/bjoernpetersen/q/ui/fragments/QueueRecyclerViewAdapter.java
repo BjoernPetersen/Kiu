@@ -14,8 +14,10 @@ import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.ui.fragments.QueueFragment.ListFragmentInteractionListener;
+import com.squareup.picasso.Callback.EmptyCallback;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link QueueEntry} and makes a call to the
@@ -32,6 +34,16 @@ public class QueueRecyclerViewAdapter extends
       ListFragmentInteractionListener listener) {
     mValues = items;
     mListener = listener;
+    setHasStableIds(true);
+  }
+
+  @Override
+  public long getItemId(int position) {
+    QueueEntry entry = mValues.get(position);
+    if (entry == null) {
+      return 0;
+    }
+    return Objects.hash(entry.getSong(), entry.getUserName());
   }
 
   @Override
@@ -43,7 +55,12 @@ public class QueueRecyclerViewAdapter extends
 
   @Override
   public void onBindViewHolder(final ViewHolder holder, int position) {
-    QueueEntry entry = holder.entry = mValues.get(position);
+    QueueEntry entry = mValues.get(position);
+    if (entry != null && entry.equals(holder.entry)) {
+      return;
+    }
+    holder.entry = entry;
+
     if (entry == null) {
       showActual(holder, false);
       holder.searchButton.setOnClickListener(new OnClickListener() {
@@ -79,10 +96,16 @@ public class QueueRecyclerViewAdapter extends
     } else {
       showActual(holder, true);
       Song song = entry.getSong();
+      Picasso.with(holder.view.getContext()).cancelRequest(holder.albumArtView);
+      holder.albumArtView.setVisibility(View.GONE);
       Picasso.with(holder.view.getContext())
           .load(song.getAlbumArtUrl())
-          .placeholder(R.drawable.ic_broken_image)
-          .into(holder.albumArtView);
+          .into(holder.albumArtView, new EmptyCallback() {
+            @Override
+            public void onSuccess() {
+              holder.albumArtView.setVisibility(View.VISIBLE);
+            }
+          });
       setContent(holder.titleView, song.getTitle());
       setContent(holder.descriptionView, song.getDescription());
       setContent(holder.queuerView, entry.getUserName());

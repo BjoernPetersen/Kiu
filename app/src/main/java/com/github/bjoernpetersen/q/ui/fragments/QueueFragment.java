@@ -1,9 +1,13 @@
 package com.github.bjoernpetersen.q.ui.fragments;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.State;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,6 +88,9 @@ public class QueueFragment extends Fragment {
       Context context = view.getContext();
       RecyclerView recyclerView = (RecyclerView) view;
       recyclerView.setAdapter(new QueueRecyclerViewAdapter(items, mListener));
+      recyclerView.addItemDecoration(
+          new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL)
+      );
     } else {
       throw new IllegalStateException();
     }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment.OnListFragmentInteractionListener;
+import com.squareup.picasso.Callback.EmptyCallback;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
@@ -39,10 +40,16 @@ public class SongRecyclerViewAdapter extends
   @Override
   public void onBindViewHolder(final ViewHolder holder, int position) {
     final Song song = holder.song = mValues.get(position);
+    Picasso.with(holder.view.getContext()).cancelRequest(holder.albumArtView);
+    holder.albumArtView.setVisibility(View.GONE);
     Picasso.with(holder.view.getContext())
         .load(song.getAlbumArtUrl())
-        .placeholder(R.drawable.ic_broken_image)
-        .into(holder.albumArtView);
+        .into(holder.albumArtView, new EmptyCallback() {
+          @Override
+          public void onSuccess() {
+            holder.albumArtView.setVisibility(View.VISIBLE);
+          }
+        });
     setContent(holder.titleView, song.getTitle());
     setContent(holder.descriptionView, song.getDescription());
     holder.addButton.setVisibility(View.VISIBLE);

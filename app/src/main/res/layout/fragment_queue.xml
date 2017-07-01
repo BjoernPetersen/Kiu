@@ -6,9 +6,10 @@
   <android.support.constraint.ConstraintLayout
     android:id="@+id/actual_entry"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="65dp"
     android:paddingTop="5dp"
-    android:paddingBottom="5dp">
+    android:paddingBottom="5dp"
+    android:background="@android:color/white">
 
     <ImageView
       android:id="@+id/album_art"
