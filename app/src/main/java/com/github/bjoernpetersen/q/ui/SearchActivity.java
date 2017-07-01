@@ -26,8 +26,6 @@ import com.github.bjoernpetersen.q.ui.fragments.SearchFragment;
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class SearchActivity extends AppCompatActivity implements
     SearchFragment.OnFragmentInteractionListener,
@@ -131,8 +129,7 @@ public class SearchActivity extends AppCompatActivity implements
   }
 
   private void loadProviders() {
-    final ExecutorService executor = Executors.newSingleThreadExecutor();
-    executor.submit(new Runnable() {
+    new Thread(new Runnable() {
       @Override
       public void run() {
         try {
@@ -152,9 +149,8 @@ public class SearchActivity extends AppCompatActivity implements
             }
           });
         }
-        executor.shutdown();
       }
-    });
+    }, "ProviderLoader").start();
   }
 
   private void updateProviders(List<String> providers) {
