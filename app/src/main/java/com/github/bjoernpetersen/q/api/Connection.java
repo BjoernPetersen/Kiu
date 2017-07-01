@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings.Secure;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import com.github.bjoernpetersen.jmusicbot.client.ApiClient;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.jmusicbot.client.api.DefaultApi;
@@ -18,6 +19,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class Connection {
 
+  private static final String TAG = Connection.class.getSimpleName();
 
   @Nullable
   private static Connection instance;
@@ -233,7 +235,17 @@ public final class Connection {
    * response body
    */
   private void deleteUser() throws ApiException {
-    api.deleteUser(getToken());
+    try {
+      api.deleteUser(getToken());
+    } catch (ApiException e) {
+      if (e.getCode() == 401) {
+        Log.v(TAG, "Dropping invalid token");
+        apiKey = null;
+        api.deleteUser(getToken());
+      } else {
+        throw e;
+      }
+    }
   }
 
   /**
@@ -246,7 +258,17 @@ public final class Connection {
    * response body
    */
   public List<QueueEntry> dequeue(QueueEntry queueEntry) throws ApiException {
-    return api.dequeue(getToken(), queueEntry);
+    try {
+      return api.dequeue(getToken(), queueEntry);
+    } catch (ApiException e) {
+      if (e.getCode() == 401) {
+        Log.v(TAG, "Dropping invalid token");
+        apiKey = null;
+        return api.dequeue(getToken(), queueEntry);
+      } else {
+        throw e;
+      }
+    }
   }
 
   /**
@@ -260,7 +282,17 @@ public final class Connection {
    * response body
    */
   public List<QueueEntry> enqueue(String songId, String providerId) throws ApiException {
-    return api.enqueue(getToken(), songId, providerId);
+    try {
+      return api.enqueue(getToken(), songId, providerId);
+    } catch (ApiException e) {
+      if (e.getCode() == 401) {
+        Log.v(TAG, "Dropping invalid token");
+        apiKey = null;
+        return api.enqueue(getToken(), songId, providerId);
+      } else {
+        throw e;
+      }
+    }
   }
 
   /**
@@ -348,7 +380,17 @@ public final class Connection {
    * response body
    */
   public PlayerState nextSong() throws ApiException {
-    return api.nextSong(getToken());
+    try {
+      return api.nextSong(getToken());
+    } catch (ApiException e) {
+      if (e.getCode() == 401) {
+        Log.v(TAG, "Dropping invalid token");
+        apiKey = null;
+        return api.nextSong(getToken());
+      } else {
+        throw e;
+      }
+    }
   }
 
   /**

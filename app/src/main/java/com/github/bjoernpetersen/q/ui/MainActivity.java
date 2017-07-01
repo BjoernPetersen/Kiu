@@ -146,7 +146,8 @@ public class MainActivity extends AppCompatActivity implements
 
   @Override
   public void showSuggestions() {
-
+    Intent intent = new Intent(this, SuggestActivity.class);
+    startActivity(intent);
   }
 
   @Override
