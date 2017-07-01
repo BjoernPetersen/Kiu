@@ -19,16 +19,20 @@ import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.api.Connection;
 import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment;
 import com.github.bjoernpetersen.q.ui.fragments.QueueFragment;
+import io.sentry.Sentry;
+import io.sentry.android.AndroidSentryClientFactory;
 
 public class MainActivity extends AppCompatActivity implements
     QueueFragment.ListFragmentInteractionListener {
 
   private static final String TAG = MainActivity.class.getSimpleName();
-
+  private static final String SENTRY_DSN = "https://ab694f1a00ae41678d673c676de4bb9e:cd17682534a746e2bdabbf909568b7fe@sentry.io/186487";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Sentry.init(SENTRY_DSN, new AndroidSentryClientFactory(getApplicationContext()));
+
     setContentView(R.layout.activity_main);
     setTitle(getString(R.string.queue));
 
