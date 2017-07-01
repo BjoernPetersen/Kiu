@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
@@ -145,6 +146,11 @@ public class SearchActivity extends AppCompatActivity implements
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
+              Toast.makeText(
+                  SearchActivity.this,
+                  getString(R.string.no_provider_found),
+                  Toast.LENGTH_SHORT
+              ).show();
               finish();
             }
           });
