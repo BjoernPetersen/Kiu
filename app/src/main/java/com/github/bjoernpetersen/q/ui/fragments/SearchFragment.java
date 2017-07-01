@@ -12,10 +12,14 @@ import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.api.Connection;
-import com.github.bjoernpetersen.q.api.UiCallback;
-import com.squareup.okhttp.Call;
+import java.io.Closeable;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,8 +33,7 @@ public class SearchFragment extends Fragment {
   private static final String ARG_PROVIDER_ID = "provider-id";
 
   private String providerId;
-  private String currentQuery;
-  private Call currentCall;
+  private SearchExecutor searchExecutor;
   private OnFragmentInteractionListener mListener;
 
   @SuppressWarnings("unused")
@@ -80,52 +83,25 @@ public class SearchFragment extends Fragment {
       throw new RuntimeException(context.toString()
           + " must implement OnFragmentInteractionListener");
     }
+    searchExecutor = new SearchExecutor();
   }
 
   @Override
   public void onDetach() {
     super.onDetach();
+    searchExecutor.close();
+    searchExecutor = null;
     mListener = null;
   }
 
   public void updateResults(final String query) {
-    if (query.equals(currentQuery)) {
-      return;
-    }
+    searchExecutor.search(query);
+  }
 
-    if (currentCall != null) {
-      currentCall.cancel();
-    }
-
+  void showResults(List<Song> result) {
     getChildFragmentManager().beginTransaction()
-        .replace(R.id.root, new LoadingFragment())
+        .replace(R.id.root, SongFragment.newInstance(result))
         .commit();
-
-    try {
-      currentCall = Connection.get(getContext()).searchSongAsync(providerId, query,
-          new UiCallback<List<Song>>() {
-            @Override
-            protected void onFailureImpl(ApiException e, int statusCode,
-                Map<String, List<String>> responseHeaders) {
-              Log.v(TAG, "Error searching for " + query + " on " + providerId, e);
-              // TODO show error fragment
-            }
-
-            @Override
-            protected void onSuccessImpl(List<Song> result, int statusCode,
-                Map<String, List<String>> responseHeaders) {
-              if (!isDetached()) {
-                getChildFragmentManager().beginTransaction()
-                    .replace(R.id.root, SongFragment.newInstance(result))
-                    .commit();
-              }
-            }
-          });
-      currentQuery = query;
-    } catch (ApiException e) {
-      Log.e(TAG, "Error searching for " + query + " on " + providerId, e);
-      // TODO show error fragment
-    }
   }
 
   public String getProviderId() {
@@ -144,6 +120,80 @@ public class SearchFragment extends Fragment {
    */
   public interface OnFragmentInteractionListener {
 
+  }
 
+  private class SearchExecutor implements Closeable {
+
+    private final ExecutorService executor;
+    private final Runnable resultListenerTask;
+
+    private String currentQuery;
+    private Future<?> resultListener;
+    private Future<List<Song>> searchFuture;
+
+    SearchExecutor() {
+      executor = Executors.newFixedThreadPool(2);
+      resultListenerTask = new Runnable() {
+        @Override
+        public void run() {
+          try {
+            final List<Song> result = searchFuture.get();
+            if (!isDetached()) {
+              View view = getView();
+              if (view == null) {
+                Log.w(TAG, "Not detached, but view is null");
+                return;
+              }
+              view.post(new Runnable() {
+                @Override
+                public void run() {
+                  showResults(result);
+                }
+              });
+            }
+          } catch (InterruptedException e) {
+            Log.v(TAG, "Interrupted while waiting for search results", e);
+          } catch (ExecutionException e) {
+            Log.e(TAG, "Error retrieving search results", e);
+            // TODO show error fragment
+          } catch (CancellationException e) {
+            Log.v(TAG, "Search result waiter was cancelled");
+          }
+        }
+      };
+    }
+
+    private void search(String query) {
+      if (query.equals(currentQuery)) {
+        return;
+      }
+
+      if (searchFuture != null) {
+        resultListener.cancel(true);
+        searchFuture.cancel(true);
+      }
+
+      getChildFragmentManager().beginTransaction()
+          .replace(R.id.root, new LoadingFragment())
+          .commit();
+
+      this.currentQuery = query;
+      this.searchFuture = enqueue(query);
+      this.resultListener = executor.submit(resultListenerTask);
+    }
+
+    private Future<List<Song>> enqueue(final String query) {
+      return executor.submit(new Callable<List<Song>>() {
+        @Override
+        public List<Song> call() throws ApiException {
+          return Connection.get(getContext()).searchSong(providerId, query);
+        }
+      });
+    }
+
+    @Override
+    public void close() {
+      executor.shutdown();
+    }
   }
 }

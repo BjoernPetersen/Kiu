@@ -22,12 +22,12 @@ import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.QueueState;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.api.Connection;
-import com.github.bjoernpetersen.q.api.UiCallback;
 import com.github.bjoernpetersen.q.ui.fragments.SearchFragment;
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SearchActivity extends AppCompatActivity implements
     SearchFragment.OnFragmentInteractionListener,
@@ -131,25 +131,30 @@ public class SearchActivity extends AppCompatActivity implements
   }
 
   private void loadProviders() {
-    try {
-      Connection.get(this).getProvidersAsync(new UiCallback<List<String>>() {
-        @Override
-        public void onFailureImpl(ApiException e, int statusCode,
-            Map<String, List<String>> responseHeaders) {
-          Log.e(TAG, "Could not retrieve providers. Code: " + statusCode, e);
-          finish();
+    final ExecutorService executor = Executors.newSingleThreadExecutor();
+    executor.submit(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          final List<String> providers = Connection.get(SearchActivity.this).getProviders();
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              updateProviders(providers);
+            }
+          });
+        } catch (ApiException e) {
+          Log.e(TAG, "Could not retrieve providers", e);
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              finish();
+            }
+          });
         }
-
-        @Override
-        public void onSuccessImpl(List<String> result, int statusCode,
-            Map<String, List<String>> responseHeaders) {
-          updateProviders(result);
-        }
-      });
-    } catch (ApiException e) {
-      Log.e(TAG, "Could not retrieve providers", e);
-      finish();
-    }
+        executor.shutdown();
+      }
+    });
   }
 
   private void updateProviders(List<String> providers) {
