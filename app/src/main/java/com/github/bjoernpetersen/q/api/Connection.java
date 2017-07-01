@@ -5,19 +5,14 @@ import android.preference.PreferenceManager;
 import android.provider.Settings.Secure;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.github.bjoernpetersen.jmusicbot.client.ApiCallback;
 import com.github.bjoernpetersen.jmusicbot.client.ApiClient;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
-import com.github.bjoernpetersen.jmusicbot.client.ApiResponse;
-import com.github.bjoernpetersen.jmusicbot.client.ProgressRequestBody.ProgressRequestListener;
-import com.github.bjoernpetersen.jmusicbot.client.ProgressResponseBody.ProgressListener;
 import com.github.bjoernpetersen.jmusicbot.client.api.DefaultApi;
 import com.github.bjoernpetersen.jmusicbot.client.model.PlayerState;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.api.ApiKey.UserType;
 import com.hadisatrio.optional.Optional;
-import com.squareup.okhttp.Call;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -89,13 +84,19 @@ public final class Connection {
   private ApiKey retrieveApiKey(@Nullable UserType userType) throws ApiException {
     String userName = getConfiguration().getUserName().get();
     if (userType != null) {
-      switch (userType) {
-        case GUEST:
-          return retrieveGuestApiKey(userName);
-        case FULL:
-          return retrieveFullApiKey(userName);
-        default:
-          throw new IllegalArgumentException();
+      try {
+        switch (userType) {
+          case GUEST:
+            return retrieveGuestApiKey(userName);
+          case FULL:
+            return retrieveFullApiKey(userName);
+          default:
+            throw new IllegalArgumentException();
+        }
+      } catch (ApiException e) {
+        if (e.getCode() != 404) {
+          throw e;
+        }
       }
     }
 
