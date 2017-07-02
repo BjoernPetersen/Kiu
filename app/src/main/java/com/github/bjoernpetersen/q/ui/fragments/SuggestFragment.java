@@ -111,13 +111,6 @@ public class SuggestFragment extends Fragment {
 
   }
 
-  private void runOnUiThread(Runnable runnable) {
-    View view = getView();
-    if (view != null) {
-      view.post(runnable);
-    }
-  }
-
   private void loadSuggestions() {
     getChildFragmentManager().beginTransaction()
         .replace(R.id.root, new LoadingFragment())
@@ -132,7 +125,7 @@ public class SuggestFragment extends Fragment {
           songs = Connection.get(getContext()).suggestSong(suggesterId, null);
         } catch (ApiException e) {
           Log.v(TAG, "Could not load suggestions", e);
-          runOnUiThread(new Runnable() {
+          Util.runOnUiThread(SuggestFragment.this, new Runnable() {
             @Override
             public void run() {
               if (!isDetached()) {
@@ -142,7 +135,7 @@ public class SuggestFragment extends Fragment {
           });
         }
 
-        runOnUiThread(new Runnable() {
+        Util.runOnUiThread(SuggestFragment.this, new Runnable() {
           @Override
           public void run() {
             showResults(songs);

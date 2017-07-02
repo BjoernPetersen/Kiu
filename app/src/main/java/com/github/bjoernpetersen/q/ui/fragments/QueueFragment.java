@@ -1,13 +1,10 @@
 package com.github.bjoernpetersen.q.ui.fragments;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.State;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,8 +101,13 @@ public class QueueFragment extends Fragment {
     updateQueue(QueueState.getInstance().get());
     QueueState.getInstance().addListener(queueListener = new QueueState.Listener() {
       @Override
-      public void onChange(List<QueueEntry> oldQueue, List<QueueEntry> newQueue) {
-        updateQueue(newQueue);
+      public void onChange(List<QueueEntry> oldQueue, final List<QueueEntry> newQueue) {
+        Util.runOnUiThread(QueueFragment.this, new Runnable() {
+          @Override
+          public void run() {
+            updateQueue(newQueue);
+          }
+        });
       }
     });
     updateTask = updater.scheduleWithFixedDelay(new UpdateTask(), 0, 2, TimeUnit.SECONDS);

@@ -189,7 +189,7 @@ public class SearchActivity extends AppCompatActivity implements
               .enqueue(song.getId(), song.getProviderId());
           QueueState.getInstance().set(queueEntries);
         } catch (ApiException e) {
-          e.printStackTrace();
+          Log.v(TAG, "Couldn't add song to queue.", e);
         }
       }
     }, "enqueueThread").start();
