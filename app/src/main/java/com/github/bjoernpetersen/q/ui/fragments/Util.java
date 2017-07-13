@@ -8,8 +8,8 @@ final class Util {
   private Util() {
   }
 
-  static void runOnUiThread(Fragment framgent, Runnable runnable) {
-    View view = framgent.getView();
+  static void runOnUiThread(Fragment fragment, Runnable runnable) {
+    View view = fragment.getView();
     if (view != null) {
       view.post(runnable);
     }
