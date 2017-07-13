@@ -99,9 +99,11 @@ public class SearchFragment extends Fragment {
   }
 
   void showResults(List<Song> result) {
-    getChildFragmentManager().beginTransaction()
-        .replace(R.id.root, SongFragment.newInstance(result))
-        .commit();
+    if (!isDetached()) {
+      getChildFragmentManager().beginTransaction()
+          .replace(R.id.root, SongFragment.newInstance(result))
+          .commit();
+    }
   }
 
   public String getProviderId() {

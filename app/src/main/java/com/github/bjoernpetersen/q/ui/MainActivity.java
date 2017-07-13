@@ -14,16 +14,19 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
+import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.api.Connection;
 import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment;
+import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener;
+import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener;
 import com.github.bjoernpetersen.q.ui.fragments.QueueFragment;
 import io.sentry.Sentry;
 import io.sentry.android.AndroidSentryClientFactory;
 
 public class MainActivity extends AppCompatActivity implements
-    QueueFragment.ListFragmentInteractionListener {
+    QueueEntryListener, QueueEntryAddButtonsListener {
 
   private static final String TAG = MainActivity.class.getSimpleName();
   private static final String SENTRY_DSN = "https://ab694f1a00ae41678d673c676de4bb9e:cd17682534a746e2bdabbf909568b7fe@sentry.io/186487";
@@ -139,19 +142,19 @@ public class MainActivity extends AppCompatActivity implements
   }
 
   @Override
-  public void showSearch() {
+  public void onSearchClick() {
     Intent intent = new Intent(this, SearchActivity.class);
     startActivity(intent);
   }
 
   @Override
-  public void showSuggestions() {
+  public void onSuggestionsClick() {
     Intent intent = new Intent(this, SuggestActivity.class);
     startActivity(intent);
   }
 
   @Override
-  public void onSongClick(Song song) {
+  public void onClick(QueueEntry entry) {
 
   }
 }
