@@ -16,6 +16,7 @@ import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBinder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHolder> {
@@ -39,6 +40,9 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
   @Override
   public void bindViewHolder(final ViewHolder holder, int position) {
     QueueEntry entry = getItem(position);
+    if (Objects.equals(entry, holder.entry)) {
+      return;
+    }
     holder.entry = entry;
     Song song = entry.getSong();
 
