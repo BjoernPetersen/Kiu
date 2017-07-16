@@ -67,6 +67,11 @@ public final class Connection {
     configuration.reset();
   }
 
+  public void setHost(@NonNull String host) {
+    getConfiguration().setHost(host);
+    api.getApiClient().setBasePath(getConfiguration().getBasePath());
+  }
+
   @NonNull
   private String getToken() throws ApiException {
     return getApiKey().getRaw();

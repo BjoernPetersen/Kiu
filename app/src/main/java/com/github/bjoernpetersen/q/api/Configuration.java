@@ -8,8 +8,9 @@ import com.hadisatrio.optional.Optional;
 
 public final class Configuration {
 
-  private static final String HOST_KEY = "host";
+  public static final int PORT = 42945;
 
+  private static final String HOST_KEY = "host";
   private static final String USERNAME_KEY = "userName";
   private static final String PASSWORD_KEY = "password";
   private static final String TOKEN_KEY = "token";
@@ -40,7 +41,7 @@ public final class Configuration {
     return getUserName().isPresent();
   }
 
-  public void setHost(@NonNull String host) {
+  void setHost(@NonNull String host) {
     preferences.edit()
         .putString(HOST_KEY, host)
         .apply();
@@ -69,13 +70,12 @@ public final class Configuration {
   }
 
   String getBasePath() {
-    return "http://" + getHost() + ":4567/v1";
+    return "http://" + getHost() + ":" + PORT + "/v1";
   }
 
   @NonNull
   private String getHost() {
-    // TODO replace default with localhost
-    return preferences.getString(HOST_KEY, "192.168.0.11");
+    return preferences.getString(HOST_KEY, "localhost");
   }
 
   Optional<ApiKey> getApiKey() {

@@ -14,9 +14,12 @@ import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.q.QueueState;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.api.Connection;
+import com.github.bjoernpetersen.q.api.HostDiscoverer;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAdapter.QueueEntryType;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener;
+import com.hadisatrio.optional.function.Consumer;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -181,9 +184,21 @@ public class QueueFragment extends Fragment {
           }
         });
       } catch (ApiException e) {
+        if (e.getCause() instanceof SocketException) {
+          // try reconnecting
+          new Thread(new HostDiscoverer(new Consumer<String>() {
+            @Override
+            public void consume(String value) {
+              Log.i(TAG, "Found host: " + value);
+              if (value != null) {
+                Connection.get(getContext()).setHost(value);
+              }
+            }
+          })).start();
+        }
         Log.v(TAG, "Could not get queue", e);
       } catch (RuntimeException e) {
-        Log.wtf(TAG, "FUCK", e);
+        Log.wtf(TAG, e);
       }
     }
   }
