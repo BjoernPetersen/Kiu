@@ -30,6 +30,13 @@ public final class Configuration {
         .apply();
   }
 
+  void resetApiKey() {
+    preferences.edit()
+        .remove(TOKEN_KEY)
+        .remove(TOKEN_TYPE)
+        .apply();
+  }
+
   void setUserName(@NonNull String userName) {
     userName = userName.trim();
     preferences.edit()

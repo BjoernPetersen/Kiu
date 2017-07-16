@@ -3,7 +3,7 @@ package com.github.bjoernpetersen.q.api;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-enum Permission implements Parcelable {
+public enum Permission implements Parcelable {
   SKIP("skip"), DISLIKE("dislike");
 
   private final String name;

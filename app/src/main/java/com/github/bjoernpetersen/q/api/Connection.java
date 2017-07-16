@@ -67,6 +67,33 @@ public final class Connection {
     configuration.reset();
   }
 
+  public void invalidateToken() {
+    this.apiKey = null;
+    getConfiguration().resetApiKey();
+  }
+
+  public boolean checkHasPermission(Permission permission) {
+    try {
+      if (hasPermission(getApiKey(), permission)) {
+        return true;
+      }
+    } catch (ApiException e) {
+      return false;
+    }
+
+    // Check if permission has changed on server side
+    apiKey = null;
+    try {
+      return hasPermission(getApiKey(), permission);
+    } catch (ApiException e) {
+      return false;
+    }
+  }
+
+  private boolean hasPermission(ApiKey apiKey, Permission permission) {
+    return apiKey.getPermissions().contains(permission);
+  }
+
   public void setHost(@NonNull String host) {
     getConfiguration().setHost(host);
     api.getApiClient().setBasePath(getConfiguration().getBasePath());
