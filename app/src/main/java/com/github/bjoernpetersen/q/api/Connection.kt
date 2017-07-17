@@ -3,6 +3,7 @@ package com.github.bjoernpetersen.q.api
 import com.github.bjoernpetersen.jmusicbot.client.ApiClient
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.api.DefaultApi
+import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin
 import com.github.bjoernpetersen.jmusicbot.client.model.PlayerState
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
 import com.github.bjoernpetersen.jmusicbot.client.model.Song
@@ -107,7 +108,7 @@ object Connection {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun getProviders(): List<String> {
+    fun getProviders(): List<NamedPlugin> {
         return api.providers
     }
 
@@ -131,7 +132,7 @@ object Connection {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun getSuggesters(): List<String> {
+    fun getSuggesters(): List<NamedPlugin> {
         return api.suggesters
     }
 

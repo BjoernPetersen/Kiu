@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
+import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.api.Connection;
@@ -23,16 +24,16 @@ import java.util.List;
 public class SuggestFragment extends Fragment {
 
   private static final String TAG = SuggestFragment.class.getSimpleName();
-  private static final String ARG_SUGGESTER_ID = "suggester-id";
+  private static final String ARG_SUGGESTER = "suggester";
 
-  private String suggesterId;
+  private NamedPlugin suggester;
   private OnFragmentInteractionListener mListener;
 
   @SuppressWarnings("unused")
-  public static SuggestFragment newInstance(String suggesterId) {
+  public static SuggestFragment newInstance(NamedPlugin suggester) {
     SuggestFragment fragment = new SuggestFragment();
     Bundle args = new Bundle();
-    args.putString(ARG_SUGGESTER_ID, suggesterId);
+    args.putParcelable(ARG_SUGGESTER, suggester);
     fragment.setArguments(args);
     return fragment;
   }
@@ -46,10 +47,10 @@ public class SuggestFragment extends Fragment {
     super.onCreate(savedInstanceState);
 
     if (getArguments() != null) {
-      suggesterId = getArguments().getString(ARG_SUGGESTER_ID);
+      suggester = getArguments().getParcelable(ARG_SUGGESTER);
     }
 
-    if (suggesterId == null) {
+    if (suggester == null) {
       throw new IllegalStateException("Missing suggesterId argument");
     }
   }
@@ -93,8 +94,8 @@ public class SuggestFragment extends Fragment {
         .commit();
   }
 
-  public String getSuggesterId() {
-    return suggesterId;
+  public NamedPlugin getSuggester() {
+    return suggester;
   }
 
   /**
@@ -122,7 +123,7 @@ public class SuggestFragment extends Fragment {
       @Override
       public void run() {
         try {
-          songs = Connection.INSTANCE.suggestSong(suggesterId, null);
+          songs = Connection.INSTANCE.suggestSong(suggester.getId(), null);
         } catch (ApiException e) {
           Log.v(TAG, "Could not load suggestions", e);
           Util.runOnUiThread(SuggestFragment.this, new Runnable() {

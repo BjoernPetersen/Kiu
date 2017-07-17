@@ -9,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
+import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.R;
 import com.github.bjoernpetersen.q.api.Connection;
+import com.github.bjoernpetersen.q.api.HostDiscoverer;
 import java.io.Closeable;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -20,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.jar.Attributes.Name;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,17 +34,17 @@ import java.util.concurrent.Future;
 public class SearchFragment extends Fragment {
 
   private static final String TAG = SearchFragment.class.getSimpleName();
-  private static final String ARG_PROVIDER_ID = "provider-id";
+  private static final String ARG_PROVIDER = "provider";
 
-  private String providerId;
+  private NamedPlugin provider;
   private SearchExecutor searchExecutor;
   private OnFragmentInteractionListener mListener;
 
   @SuppressWarnings("unused")
-  public static SearchFragment newInstance(String providerId) {
+  public static SearchFragment newInstance(NamedPlugin provider) {
     SearchFragment fragment = new SearchFragment();
     Bundle args = new Bundle();
-    args.putString(ARG_PROVIDER_ID, providerId);
+    args.putParcelable(ARG_PROVIDER, provider);
     fragment.setArguments(args);
     return fragment;
   }
@@ -54,11 +58,11 @@ public class SearchFragment extends Fragment {
     super.onCreate(savedInstanceState);
 
     if (getArguments() != null) {
-      providerId = getArguments().getString(ARG_PROVIDER_ID);
+      provider = getArguments().getParcelable(ARG_PROVIDER);
     }
 
-    if (providerId == null) {
-      throw new IllegalStateException("Missing providerId argument");
+    if (provider == null) {
+      throw new IllegalStateException("Missing provider argument");
     }
   }
 
@@ -106,8 +110,8 @@ public class SearchFragment extends Fragment {
     }
   }
 
-  public String getProviderId() {
-    return providerId;
+  public NamedPlugin getProvider() {
+    return provider;
   }
 
   /**
@@ -156,8 +160,10 @@ public class SearchFragment extends Fragment {
           } catch (InterruptedException e) {
             Log.v(TAG, "Interrupted while waiting for search results", e);
           } catch (ExecutionException e) {
-            Log.e(TAG, "Error retrieving search results", e);
-            // TODO show error fragment
+            Log.d(TAG, "Error retrieving search results", e);
+            if(e.getCause() instanceof SocketTimeoutException) {
+              executor.submit((Runnable) new HostDiscoverer());
+            }
           } catch (CancellationException e) {
             Log.v(TAG, "Search result waiter was cancelled");
           }
@@ -188,7 +194,7 @@ public class SearchFragment extends Fragment {
       return executor.submit(new Callable<List<Song>>() {
         @Override
         public List<Song> call() throws ApiException {
-          return Connection.INSTANCE.searchSong(providerId, query);
+          return Connection.INSTANCE.searchSong(provider.getId(), query);
         }
       });
     }

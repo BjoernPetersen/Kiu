@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
+import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.QueueState;
@@ -136,7 +137,7 @@ public class SuggestActivity extends AppCompatActivity implements
       @Override
       public void run() {
         try {
-          final List<String> providers = Connection.INSTANCE.getSuggesters();
+          final List<NamedPlugin> providers = Connection.INSTANCE.getSuggesters();
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -161,7 +162,7 @@ public class SuggestActivity extends AppCompatActivity implements
     }, "SuggesterLoader").start();
   }
 
-  private void updateSuggesters(List<String> suggesters) {
+  private void updateSuggesters(List<NamedPlugin> suggesters) {
     if (viewPager != null) {
       viewPager
           .setAdapter(new SuggestFragmentPagerAdapter(getSupportFragmentManager(), suggesters));
@@ -190,7 +191,7 @@ public class SuggestActivity extends AppCompatActivity implements
         try {
           String token = Auth.INSTANCE.getApiKey().getRaw();
           List<QueueEntry> queueEntries = Connection.INSTANCE
-              .enqueue(token, song.getId(), song.getProviderId());
+              .enqueue(token, song.getId(), song.getProvider().getId());
           QueueState.getInstance().set(queueEntries);
         } catch (ApiException e) {
           e.printStackTrace();
@@ -217,10 +218,10 @@ final class SuggestFragmentPagerAdapter extends FragmentPagerAdapter {
 
   private final List<SuggestFragment> fragments;
 
-  SuggestFragmentPagerAdapter(FragmentManager fm, List<String> suggesters) {
+  SuggestFragmentPagerAdapter(FragmentManager fm, List<NamedPlugin> suggesters) {
     super(fm);
     fragments = new ArrayList<>(suggesters.size());
-    for (String provider : suggesters) {
+    for (NamedPlugin provider : suggesters) {
       fragments.add(SuggestFragment.newInstance(provider));
     }
   }
@@ -243,6 +244,6 @@ final class SuggestFragmentPagerAdapter extends FragmentPagerAdapter {
 
   @Override
   public CharSequence getPageTitle(int position) {
-    return getItem(position).getSuggesterId();
+    return getItem(position).getSuggester().getId();
   }
 }

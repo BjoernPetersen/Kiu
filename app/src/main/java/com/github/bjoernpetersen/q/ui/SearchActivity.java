@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
+import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.QueueState;
@@ -137,7 +138,7 @@ public class SearchActivity extends AppCompatActivity implements
       @Override
       public void run() {
         try {
-          final List<String> providers = Connection.INSTANCE.getProviders();
+          final List<NamedPlugin> providers = Connection.INSTANCE.getProviders();
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -162,7 +163,7 @@ public class SearchActivity extends AppCompatActivity implements
     }, "ProviderLoader").start();
   }
 
-  private void updateProviders(List<String> providers) {
+  private void updateProviders(List<NamedPlugin> providers) {
     if (viewPager != null) {
       viewPager.setAdapter(new SearchFragmentPagerAdapter(getSupportFragmentManager(), providers));
     }
@@ -190,10 +191,10 @@ public class SearchActivity extends AppCompatActivity implements
         try {
           String token = Auth.INSTANCE.getApiKey().getRaw();
           List<QueueEntry> queueEntries = Connection.INSTANCE
-              .enqueue(token, song.getId(), song.getProviderId());
+              .enqueue(token, song.getId(), song.getProvider().getId());
           QueueState.getInstance().set(queueEntries);
         } catch (ApiException e) {
-          Log.v(TAG, "Couldn't add song to queue.", e);
+          Log.v(TAG, "Couldn't add song to queue. (" + e.getCode() + ")", e);
         } catch (AuthException e) {
           Log.d(TAG, "Could not add song", e);
           Intent intent = new Intent(SearchActivity.this, LoginActivity.class);
@@ -213,10 +214,10 @@ final class SearchFragmentPagerAdapter extends FragmentPagerAdapter {
 
   private final List<SearchFragment> fragments;
 
-  SearchFragmentPagerAdapter(FragmentManager fm, List<String> providers) {
+  SearchFragmentPagerAdapter(FragmentManager fm, List<NamedPlugin> providers) {
     super(fm);
     fragments = new ArrayList<>(providers.size());
-    for (String provider : providers) {
+    for (NamedPlugin provider : providers) {
       fragments.add(SearchFragment.newInstance(provider));
     }
   }
@@ -239,6 +240,7 @@ final class SearchFragmentPagerAdapter extends FragmentPagerAdapter {
 
   @Override
   public CharSequence getPageTitle(int position) {
-    return getItem(position).getProviderId();
+    NamedPlugin provider = getItem(position).getProvider();
+    return provider == null ? null : provider.getName();
   }
 }
