@@ -29,4 +29,5 @@
   <string name="skipping_current_song">Skipping song...</string>
   <string name="skip_error">Could not skip song</string>
   <string name="connection_error">No connection to server</string>
+  <string name="trying_upgrade">Trying to upgrade...</string>
 </resources>

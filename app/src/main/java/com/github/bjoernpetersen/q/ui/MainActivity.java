@@ -57,19 +57,21 @@ public class MainActivity extends AppCompatActivity implements
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.main_menu, menu);
-
-    if (!Auth.INSTANCE.isFullUser()) {
-      menu.findItem(R.id.upgrade).setVisible(true);
-    }
-
     return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    MenuItem upgrade = menu.findItem(R.id.upgrade);
+    upgrade.setVisible(!Config.INSTANCE.hasPassword());
+    return super.onPrepareOptionsMenu(menu);
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.upgrade:
-        upgrade(item);
+        upgrade();
         return true;
       case R.id.logout:
         Config.INSTANCE.reset();
@@ -80,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements
     }
   }
 
-  private void upgrade(final MenuItem upgradeItem) {
-    if (!Auth.INSTANCE.isFullUser()) {
+  private void upgrade() {
+    if (!Config.INSTANCE.hasPassword()) {
       final EditText editText = new EditText(this);
       editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
@@ -92,17 +94,17 @@ public class MainActivity extends AppCompatActivity implements
           .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-              upgrade(upgradeItem, editText.getText().toString());
+              upgrade(editText.getText().toString());
             }
           })
           .show();
     }
   }
 
-  private void upgrade(final MenuItem upgradeItem, final String password) {
+  private void upgrade(final String password) {
     if (password.isEmpty()) {
       Toast.makeText(this, R.string.error_empty, Toast.LENGTH_SHORT).show();
-      upgrade(upgradeItem);
+      upgrade();
     }
 
     final Context context = this;
@@ -111,14 +113,20 @@ public class MainActivity extends AppCompatActivity implements
       public void run() {
         try {
           Config.INSTANCE.setPassword(password);
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              Toast.makeText(context, R.string.trying_upgrade, Toast.LENGTH_SHORT).show();
+            }
+          });
           Auth.INSTANCE.getApiKey();
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
               Toast.makeText(context, R.string.upgrade_success, Toast.LENGTH_SHORT).show();
-              upgradeItem.setVisible(false);
             }
           });
+          return;
         } catch (final ChangePasswordException e) {
           runOnUiThread(new Runnable() {
             @Override
@@ -126,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements
               switch (e.getReason()) {
                 case INVALID_PASSWORD:
                   Toast.makeText(context, R.string.invalid_password, Toast.LENGTH_SHORT).show();
-                  upgrade(upgradeItem);
+                  upgrade();
                   break;
                 case WRONG_OLD_PASSWORD:
                 case INVALID_TOKEN:
@@ -149,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements
         } catch (AuthException e) {
           Log.e(TAG, "Error during upgrade", e);
         }
+        Config.INSTANCE.clearPassword();
       }
     }, "upgradeThread").start();
   }

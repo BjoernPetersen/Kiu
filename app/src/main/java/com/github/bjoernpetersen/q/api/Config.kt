@@ -48,6 +48,7 @@ object Config {
         }
 
     fun hasPassword(): Boolean = prefs.contains(Key.PASSWORD)
+    fun clearPassword() = prefs.edit().remove(Key.PASSWORD).apply()
 
     var apiKey: ApiKey?
         get() {
