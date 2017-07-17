@@ -22,29 +22,33 @@ internal object Auth {
     val apiKey: ApiKey
         @Throws(AuthException::class)
         get() {
-            try {
-                var apiKey = _apiKey
-                if (apiKey != null && !apiKey.isExpired) {
-                    return apiKey
-                } else {
-                    apiKey = tryRetrieve()
-                    _apiKey = apiKey
-                    return apiKey
-                }
-            } catch (e: ApiException) {
-                val cause = e.cause
-                if (cause is SocketException || cause is SocketTimeoutException) {
-                    throw ConnectionException(cause)
-                }
-                throw ConnectionException(e)
-            } catch (e: UnknownAuthException) {
-                val cause = e.cause?.cause
-                if (cause is SocketException || cause is SocketTimeoutException) {
-                    throw ConnectionException(e)
-                }
-                throw e
+            var apiKey = _apiKey
+            if (apiKey != null && !apiKey.isExpired) {
+                return apiKey
+            } else {
+                apiKey = tryRetrieve()
+                _apiKey = apiKey
+                return apiKey
             }
         }
+
+    private fun refreshApiKey(): ApiKey {
+        try {
+            return tryRetrieve()
+        } catch (e: ApiException) {
+            val cause = e.cause
+            if (cause is SocketException || cause is SocketTimeoutException) {
+                throw ConnectionException(cause)
+            }
+            throw ConnectionException(e)
+        } catch (e: UnknownAuthException) {
+            val cause = e.cause?.cause
+            if (cause is SocketException || cause is SocketTimeoutException) {
+                throw ConnectionException(e)
+            }
+            throw e
+        }
+    }
 
     /**
      * Checks whether there is an API key and the user type is FULL.
@@ -67,8 +71,9 @@ internal object Auth {
 
 
         // Check if permission has changed on server side
-        clear()
         try {
+            val apiKey = refreshApiKey()
+            this._apiKey = apiKey
             return apiKey.permissions.contains(permission)
         } catch (e: AuthException) {
             return false
