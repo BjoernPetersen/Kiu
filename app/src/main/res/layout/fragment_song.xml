@@ -42,16 +42,10 @@
       android:marqueeRepeatLimit="marquee_forever"
       android:scrollHorizontally="true"
       android:singleLine="true" />
-    <!-- TODO make visible-->
     <TextView
-      android:id="@+id/song_length"
+      android:id="@+id/song_duration"
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:ellipsize="marquee"
-      android:marqueeRepeatLimit="marquee_forever"
-      android:scrollHorizontally="true"
-      android:singleLine="true"
-      android:visibility="gone" />
+      android:layout_height="wrap_content" />
   </LinearLayout>
 
   <Button

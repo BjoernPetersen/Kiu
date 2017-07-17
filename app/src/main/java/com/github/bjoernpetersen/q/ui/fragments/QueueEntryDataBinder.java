@@ -1,5 +1,6 @@
 package com.github.bjoernpetersen.q.ui.fragments;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBinder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 
@@ -59,6 +61,7 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
         });
     setContent(holder.titleView, song.getTitle());
     setContent(holder.descriptionView, song.getDescription());
+    setContent(holder.durationView, getDurationString(song.getDuration()));
     setContent(holder.queuerView, entry.getUserName());
 
     holder.view.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +74,16 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
         }
       }
     });
+  }
+
+  @Nullable
+  private String getDurationString(int durationSeconds) {
+    if (durationSeconds == 0) {
+      return null;
+    }
+    int seconds = durationSeconds % 60;
+    int minutes = (durationSeconds - seconds) / 60;
+    return String.format(Locale.US, "%d:%02d", minutes, seconds);
   }
 
   private void setContent(TextView view, String content) {
@@ -107,7 +120,7 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
     public final ImageView albumArtView;
     public final TextView titleView;
     public final TextView descriptionView;
-    // TODO public final TextView lengthView;
+    public final TextView durationView;
     public final TextView queuerView;
     public QueueEntry entry;
 
@@ -119,10 +132,9 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
       this.titleView.setSelected(true);
       this.descriptionView = (TextView) view.findViewById(R.id.song_description);
       this.descriptionView.setSelected(true);
-      //TODO   this.lengthView = (TextView) view.findViewById(R.id.song_length);
+      this.durationView = (TextView) view.findViewById(R.id.song_duration);
       this.queuerView = (TextView) view.findViewById(R.id.song_queuer);
     }
-
 
     @Override
     public String toString() {

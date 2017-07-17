@@ -29,6 +29,7 @@ import com.github.bjoernpetersen.q.api.AuthException;
 import com.github.bjoernpetersen.q.api.Connection;
 import com.github.bjoernpetersen.q.api.Permission;
 import com.squareup.picasso.Picasso;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -184,12 +185,14 @@ public class PlayerFragment extends Fragment {
         // update current entry info
         TextView title = (TextView) view.findViewById(R.id.song_title);
         TextView description = (TextView) view.findViewById(R.id.song_description);
+        TextView duration = (TextView) view.findViewById(R.id.song_duration);
         TextView queuer = (TextView) view.findViewById(R.id.song_queuer);
 
         SongEntry songEntry = playerState.getSongEntry();
         if (songEntry == null) {
           title.setText("");
           description.setText("");
+          duration.setText("");
           queuer.setText("");
           return;
         }
@@ -206,6 +209,15 @@ public class PlayerFragment extends Fragment {
           description.setVisibility(View.GONE);
         } else {
           description.setVisibility(View.VISIBLE);
+        }
+        int durationSeconds = song.getDuration();
+        if (durationSeconds > 0) {
+          duration.setVisibility(View.VISIBLE);
+          int seconds = durationSeconds % 60;
+          int minutes = (durationSeconds - seconds) / 60;
+          duration.setText(String.format(Locale.US, "%d:%02d", minutes, seconds));
+        } else {
+          duration.setVisibility(View.GONE);
         }
 
         String userName = songEntry.getUserName();

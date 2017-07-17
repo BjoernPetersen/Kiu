@@ -1,5 +1,6 @@
 package com.github.bjoernpetersen.q.ui.fragments;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.github.bjoernpetersen.q.ui.fragments.SongFragment.OnListFragmentInter
 import com.squareup.picasso.Callback.EmptyCallback;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Song} and makes a call to the
@@ -52,6 +54,7 @@ public class SongRecyclerViewAdapter extends
         });
     setContent(holder.titleView, song.getTitle());
     setContent(holder.descriptionView, song.getDescription());
+    setContent(holder.durationView, getDurationString(song.getDuration()));
     holder.addButton.setVisibility(View.VISIBLE);
     if (mListener != null) {
       boolean showAdd = mListener.showAdd(song);
@@ -69,6 +72,16 @@ public class SongRecyclerViewAdapter extends
         }
       }
     });
+  }
+
+  @Nullable
+  private String getDurationString(int durationSeconds) {
+    if (durationSeconds == 0) {
+      return null;
+    }
+    int seconds = durationSeconds % 60;
+    int minutes = (durationSeconds - seconds) / 60;
+    return String.format(Locale.US, "%d:%02d", minutes, seconds);
   }
 
   private void setContent(TextView view, String content) {
@@ -91,6 +104,7 @@ public class SongRecyclerViewAdapter extends
     public final ImageView albumArtView;
     public final TextView titleView;
     public final TextView descriptionView;
+    public final TextView durationView;
     public final Button addButton;
     public Song song;
 
@@ -102,7 +116,7 @@ public class SongRecyclerViewAdapter extends
       titleView.setSelected(true);
       descriptionView = (TextView) view.findViewById(R.id.song_description);
       descriptionView.setSelected(true);
-      // TODO lengthView = (TextView) view.findViewById(R.id.song_length);
+      durationView = (TextView) view.findViewById(R.id.song_duration);
       addButton = (Button) view.findViewById(R.id.add_button);
     }
 

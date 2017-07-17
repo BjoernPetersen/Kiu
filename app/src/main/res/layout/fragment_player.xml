@@ -47,6 +47,11 @@
       android:singleLine="true"
       android:textColor="@android:color/white" />
     <TextView
+      android:id="@+id/song_duration"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/white" />
+    <TextView
       android:id="@+id/song_queuer"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
