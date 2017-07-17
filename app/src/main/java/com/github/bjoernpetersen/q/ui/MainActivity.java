@@ -19,6 +19,7 @@ import com.github.bjoernpetersen.q.api.Auth;
 import com.github.bjoernpetersen.q.api.AuthException;
 import com.github.bjoernpetersen.q.api.ChangePasswordException;
 import com.github.bjoernpetersen.q.api.Config;
+import com.github.bjoernpetersen.q.api.ConnectionException;
 import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener;
@@ -136,6 +137,13 @@ public class MainActivity extends AppCompatActivity implements
                   Toast.makeText(context, getString(R.string.unknown_error),
                       Toast.LENGTH_SHORT).show();
               }
+            }
+          });
+        } catch (ConnectionException e) {
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              Toast.makeText(context, R.string.connection_error, Toast.LENGTH_SHORT).show();
             }
           });
         } catch (AuthException e) {

@@ -110,8 +110,6 @@ public class LoginActivity extends AppCompatActivity {
         } catch (ChangePasswordException e) {
           Log.d(TAG, "Could not change password", e);
           loginFailure(e.getReason());
-        } catch (AuthException e) {
-          Log.wtf(TAG, e);
         } catch (ConnectionException e) {
           String host;
           if ((host = new HostDiscoverer().call()) != null) {
@@ -127,6 +125,8 @@ public class LoginActivity extends AppCompatActivity {
               }
             });
           }
+        } catch (AuthException e) {
+          Log.wtf(TAG, e);
         }
       }
     }, "loginThread").start();

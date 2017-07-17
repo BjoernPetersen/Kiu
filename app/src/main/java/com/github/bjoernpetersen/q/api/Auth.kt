@@ -4,6 +4,7 @@ import android.provider.Settings
 import android.util.Log
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import java.net.SocketException
+import java.net.SocketTimeoutException
 
 private val TAG = "Auth"
 
@@ -23,23 +24,25 @@ internal object Auth {
         get() {
             try {
                 var apiKey = _apiKey
-                if (apiKey != null) {
-                    if (apiKey.isExpired) {
-                        apiKey = login()
-                        _apiKey = apiKey
-                    }
+                if (apiKey != null && !apiKey.isExpired) {
                     return apiKey
                 } else {
-                    val result = tryRetrieve()
-                    _apiKey = result
-                    return result
+                    apiKey = tryRetrieve()
+                    _apiKey = apiKey
+                    return apiKey
                 }
             } catch (e: ApiException) {
                 val cause = e.cause
-                if (cause is SocketException) {
+                if (cause is SocketException || cause is SocketTimeoutException) {
                     throw ConnectionException(cause)
                 }
                 throw ConnectionException(e)
+            } catch (e: UnknownAuthException) {
+                val cause = e.cause?.cause
+                if (cause is SocketException || cause is SocketTimeoutException) {
+                    throw ConnectionException(e)
+                }
+                throw e
             }
         }
 
@@ -190,7 +193,7 @@ internal object Auth {
                 400 -> throw LoginException(LoginException.Reason.WRONG_UUID)
                 401 -> throw LoginException(LoginException.Reason.NEEDS_AUTH)
                 404 -> throw LoginException(LoginException.Reason.UNKNOWN)
-                else -> throw UnknownAuthException(e)
+                else -> throw UnknownAuthException("Error code: " + e.code, e)
             }
         }
     }
@@ -216,7 +219,10 @@ internal object Auth {
 
 sealed class AuthException : Exception {
     constructor() : super()
-    constructor(message: String?) : super(message)
+    constructor(message: String) : super(message)
+    constructor(cause: Throwable) : super(cause)
+    constructor(message: String, cause: Throwable) : super(message, cause)
+
 }
 
 class RegisterException : AuthException {
@@ -264,14 +270,14 @@ class LoginException : AuthException {
     }
 }
 
+class ConnectionException : AuthException {
+    constructor(message: String) : super(message)
+    constructor(message: String, cause: Throwable) : super(message, cause)
+    constructor(cause: Throwable) : super(cause)
+}
+
 class UnknownAuthException : RuntimeException {
     constructor(message: String) : super(message)
     constructor(message: String, cause: ApiException) : super(message, cause)
     constructor(cause: ApiException) : super(cause)
-}
-
-class ConnectionException : RuntimeException {
-    constructor(message: String) : super(message)
-    constructor(message: String, cause: Throwable) : super(message, cause)
-    constructor(cause: Throwable) : super(cause)
 }
