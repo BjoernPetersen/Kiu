@@ -14,7 +14,7 @@ public final class HostDiscoverer implements Runnable, Callable<String> {
 
   private static final String TAG = HostDiscoverer.class.getSimpleName();
   private static final String GROUP_ADDRESS = "224.0.0.142";
-  private static final int PORT = Configuration.PORT;
+  private static final int PORT = 42945;
 
   private final Lock lock;
   private final Consumer<String> onFinish;

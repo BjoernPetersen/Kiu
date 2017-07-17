@@ -22,6 +22,9 @@ import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.QueueState;
 import com.github.bjoernpetersen.q.R;
+import com.github.bjoernpetersen.q.api.Auth;
+import com.github.bjoernpetersen.q.api.AuthException;
+import com.github.bjoernpetersen.q.api.Config;
 import com.github.bjoernpetersen.q.api.Connection;
 import com.github.bjoernpetersen.q.ui.fragments.SearchFragment;
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment;
@@ -124,7 +127,7 @@ public class SearchActivity extends AppCompatActivity implements
   @Override
   protected void onStart() {
     super.onStart();
-    if (!Connection.get(this).getConfiguration().hasUserName()) {
+    if (!Config.INSTANCE.hasUser()) {
       startActivity(new Intent(this, LoginActivity.class));
     }
   }
@@ -134,7 +137,7 @@ public class SearchActivity extends AppCompatActivity implements
       @Override
       public void run() {
         try {
-          final List<String> providers = Connection.get(SearchActivity.this).getProviders();
+          final List<String> providers = Connection.INSTANCE.getProviders();
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -185,11 +188,16 @@ public class SearchActivity extends AppCompatActivity implements
       @Override
       public void run() {
         try {
-          List<QueueEntry> queueEntries = Connection.get(SearchActivity.this)
-              .enqueue(song.getId(), song.getProviderId());
+          String token = Auth.INSTANCE.getApiKey().getRaw();
+          List<QueueEntry> queueEntries = Connection.INSTANCE
+              .enqueue(token, song.getId(), song.getProviderId());
           QueueState.getInstance().set(queueEntries);
         } catch (ApiException e) {
           Log.v(TAG, "Couldn't add song to queue.", e);
+        } catch (AuthException e) {
+          Log.d(TAG, "Could not add song", e);
+          Intent intent = new Intent(SearchActivity.this, LoginActivity.class);
+          startActivity(intent);
         }
       }
     }, "enqueueThread").start();

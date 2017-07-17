@@ -188,7 +188,7 @@ public class SearchFragment extends Fragment {
       return executor.submit(new Callable<List<Song>>() {
         @Override
         public List<Song> call() throws ApiException {
-          return Connection.get(getContext()).searchSong(providerId, query);
+          return Connection.INSTANCE.searchSong(providerId, query);
         }
       });
     }

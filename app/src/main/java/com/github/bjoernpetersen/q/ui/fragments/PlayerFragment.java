@@ -24,6 +24,8 @@ import com.github.bjoernpetersen.jmusicbot.client.model.PlayerState;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.jmusicbot.client.model.SongEntry;
 import com.github.bjoernpetersen.q.R;
+import com.github.bjoernpetersen.q.api.Auth;
+import com.github.bjoernpetersen.q.api.AuthException;
 import com.github.bjoernpetersen.q.api.Connection;
 import com.github.bjoernpetersen.q.api.Permission;
 import com.squareup.picasso.Picasso;
@@ -98,7 +100,7 @@ public class PlayerFragment extends Fragment {
       @Override
       public void run() {
         try {
-          updatedState(Connection.get(getContext()).pausePlayer());
+          updatedState(Connection.INSTANCE.pausePlayer());
         } catch (ApiException e) {
           Log.w(getClass().getSimpleName(), "Could not pause player", e);
         }
@@ -111,7 +113,7 @@ public class PlayerFragment extends Fragment {
       @Override
       public void run() {
         try {
-          updatedState(Connection.get(getContext()).resumePlayer());
+          updatedState(Connection.INSTANCE.resumePlayer());
         } catch (ApiException e) {
           Log.w(getClass().getSimpleName(), "Could not resume player", e);
         }
@@ -128,18 +130,21 @@ public class PlayerFragment extends Fragment {
     updater.submit(new Runnable() {
       @Override
       public void run() {
-        Connection connection = Connection.get(getContext());
-        if (!connection.checkHasPermission(Permission.SKIP)) {
+        Connection connection = Connection.INSTANCE;
+        if (!Auth.INSTANCE.hasPermission(Permission.SKIP)) {
           return;
         }
         Util.showToast(PlayerFragment.this, toast);
         try {
-          updatedState(connection.nextSong());
+          String token = Auth.INSTANCE.getApiKey().getRaw();
+          updatedState(connection.nextSong(token));
         } catch (ApiException e) {
-          connection.invalidateToken();
-          Log.w(TAG, "Could not skip current song", e);
+          Auth.INSTANCE.clear();
+          Log.i(TAG, "Could not skip current song", e);
           Util.hideToast(PlayerFragment.this, toast);
           Util.showToast(PlayerFragment.this, R.string.skip_error, Toast.LENGTH_SHORT);
+        } catch (AuthException e) {
+          Log.wtf(TAG, e);
         }
       }
     });
@@ -227,7 +232,7 @@ public class PlayerFragment extends Fragment {
     @Override
     public void run() {
       try {
-        updatedState(Connection.get(getContext()).getPlayerState());
+        updatedState(Connection.INSTANCE.getPlayerState());
       } catch (ApiException e) {
         Log.v(getClass().getSimpleName(), "Error updating player fragment", e);
       }
@@ -278,9 +283,9 @@ public class PlayerFragment extends Fragment {
     }
 
     /**
-     * The user has performed a down {@link MotionEvent} and not performed
+     * The userName has performed a down {@link MotionEvent} and not performed
      * a move or up yet. This event is commonly used to provide visual
-     * feedback to the user to let them know that their action has been
+     * feedback to the userName to let them know that their action has been
      * recognized i.e. highlight an element.
      *
      * @param e The down motion event

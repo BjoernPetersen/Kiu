@@ -122,7 +122,7 @@ public class SuggestFragment extends Fragment {
       @Override
       public void run() {
         try {
-          songs = Connection.get(getContext()).suggestSong(suggesterId, null);
+          songs = Connection.INSTANCE.suggestSong(suggesterId, null);
         } catch (ApiException e) {
           Log.v(TAG, "Could not load suggestions", e);
           Util.runOnUiThread(SuggestFragment.this, new Runnable() {

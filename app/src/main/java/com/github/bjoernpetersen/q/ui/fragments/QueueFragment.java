@@ -13,6 +13,7 @@ import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.q.QueueState;
 import com.github.bjoernpetersen.q.R;
+import com.github.bjoernpetersen.q.api.Config;
 import com.github.bjoernpetersen.q.api.Connection;
 import com.github.bjoernpetersen.q.api.HostDiscoverer;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAdapter.QueueEntryType;
@@ -172,7 +173,7 @@ public class QueueFragment extends Fragment {
     @Override
     public void run() {
       try {
-        final List<QueueEntry> queue = Connection.get(getContext()).getQueue();
+        final List<QueueEntry> queue = Connection.INSTANCE.getQueue();
         View view = getView();
         if (view == null) {
           return;
@@ -191,7 +192,7 @@ public class QueueFragment extends Fragment {
             public void consume(String value) {
               Log.i(TAG, "Found host: " + value);
               if (value != null) {
-                Connection.get(getContext()).setHost(value);
+                Config.INSTANCE.setHost(value);
               }
             }
           })).start();

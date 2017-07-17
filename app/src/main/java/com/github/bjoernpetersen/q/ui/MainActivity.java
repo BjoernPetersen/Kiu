@@ -13,11 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
-import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.R;
-import com.github.bjoernpetersen.q.api.Connection;
+import com.github.bjoernpetersen.q.api.Auth;
+import com.github.bjoernpetersen.q.api.AuthException;
+import com.github.bjoernpetersen.q.api.ChangePasswordException;
+import com.github.bjoernpetersen.q.api.Config;
 import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Sentry.init(SENTRY_DSN, new AndroidSentryClientFactory(getApplicationContext()));
+    Config.INSTANCE.init(this);
 
     setContentView(R.layout.activity_main);
     setTitle(getString(R.string.queue));
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.main_menu, menu);
 
-    if (!Connection.get(this).isFullUser()) {
+    if (!Auth.INSTANCE.isFullUser()) {
       menu.findItem(R.id.upgrade).setVisible(true);
     }
 
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements
         upgrade(item);
         return true;
       case R.id.logout:
-        Connection.get(this).reset();
+        Config.INSTANCE.reset();
         startActivity(new Intent(this, LoginActivity.class));
         return true;
       default:
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements
   }
 
   private void upgrade(final MenuItem upgradeItem) {
-    if (!Connection.get(this).isFullUser()) {
+    if (!Auth.INSTANCE.isFullUser()) {
       final EditText editText = new EditText(this);
       editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
@@ -107,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements
       @Override
       public void run() {
         try {
-          Connection.get(context).upgrade(password);
+          Config.INSTANCE.setPassword(password);
+          Auth.INSTANCE.getApiKey();
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -115,30 +118,31 @@ public class MainActivity extends AppCompatActivity implements
               upgradeItem.setVisible(false);
             }
           });
-        } catch (final ApiException e) {
+        } catch (final ChangePasswordException e) {
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
-              switch (e.getCode()) {
-                case 400:
+              switch (e.getReason()) {
+                case INVALID_PASSWORD:
                   Toast.makeText(context, R.string.invalid_password, Toast.LENGTH_SHORT).show();
                   upgrade(upgradeItem);
                   break;
-                case 401:
-                case 403:
+                case WRONG_OLD_PASSWORD:
+                case INVALID_TOKEN:
                   Toast.makeText(context, R.string.invalid_credentials, Toast.LENGTH_LONG).show();
                   break;
                 default:
                   Log.e(TAG, "Unknown upgrade error", e);
-                  Toast.makeText(context, getString(R.string.unknown_error, e.getCode()),
+                  Toast.makeText(context, getString(R.string.unknown_error),
                       Toast.LENGTH_SHORT).show();
               }
             }
           });
+        } catch (AuthException e) {
+          Log.e(TAG, "Error during upgrade", e);
         }
       }
     }, "upgradeThread").start();
-
   }
 
   @Override

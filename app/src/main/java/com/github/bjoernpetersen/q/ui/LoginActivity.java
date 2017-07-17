@@ -10,9 +10,15 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.q.R;
-import com.github.bjoernpetersen.q.api.Connection;
+import com.github.bjoernpetersen.q.api.Auth;
+import com.github.bjoernpetersen.q.api.AuthException;
+import com.github.bjoernpetersen.q.api.ChangePasswordException;
+import com.github.bjoernpetersen.q.api.Config;
+import com.github.bjoernpetersen.q.api.ConnectionException;
+import com.github.bjoernpetersen.q.api.HostDiscoverer;
+import com.github.bjoernpetersen.q.api.LoginException;
+import com.github.bjoernpetersen.q.api.RegisterException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -70,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
   private void changePassword(String password) {
     password = password.trim();
-    Connection.get(this).getConfiguration().setPassword(password);
+    Config.INSTANCE.setPassword(password);
   }
 
   @Override
@@ -88,16 +94,39 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     setInputEnabled(false);
-    final Connection connection = Connection.get(this);
     new Thread(new Runnable() {
       @Override
       public void run() {
+        Config.INSTANCE.setUser(userName);
         try {
-          connection.setUsername(userName);
+          Auth.INSTANCE.getApiKey();
           loginSuccess();
-        } catch (ApiException e) {
-          Log.e(TAG, "Could not set username", e);
-          loginFailure(e.getCode());
+        } catch (RegisterException e) {
+          Log.d(TAG, "Could not register", e);
+          loginFailure(e.getReason());
+        } catch (LoginException e) {
+          Log.d(TAG, "Could not login", e);
+          loginFailure(e.getReason());
+        } catch (ChangePasswordException e) {
+          Log.d(TAG, "Could not change password", e);
+          loginFailure(e.getReason());
+        } catch (AuthException e) {
+          Log.wtf(TAG, e);
+        } catch (ConnectionException e) {
+          String host;
+          if ((host = new HostDiscoverer().call()) != null) {
+            Config.INSTANCE.setHost(host);
+            this.run();
+          } else {
+            runOnUiThread(new Runnable() {
+              @Override
+              public void run() {
+                setInputEnabled(true);
+                Toast.makeText(LoginActivity.this, R.string.connection_error, Toast.LENGTH_SHORT)
+                    .show();
+              }
+            });
+          }
         }
       }
     }, "loginThread").start();
@@ -112,29 +141,60 @@ public class LoginActivity extends AppCompatActivity {
     });
   }
 
-  private void loginFailure(final int code) {
+  private void loginFailure(final RegisterException.Reason reason) {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
         setInputEnabled(true);
 
-        if (code == 400) {
-          userName.setError(getString(R.string.error_username_taken));
-          return;
+        switch (reason) {
+          case TAKEN:
+            userName.setError(getString(R.string.error_username_taken));
+            return;
+          default:
+            Log.wtf(TAG, "Registering failed for reason " + reason);
+            userName.setError("Not sure what went wrong");
         }
+      }
+    });
+  }
 
-        if (code == 401) {
-          password.setVisibility(View.VISIBLE);
-          Toast.makeText(LoginActivity.this, R.string.needs_password, Toast.LENGTH_SHORT).show();
-          return;
+  private void loginFailure(final LoginException.Reason reason) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        setInputEnabled(true);
+
+        switch (reason) {
+          case NEEDS_AUTH:
+            password.setVisibility(View.VISIBLE);
+            Toast.makeText(LoginActivity.this, R.string.needs_password, Toast.LENGTH_SHORT).show();
+            return;
+          case WRONG_PASSWORD:
+            password.setError(getString(R.string.wrong_password));
+            return;
+          case WRONG_UUID:
+            userName.setError(getString(R.string.error_username_taken));
+            return;
+          default:
+            Log.wtf(TAG, "Login failed for reason " + reason);
+            userName.setError("Not sure what went wrong");
         }
+      }
+    });
+  }
 
-        if (code == 403) {
-          password.setError(getString(R.string.wrong_password));
-          return;
+  private void loginFailure(final ChangePasswordException.Reason reason) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        setInputEnabled(true);
+
+        switch (reason) {
+          default:
+            Log.wtf(TAG, "Got ChangePasswordException at login " + reason);
+            Toast.makeText(LoginActivity.this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
         }
-
-        Toast.makeText(LoginActivity.this, "Login error: " + code, Toast.LENGTH_SHORT).show();
       }
     });
   }
