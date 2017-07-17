@@ -43,6 +43,10 @@ internal object Auth {
             }
         }
 
+    /**
+     * Checks whether there is an API key and the user type is FULL.
+     * If there is no API key, this method will not attempt to retrieve one.
+     */
     val isFullUser: Boolean
         get() {
             val _apiKey = this._apiKey
