@@ -194,7 +194,13 @@ public class SuggestActivity extends AppCompatActivity implements
               .enqueue(token, song.getId(), song.getProvider().getId());
           QueueState.getInstance().set(queueEntries);
         } catch (ApiException e) {
-          e.printStackTrace();
+          if (e.getCode() == 401) {
+            Auth.INSTANCE.clear();
+            Log.v(TAG, "Could not add song, trying again with cleared auth...");
+            this.run();
+          } else {
+            Log.d(TAG, "Could not add song: " + e.getCode(), e);
+          }
         } catch (AuthException e) {
           Log.d(TAG, "Could not add song", e);
           runOnUiThread(new Runnable() {

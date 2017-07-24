@@ -194,7 +194,13 @@ public class SearchActivity extends AppCompatActivity implements
               .enqueue(token, song.getId(), song.getProvider().getId());
           QueueState.getInstance().set(queueEntries);
         } catch (ApiException e) {
-          Log.v(TAG, "Couldn't add song to queue. (" + e.getCode() + ")", e);
+          if (e.getCode() == 401) {
+            Log.v(TAG, "Could not add song, trying again with cleared auth...");
+            Auth.INSTANCE.clear();
+            this.run();
+          } else {
+            Log.d(TAG, "Couldn't add song to queue. (" + e.getCode() + ")", e);
+          }
         } catch (AuthException e) {
           Log.d(TAG, "Could not add song", e);
           Intent intent = new Intent(SearchActivity.this, LoginActivity.class);
