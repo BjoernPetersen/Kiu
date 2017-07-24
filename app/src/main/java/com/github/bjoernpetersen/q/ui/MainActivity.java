@@ -38,6 +38,16 @@ public class MainActivity extends AppCompatActivity implements
     super.onCreate(savedInstanceState);
     Sentry.init(SENTRY_DSN, new AndroidSentryClientFactory(getApplicationContext()));
     Config.INSTANCE.init(this);
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          Auth.INSTANCE.getApiKey();
+        } catch (AuthException e) {
+          Log.v(TAG, "Initial auth key retrieval failed...");
+        }
+      }
+    }).start();
 
     setContentView(R.layout.activity_main);
     setTitle(getString(R.string.queue));
