@@ -56,17 +56,14 @@ object Connection {
      * Removes a Song from the queue
      * Removes the specified Song from the current queue. If the queue did not contain the song, nothing is done.
      * @param authorization Authorization token with &#39;skip&#39; permission (required)
-     * *
-     * @param queueEntry the queue entry to dequeue (required)
-     * *
+     * @param songId the song ID of the song to dequeue (required)
+     * @param providerId the provider ID of the song to dequeue (required)
      * @return List&lt;QueueEntry&gt;
-     * *
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun dequeue(
-            authorization: String, queueEntry: QueueEntry): List<QueueEntry> {
-        return api.dequeue(authorization, queueEntry)
+    fun dequeue(authorization: String, songId: String, providerId: String): List<QueueEntry> {
+        return api.dequeue(authorization, songId, providerId)
     }
 
     /**
