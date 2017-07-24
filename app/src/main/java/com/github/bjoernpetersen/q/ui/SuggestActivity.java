@@ -8,13 +8,10 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
 import com.github.bjoernpetersen.jmusicbot.client.ApiException;
@@ -40,13 +37,12 @@ public class SuggestActivity extends AppCompatActivity implements
   private static final String TAG = SuggestActivity.class.getSimpleName();
 
   private ViewPager viewPager;
-  private String query;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_search);
-    setTitle(R.string.title_search);
+    setTitle(R.string.title_suggestions);
 
     ActionBar actionBar = getSupportActionBar();
     if (actionBar == null) {
@@ -64,7 +60,7 @@ public class SuggestActivity extends AppCompatActivity implements
 
       @Override
       public void onPageSelected(int position) {
-        refreshSearchResults(position);
+        refreshSuggestions(position);
       }
 
       @Override
@@ -84,35 +80,8 @@ public class SuggestActivity extends AppCompatActivity implements
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.search_menu, menu);
-    final MenuItem menuItem = menu.findItem(R.id.search_bar);
-    SearchView searchView = (SearchView) menuItem.getActionView();
-    searchView.setIconifiedByDefault(false);
-    searchView.setQueryHint(getString(R.string.search_hint));
-    View magView = searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
-    ((ViewGroup) magView.getParent()).removeView(magView);
-    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-      @Override
-      public boolean onQueryTextSubmit(String query) {
-        return true;
-      }
-
-      @Override
-      public boolean onQueryTextChange(String newText) {
-        query = newText;
-        refreshSearchResults();
-        return true;
-      }
-    });
+    inflater.inflate(R.menu.suggest_menu, menu);
     return true;
-  }
-
-  @Override
-  public boolean onPrepareOptionsMenu(Menu menu) {
-    final MenuItem menuItem = menu.findItem(R.id.search_bar);
-    SearchView searchView = (SearchView) menuItem.getActionView();
-    searchView.setQuery(query, false);
-    return super.onPrepareOptionsMenu(menu);
   }
 
   @Override
@@ -120,6 +89,9 @@ public class SuggestActivity extends AppCompatActivity implements
     switch (item.getItemId()) {
       case android.R.id.home:
         finish();
+        return true;
+      case R.id.refresh:
+        refreshSuggestions();
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -171,13 +143,13 @@ public class SuggestActivity extends AppCompatActivity implements
     }
   }
 
-  private void refreshSearchResults() {
+  private void refreshSuggestions() {
     if (viewPager != null) {
-      refreshSearchResults(viewPager.getCurrentItem());
+      refreshSuggestions(viewPager.getCurrentItem());
     }
   }
 
-  private void refreshSearchResults(int position) {
+  private void refreshSuggestions(int position) {
     PagerAdapter adapter = viewPager.getAdapter();
     if (adapter instanceof SuggestFragmentPagerAdapter) {
       SuggestFragmentPagerAdapter searchAdapter = (SuggestFragmentPagerAdapter) adapter;

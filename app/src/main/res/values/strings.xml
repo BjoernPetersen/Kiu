@@ -31,4 +31,6 @@
   <string name="connection_error">No connection to server</string>
   <string name="trying_upgrade">Trying to upgrade...</string>
   <string name="remove">Remove</string>
+  <string name="title_suggestions">Suggestions</string>
+  <string name="refresh">Refresh</string>
 </resources>
