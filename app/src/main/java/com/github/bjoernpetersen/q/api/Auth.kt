@@ -60,15 +60,13 @@ internal object Auth {
             return _apiKey != null && _apiKey.userType == ApiKey.UserType.FULL
         }
 
-    fun hasPermission(permission: Permission): Boolean {
-        try {
-            if (apiKey.permissions.contains(permission)) {
-                return true
-            }
-        } catch (e: AuthException) {
-            return false
-        }
+    fun hasPermissionNoRefresh(permission: Permission): Boolean =
+            _apiKey?.permissions?.contains(permission) ?: false
 
+    fun hasPermission(permission: Permission): Boolean {
+        if (hasPermissionNoRefresh(permission)) return true
+
+        Log.d(TAG, "REFRESHING TOKEN")
 
         // Check if permission has changed on server side
         try {

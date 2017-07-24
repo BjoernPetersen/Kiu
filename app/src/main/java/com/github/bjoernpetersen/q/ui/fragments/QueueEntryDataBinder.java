@@ -1,15 +1,24 @@
 package com.github.bjoernpetersen.q.ui.fragments;
 
 import android.support.annotation.Nullable;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.github.bjoernpetersen.jmusicbot.client.ApiException;
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
+import com.github.bjoernpetersen.q.QueueState;
 import com.github.bjoernpetersen.q.R;
+import com.github.bjoernpetersen.q.api.Auth;
+import com.github.bjoernpetersen.q.api.AuthException;
+import com.github.bjoernpetersen.q.api.Connection;
+import com.github.bjoernpetersen.q.api.Permission;
 import com.squareup.picasso.Callback.EmptyCallback;
 import com.squareup.picasso.Picasso;
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBindAdapter;
@@ -41,7 +50,7 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
 
   @Override
   public void bindViewHolder(final ViewHolder holder, int position) {
-    QueueEntry entry = getItem(position);
+    final QueueEntry entry = getItem(position);
     if (Objects.equals(entry, holder.entry)) {
       return;
     }
@@ -72,6 +81,51 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
           // fragment is attached to one) that an item has been selected.
           listener.onClick(holder.entry);
         }
+      }
+    });
+
+    final PopupMenu menu = new PopupMenu(holder.view.getContext(), holder.contextMenu);
+    menu.inflate(R.menu.query_item_menu);
+    menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+      @Override
+      public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+          case R.id.remove_button:
+            new Thread(new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  String token = Auth.INSTANCE.getApiKey().getRaw();
+                  Song song = entry.getSong();
+                  List<QueueEntry> newQueue = Connection.INSTANCE.dequeue(
+                      token, song.getId(), song.getProvider().getId()
+                  );
+                  QueueState.getInstance().set(newQueue);
+                } catch (ApiException e) {
+                  if (e.getCode() == 403) {
+                    Auth.INSTANCE.clear();
+                  } else {
+                    e.printStackTrace();
+                    // TODO show toast
+                  }
+                } catch (AuthException e) {
+                  e.printStackTrace();
+                  // TODO show toast
+                }
+              }
+            }).start();
+            return true;
+          default:
+            return false;
+        }
+      }
+    });
+    holder.contextMenu.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        MenuItem removeButton = menu.getMenu().findItem(R.id.remove_button);
+        removeButton.setVisible(Auth.INSTANCE.hasPermissionNoRefresh(Permission.SKIP));
+        menu.show();
       }
     });
   }
@@ -122,6 +176,7 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
     public final TextView descriptionView;
     public final TextView durationView;
     public final TextView queuerView;
+    public final ImageButton contextMenu;
     public QueueEntry entry;
 
     public ViewHolder(View view) {
@@ -134,6 +189,7 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
       this.descriptionView.setSelected(true);
       this.durationView = (TextView) view.findViewById(R.id.song_duration);
       this.queuerView = (TextView) view.findViewById(R.id.song_queuer);
+      this.contextMenu = (ImageButton) view.findViewById(R.id.context_menu);
     }
 
     @Override
