@@ -20,6 +20,7 @@ import com.github.bjoernpetersen.q.api.AuthException;
 import com.github.bjoernpetersen.q.api.ChangePasswordException;
 import com.github.bjoernpetersen.q.api.Config;
 import com.github.bjoernpetersen.q.api.ConnectionException;
+import com.github.bjoernpetersen.q.api.UnknownAuthException;
 import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener;
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener;
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements
           Auth.INSTANCE.getApiKey();
         } catch (AuthException e) {
           Log.v(TAG, "Initial auth key retrieval failed...");
+        } catch (UnknownAuthException e) {
+          Log.d(TAG, "Unknown auth exception", e);
         }
       }
     }).start();
