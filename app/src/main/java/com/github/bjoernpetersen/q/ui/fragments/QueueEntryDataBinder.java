@@ -15,6 +15,7 @@ import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry;
 import com.github.bjoernpetersen.jmusicbot.client.model.Song;
 import com.github.bjoernpetersen.q.QueueState;
 import com.github.bjoernpetersen.q.R;
+import com.github.bjoernpetersen.q.api.ApiKey;
 import com.github.bjoernpetersen.q.api.Auth;
 import com.github.bjoernpetersen.q.api.AuthException;
 import com.github.bjoernpetersen.q.api.Connection;
@@ -124,7 +125,10 @@ public class QueueEntryDataBinder extends DataBinder<QueueEntryDataBinder.ViewHo
       @Override
       public void onClick(View v) {
         MenuItem removeButton = menu.getMenu().findItem(R.id.remove_button);
-        removeButton.setVisible(Auth.INSTANCE.hasPermissionNoRefresh(Permission.SKIP));
+        Auth auth = Auth.INSTANCE;
+        ApiKey apiKey = auth.getApiKeyNoRefresh();
+        removeButton.setVisible(apiKey != null && apiKey.getUserName().equals(entry.getUserName())
+            || auth.hasPermissionNoRefresh(Permission.SKIP));
         menu.show();
       }
     });

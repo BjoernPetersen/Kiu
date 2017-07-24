@@ -60,8 +60,11 @@ internal object Auth {
             return _apiKey != null && _apiKey.userType == ApiKey.UserType.FULL
         }
 
+    val apiKeyNoRefresh: ApiKey?
+        get() = _apiKey
+
     fun hasPermissionNoRefresh(permission: Permission): Boolean =
-            _apiKey?.permissions?.contains(permission) ?: false
+            apiKeyNoRefresh?.permissions?.contains(permission) ?: false
 
     fun hasPermission(permission: Permission): Boolean {
         if (hasPermissionNoRefresh(permission)) return true
