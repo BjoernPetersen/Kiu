@@ -27,6 +27,8 @@ import com.github.bjoernpetersen.q.api.Auth;
 import com.github.bjoernpetersen.q.api.AuthException;
 import com.github.bjoernpetersen.q.api.Config;
 import com.github.bjoernpetersen.q.api.Connection;
+import com.github.bjoernpetersen.q.api.LoginException;
+import com.github.bjoernpetersen.q.api.RegisterException;
 import com.github.bjoernpetersen.q.ui.fragments.SearchFragment;
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment;
 import java.util.ArrayList;
@@ -201,10 +203,24 @@ public class SearchActivity extends AppCompatActivity implements
           } else {
             Log.d(TAG, "Couldn't add song to queue. (" + e.getCode() + ")", e);
           }
+        } catch (RegisterException e) {
+          if (e.getReason() == RegisterException.Reason.TAKEN) {
+            runOnUiThread(new Runnable() {
+              @Override
+              public void run() {
+                startActivity(new Intent(SearchActivity.this, LoginActivity.class));
+              }
+            });
+          }
+        } catch (LoginException e) {
+          runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+              startActivity(new Intent(SearchActivity.this, LoginActivity.class));
+            }
+          });
         } catch (AuthException e) {
           Log.d(TAG, "Could not add song", e);
-          Intent intent = new Intent(SearchActivity.this, LoginActivity.class);
-          startActivity(intent);
         }
       }
     }, "enqueueThread").start();
