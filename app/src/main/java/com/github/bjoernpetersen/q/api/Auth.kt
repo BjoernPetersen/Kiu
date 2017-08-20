@@ -3,6 +3,7 @@ package com.github.bjoernpetersen.q.api
 import android.provider.Settings
 import android.util.Log
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
+import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 
@@ -26,7 +27,7 @@ internal object Auth {
             if (apiKey != null && !apiKey.isExpired) {
                 return apiKey
             } else {
-                apiKey = tryRetrieve()
+                apiKey = refreshApiKey()
                 _apiKey = apiKey
                 return apiKey
             }
@@ -36,18 +37,19 @@ internal object Auth {
         try {
             return tryRetrieve()
         } catch (e: ApiException) {
-            val cause = e.cause
-            if (cause is SocketException || cause is SocketTimeoutException) {
-                throw ConnectionException(cause)
-            }
-            throw ConnectionException(e)
+            checkConnectionException(ConnectionException(e), e.cause)
         } catch (e: UnknownAuthException) {
-            val cause = e.cause?.cause
-            if (cause is SocketException || cause is SocketTimeoutException) {
-                throw ConnectionException(e)
-            }
-            throw e
+            checkConnectionException(e, e.cause?.cause)
         }
+    }
+
+    private fun checkConnectionException(e: Exception, cause: Throwable?): Nothing {
+        if (cause is SocketException
+                || cause is SocketTimeoutException
+                || cause is ConnectException) {
+            throw ConnectionException(e)
+        }
+        throw e
     }
 
     /**
