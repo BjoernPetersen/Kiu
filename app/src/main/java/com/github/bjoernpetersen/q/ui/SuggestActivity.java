@@ -106,6 +106,12 @@ public class SuggestActivity extends AppCompatActivity implements
     }
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    NetworkUtil.checkWifiState(this);
+  }
+
   private void loadSuggesters() {
     new Thread(new Runnable() {
       @Override

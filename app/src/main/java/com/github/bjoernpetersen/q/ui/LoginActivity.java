@@ -86,6 +86,12 @@ public class LoginActivity extends AppCompatActivity {
     super.onDestroy();
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    NetworkUtil.checkWifiState(this);
+  }
+
   private void login() {
     final String userName = this.userName.getText().toString().trim();
     if (userName.isEmpty()) {

@@ -33,4 +33,6 @@
   <string name="remove">Remove</string>
   <string name="title_suggestions">Suggestions</string>
   <string name="refresh">Refresh</string>
+  <string name="wifi_disabled">You need to enable WiFi for this app to work</string>
+  <string name="connect_wifi">Connect now</string>
 </resources>

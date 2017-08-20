@@ -83,6 +83,12 @@ public class SearchActivity extends AppCompatActivity implements
   }
 
   @Override
+  protected void onResume() {
+    super.onResume();
+    NetworkUtil.checkWifiState(this);
+  }
+
+  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.search_menu, menu);
