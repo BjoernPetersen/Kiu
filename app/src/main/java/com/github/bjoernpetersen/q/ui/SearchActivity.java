@@ -148,7 +148,7 @@ public class SearchActivity extends AppCompatActivity implements
             }
           });
         } catch (ApiException e) {
-          Log.e(TAG, "Could not retrieve providers", e);
+          Log.v(TAG, "Could not retrieve providers", e);
           runOnUiThread(new Runnable() {
             @Override
             public void run() {
