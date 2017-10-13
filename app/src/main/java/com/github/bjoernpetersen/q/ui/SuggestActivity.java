@@ -213,12 +213,15 @@ public class SuggestActivity extends AppCompatActivity implements
 final class SuggestFragmentPagerAdapter extends FragmentPagerAdapter {
 
   private final List<SuggestFragment> fragments;
+  private final List<String> titles;
 
   SuggestFragmentPagerAdapter(FragmentManager fm, List<NamedPlugin> suggesters) {
     super(fm);
     fragments = new ArrayList<>(suggesters.size());
-    for (NamedPlugin provider : suggesters) {
-      fragments.add(SuggestFragment.newInstance(provider));
+    titles = new ArrayList<>(suggesters.size());
+    for (NamedPlugin suggester : suggesters) {
+      fragments.add(SuggestFragment.newInstance(suggester));
+      titles.add(suggester.getName());
     }
   }
 
@@ -240,6 +243,6 @@ final class SuggestFragmentPagerAdapter extends FragmentPagerAdapter {
 
   @Override
   public CharSequence getPageTitle(int position) {
-    return getItem(position).getSuggester().getId();
+    return titles.get(position);
   }
 }

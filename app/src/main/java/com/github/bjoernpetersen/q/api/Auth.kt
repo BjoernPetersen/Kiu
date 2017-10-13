@@ -287,5 +287,5 @@ class ConnectionException : AuthException {
 class UnknownAuthException : RuntimeException {
     constructor(message: String) : super(message)
     constructor(message: String, cause: ApiException) : super(message, cause)
-    constructor(cause: ApiException) : super(cause)
+    constructor(cause: ApiException) : super("Code: " + cause.code, cause)
 }
