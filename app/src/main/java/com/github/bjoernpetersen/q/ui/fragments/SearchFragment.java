@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.jar.Attributes.Name;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -99,7 +98,9 @@ public class SearchFragment extends Fragment {
   }
 
   public void updateResults(final String query) {
-    searchExecutor.search(query);
+    if (searchExecutor != null) {
+      searchExecutor.search(query);
+    }
   }
 
   void showResults(List<Song> result) {
@@ -161,7 +162,7 @@ public class SearchFragment extends Fragment {
             Log.v(TAG, "Interrupted while waiting for search results", e);
           } catch (ExecutionException e) {
             Log.d(TAG, "Error retrieving search results", e);
-            if(e.getCause() instanceof SocketTimeoutException) {
+            if (e.getCause() instanceof SocketTimeoutException) {
               executor.submit((Runnable) new HostDiscoverer());
             }
           } catch (CancellationException e) {
