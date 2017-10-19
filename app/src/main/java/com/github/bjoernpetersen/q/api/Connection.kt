@@ -117,9 +117,7 @@ object Connection {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun getQueue(): List<QueueEntry> {
-        return api.queue
-    }
+    fun getQueue(): List<QueueEntry> = api.queue
 
     /**
      * Returns a list of all available suggesters

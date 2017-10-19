@@ -28,6 +28,7 @@ import com.github.bjoernpetersen.q.api.Auth;
 import com.github.bjoernpetersen.q.api.AuthException;
 import com.github.bjoernpetersen.q.api.Connection;
 import com.github.bjoernpetersen.q.api.Permission;
+import com.github.bjoernpetersen.q.ui.Util;
 import com.squareup.picasso.Picasso;
 import java.util.Locale;
 import java.util.concurrent.Executors;

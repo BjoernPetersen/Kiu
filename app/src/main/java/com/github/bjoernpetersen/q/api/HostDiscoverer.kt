@@ -1,7 +1,6 @@
 package com.github.bjoernpetersen.q.api
 
 import android.util.Log
-import com.hadisatrio.optional.function.Consumer
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
@@ -10,7 +9,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 
-class HostDiscoverer @JvmOverloads constructor(private val onFinish: Consumer<String>? = null) : Runnable, Callable<String?> {
+class HostDiscoverer @JvmOverloads constructor(private val onFinish: (String?) -> Unit = {}) : Runnable, Callable<String?> {
 
     private val lock: Lock
     private var result: String? = null
@@ -34,10 +33,6 @@ class HostDiscoverer @JvmOverloads constructor(private val onFinish: Consumer<St
         } finally {
             lock.unlock()
         }
-    }
-
-    private fun onFinish(result: String?) {
-        onFinish?.consume(result)
     }
 
     private fun autoDetect(): String? {

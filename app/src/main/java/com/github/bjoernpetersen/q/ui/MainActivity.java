@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements
 
     getSupportFragmentManager().beginTransaction()
         .add(R.id.current_song, new PlayerFragment())
-        .add(R.id.song_list, QueueFragment.newInstance())
+        .add(R.id.song_list, QueueFragment.Companion.newInstance())
         .commit();
   }
 
