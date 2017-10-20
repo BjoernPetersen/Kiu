@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 enum class Permission(val label: String) : Parcelable {
-    SKIP("skip"), DISLIKE("dislike");
+    SKIP("skip"), DISLIKE("dislike"), MOVE("move");
 
     override fun writeToParcel(dest: Parcel, flags: Int) = dest.writeString(name)
 
@@ -26,13 +26,8 @@ enum class Permission(val label: String) : Parcelable {
 
         @JvmStatic
         val CREATOR: Parcelable.Creator<Permission> = object : Parcelable.Creator<Permission> {
-            override fun createFromParcel(parcel: Parcel): Permission {
-                return Permission[parcel]
-            }
-
-            override fun newArray(size: Int): Array<Permission?> {
-                return arrayOfNulls(size)
-            }
+            override fun createFromParcel(parcel: Parcel): Permission = Permission[parcel]
+            override fun newArray(size: Int): Array<Permission?> = arrayOfNulls(size)
         }
     }
 }

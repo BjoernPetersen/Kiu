@@ -35,10 +35,6 @@ private val ITEMS_KEY = QueueFragment::class.java.name + "items"
  * Activities containing this fragment MUST implement
  * the [QueueEntryListener] and [QueueEntryAddButtonsListener] interface.
  */
-/**
- * Mandatory empty constructor for the fragment manager to instantiate the
- * fragment (e.g. upon screen orientation changes).
- */
 class QueueFragment : Fragment() {
 
     private var dataBinder: QueueEntryDataBinder? = null

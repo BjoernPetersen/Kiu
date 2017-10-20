@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
@@ -180,5 +181,34 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
         startActivity(intent)
     }
 
-    override fun onClick(entry: QueueEntry?) {}
+    private fun moveEntry(index: Int, entry: QueueEntry) {
+        Thread({
+            val token: String = try {
+                Auth.apiKey.raw
+            } catch (e: AuthException) {
+                Log.d(TAG, "Could not get token", e)
+                return@Thread
+            }
+            try {
+                Connection.moveEntry(token, index, entry)
+            } catch (e: ApiException) {
+                Log.d(TAG, "Could not move entry (code: ${e.code}", e)
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, R.string.move_error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }, "queueMoveThread").start()
+    }
+
+    override fun onClick(entry: QueueEntry) {
+        if (!Auth.hasPermissionNoRefresh(Permission.MOVE)) {
+            return
+        }
+        AlertDialog.Builder(this)
+                .setCancelable(true)
+                .setTitle(R.string.move_to_top_confirm)
+                .setPositiveButton(android.R.string.yes, { _, _ -> moveEntry(0, entry) })
+                .setNegativeButton(android.R.string.cancel, { _, _ -> })
+                .show()
+    }
 }

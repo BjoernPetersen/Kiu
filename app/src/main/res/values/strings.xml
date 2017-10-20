@@ -39,4 +39,6 @@
   <string name="refresh_success">Refresh successful</string>
   <string name="refreshing_permissions">Refreshing permissions...</string>
   <string name="refresh_permissions_error">Failed to refresh permissions</string>
+  <string name="move_to_top_confirm">Move this song to the top?</string>
+  <string name="move_error">Error moving queue entry</string>
 </resources>

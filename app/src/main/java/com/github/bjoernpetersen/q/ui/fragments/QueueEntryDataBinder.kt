@@ -66,7 +66,7 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
         setContent(holder.queuerView, entry.userName)
 
         holder.view.setOnClickListener {
-            listener?.onClick(holder.entry)
+            holder.entry?.let { listener?.onClick(it) }
         }
 
         val menu = PopupMenu(holder.view.context, holder.contextMenu)
@@ -141,6 +141,6 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
     }
 
     interface QueueEntryListener {
-        fun onClick(entry: QueueEntry?)
+        fun onClick(entry: QueueEntry)
     }
 }

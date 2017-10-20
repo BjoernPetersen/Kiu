@@ -85,6 +85,10 @@ object Connection {
         return api.enqueue(authorization, songId, providerId)
     }
 
+    @Throws(ApiException::class)
+    fun moveEntry(authorization: String, index: Int, queueEntry: QueueEntry) =
+            api.moveEntry(authorization, index, queueEntry)
+
     /**
      * Returns the current player state
      * Returns the current player state. If the state is PLAY or PAUSE, it also contains the current song.
