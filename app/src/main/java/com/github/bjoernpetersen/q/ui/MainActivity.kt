@@ -13,6 +13,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
+import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
 import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment
@@ -190,7 +191,7 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
                 return@Thread
             }
             try {
-                Connection.moveEntry(token, index, entry)
+                QueueState.queue = Connection.moveEntry(token, index, entry)
             } catch (e: ApiException) {
                 Log.d(TAG, "Could not move entry (code: ${e.code}", e)
                 runOnUiThread {
