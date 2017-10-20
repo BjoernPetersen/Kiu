@@ -24,12 +24,12 @@ internal object Auth {
         @Throws(AuthException::class)
         get() {
             var apiKey = _apiKey
-            if (apiKey != null && !apiKey.isExpired) {
-                return apiKey
+            return if (apiKey != null && !apiKey.isExpired) {
+                apiKey
             } else {
                 apiKey = refreshApiKey()
                 _apiKey = apiKey
-                return apiKey
+                apiKey
             }
         }
 
@@ -74,12 +74,12 @@ internal object Auth {
         Log.d(TAG, "REFRESHING TOKEN")
 
         // Check if permission has changed on server side
-        try {
+        return try {
             val apiKey = refreshApiKey()
             this._apiKey = apiKey
-            return apiKey.permissions.contains(permission)
+            apiKey.permissions.contains(permission)
         } catch (e: AuthException) {
-            return false
+            false
         }
     }
 

@@ -71,6 +71,30 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
             upgrade()
             true
         }
+        R.id.refresh_permissions -> {
+            val dialog = AlertDialog.Builder(this)
+                    .setTitle(R.string.refreshing_permissions)
+                    .setView(ProgressBar(this).apply { animate() })
+                    .setCancelable(false)
+                    .show()
+            Auth.clear()
+            Thread({
+                try {
+                    Auth.apiKey
+                    runOnUiThread {
+                        Toast.makeText(this, R.string.refresh_success, Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: AuthException) {
+                    Log.i(TAG, "Could not refresh API key", e)
+                    runOnUiThread {
+                        Toast.makeText(this, R.string.refresh_permissions_error, Toast.LENGTH_LONG).show()
+                    }
+                } finally {
+                    dialog.dismiss()
+                }
+            }, "permission-refresher").start()
+            true
+        }
         R.id.logout -> {
             Config.reset()
             startActivity(Intent(this, LoginActivity::class.java))

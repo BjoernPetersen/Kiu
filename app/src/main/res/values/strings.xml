@@ -18,7 +18,7 @@
   <string name="needs_password">You need to enter your password</string>
   <string name="wrong_password">Wrong password</string>
   <string name="logout">Logout</string>
-  <string name="upgrade">Upgrade</string>
+  <string name="upgrade">Make user permanent</string>
   <string name="unknown_error">An unknown error occurred</string>
   <string name="invalid_password">Invalid password</string>
   <string name="invalid_credentials">The old credentials were invalid. Try logging out and in again.</string>
@@ -35,4 +35,8 @@
   <string name="refresh">Refresh</string>
   <string name="wifi_disabled">You need to enable WiFi for this app to work</string>
   <string name="connect_wifi">Connect now</string>
+  <string name="refresh_permissions">Refresh permissions</string>
+  <string name="refresh_success">Refresh successful</string>
+  <string name="refreshing_permissions">Refreshing permissions...</string>
+  <string name="refresh_permissions_error">Failed to refresh permissions</string>
 </resources>

@@ -8,6 +8,10 @@
     android:visible="false"
     app:showAsAction="never" />
   <item
+    android:id="@+id/refresh_permissions"
+    android:title="@string/refresh_permissions"
+    app:showAsAction="never" />
+  <item
     android:id="@+id/logout"
     android:title="@string/logout"
     app:showAsAction="never" />
