@@ -15,17 +15,11 @@ fun Fragment.runOnUiThread(runnable: () -> Unit) {
     else runnable()
 }
 
-fun AppCompatActivity.showToast(toast: Toast) = runOnUiThread(toast::show)
-fun Fragment.showToast(toast: Toast) = runOnUiThread(toast::show)
-fun AppCompatActivity.hideToast(toast: Toast) = runOnUiThread(toast::cancel)
-fun Fragment.hideToast(toast: Toast) = runOnUiThread(toast::cancel)
-
 fun Fragment.showToast(resId: Int, duration: Int) =
-        showToast(Toast.makeText(context, resId, duration))
+        runOnUiThread { Toast.makeText(context, resId, duration).show() }
 
 fun AppCompatActivity.showToast(resId: Int, duration: Int) =
-        showToast(Toast.makeText(this, resId, duration))
-
+        runOnUiThread { Toast.makeText(this, resId, duration).show() }
 
 fun Int.asDuration(): String? {
     if (this == 0) {

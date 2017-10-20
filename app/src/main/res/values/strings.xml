@@ -24,7 +24,7 @@
   <string name="invalid_credentials">The old credentials were invalid. Try logging out and in again.</string>
   <string name="upgrade_success">Successfully upgraded</string>
   <string name="search">Search</string>
-  <string name="suggest">Suggest</string>
+  <string name="suggest">Suggestions</string>
   <string name="no_suggester_found">No Suggester found</string>
   <string name="skipping_current_song">Skipping song...</string>
   <string name="skip_error">Could not skip song</string>
