@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
                     .setTitle(R.string.enter_your_password)
                     .setView(editText)
                     .setCancelable(true)
-                    .setPositiveButton(android.R.string.ok) { dialog, which -> upgrade(editText.text.toString()) }
+                    .setPositiveButton(android.R.string.ok) { _, _ -> upgrade(editText.text.toString()) }
                     .show()
         }
     }
@@ -123,6 +123,7 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
         if (password.isEmpty()) {
             Toast.makeText(this, R.string.error_empty, Toast.LENGTH_SHORT).show()
             upgrade()
+            return
         }
 
         Thread({ doUpgrade(password) }, "upgradeThread").start()
@@ -134,9 +135,7 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
             loader = AlertDialog.Builder(this)
                     .setCancelable(false)
                     .setTitle(R.string.trying_upgrade)
-                    .setView(ProgressBar(this).apply {
-                        animate()
-                    })
+                    .setView(ProgressBar(this).apply { animate() })
                     .show()
         }
         try {
@@ -166,7 +165,7 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
         } catch (e: AuthException) {
             Log.e(TAG, "Error during upgrade", e)
         } finally {
-            runOnUiThread { loader!!.hide() }
+            runOnUiThread { loader!!.dismiss() }
         }
 
         Config.clearPassword()
