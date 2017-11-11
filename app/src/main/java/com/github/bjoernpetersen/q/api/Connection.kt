@@ -3,10 +3,7 @@ package com.github.bjoernpetersen.q.api
 import com.github.bjoernpetersen.jmusicbot.client.ApiClient
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.api.DefaultApi
-import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin
-import com.github.bjoernpetersen.jmusicbot.client.model.PlayerState
-import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
-import com.github.bjoernpetersen.jmusicbot.client.model.Song
+import com.github.bjoernpetersen.jmusicbot.client.model.*
 
 object Connection {
     private val api: DefaultApi
@@ -36,8 +33,8 @@ object Connection {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun changePassword(authorization: String, password: String, oldPassword: String?): String {
-        return api.changePassword(authorization, password, oldPassword)
+    fun changePassword(authorization: String, change: PasswordChange): String {
+        return api.changePassword(authorization, change)
     }
 
     /**
@@ -149,8 +146,11 @@ object Connection {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun login(userName: String, password: String?, uuid: String?): String {
-        return api.login(userName, password, uuid)
+    fun login(credentials: LoginCredentials): String {
+        if (credentials.password == null && credentials.uuid == null) {
+            throw IllegalArgumentException("Either password or UUID must be nonnull!")
+        }
+        return api.login(credentials)
     }
 
     /**
@@ -165,8 +165,7 @@ object Connection {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun lookupSong(songId: String,
-                   providerId: String): Song {
+    fun lookupSong(songId: String, providerId: String): Song {
         return api.lookupSong(songId, providerId)
     }
 
@@ -180,8 +179,7 @@ object Connection {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun nextSong(
-            authorization: String): PlayerState {
+    fun nextSong(authorization: String): PlayerState {
         return api.nextSong(authorization)
     }
 
@@ -209,8 +207,8 @@ object Connection {
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
     @Throws(ApiException::class)
-    fun registerUser(userName: String, uuid: String): String {
-        return api.registerUser(userName, uuid)
+    fun registerUser(credentials: RegisterCredentials): String {
+        return api.registerUser(credentials)
     }
 
     /**

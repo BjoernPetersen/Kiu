@@ -3,6 +3,9 @@ package com.github.bjoernpetersen.q.api
 import android.provider.Settings
 import android.util.Log
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
+import com.github.bjoernpetersen.jmusicbot.client.model.LoginCredentials
+import com.github.bjoernpetersen.jmusicbot.client.model.PasswordChange
+import com.github.bjoernpetersen.jmusicbot.client.model.RegisterCredentials
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -118,7 +121,8 @@ internal object Auth {
 
         val user = Config.user
         val rawToken = try {
-            Connection.registerUser(user, Settings.Secure.ANDROID_ID)
+            val creds = RegisterCredentials().name(user).uuid(Settings.Secure.ANDROID_ID)
+            Connection.registerUser(creds)
         } catch (e: ApiException) {
             when (e.code) {
                 409 -> throw RegisterException(RegisterException.Reason.TAKEN)
@@ -142,7 +146,8 @@ internal object Auth {
 
     private fun changePassword(apiKey: ApiKey, password: String, oldPassword: String?): ApiKey {
         val rawToken = try {
-            Connection.changePassword(apiKey.raw, password, null)
+            val change = PasswordChange().newPassword(password).oldPassword(oldPassword)
+            Connection.changePassword(apiKey.raw, change)
         } catch (e: ApiException) {
             when (e.code) {
                 400 -> throw ChangePasswordException(ChangePasswordException.Reason.INVALID_PASSWORD)
@@ -194,7 +199,8 @@ internal object Auth {
     private fun loginGuest(user: String): ApiKey {
         val uuid = Settings.Secure.ANDROID_ID
         try {
-            val rawToken = Connection.login(user, null, uuid)
+            val creds = LoginCredentials().name(user).uuid(uuid)
+            val rawToken = Connection.login(creds)
             return ApiKey.guest(rawToken)
         } catch (e: ApiException) {
             when (e.code) {
@@ -212,7 +218,8 @@ internal object Auth {
         }
         val password = Config.password
         try {
-            val rawToken = Connection.login(user, password, null)
+            val creds = LoginCredentials().name(user).password(password)
+            val rawToken = Connection.login(creds)
             return ApiKey.full(rawToken)
         } catch (e: ApiException) {
             when (e.code) {
