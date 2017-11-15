@@ -11,11 +11,10 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
-import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
+import com.github.bjoernpetersen.q.api.action.MoveSong
 import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener
@@ -182,22 +181,7 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
   }
 
   private fun moveEntry(index: Int, entry: QueueEntry) {
-    Thread({
-      val token: String = try {
-        Auth.apiKey.raw
-      } catch (e: AuthException) {
-        Log.d(TAG, "Could not get token", e)
-        return@Thread
-      }
-      try {
-        QueueState.queue = Connection.moveEntry(token, index, entry)
-      } catch (e: ApiException) {
-        Log.d(TAG, "Could not move entry (code: ${e.code}", e)
-        runOnUiThread {
-          Toast.makeText(this@MainActivity, R.string.move_error, Toast.LENGTH_SHORT).show()
-        }
-      }
-    }, "queueMoveThread").start()
+    MoveSong(entry, index).defaultAction(this)
   }
 
   override fun onClick(entry: QueueEntry) {
