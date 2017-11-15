@@ -13,11 +13,11 @@ import com.github.bjoernpetersen.q.R
  */
 class LoadingFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? =
-            inflater?.inflate(R.layout.fragment_loading, container, false)
+  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+      savedInstanceState: Bundle?): View? =
+      inflater?.inflate(R.layout.fragment_loading, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        view?.findViewById(R.id.progress)?.animate()
-    }
+  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    view?.findViewById(R.id.progress)?.animate()
+  }
 }

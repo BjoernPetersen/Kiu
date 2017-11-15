@@ -11,41 +11,41 @@ import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBindAdapter
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBinder
 
 class QueueEntryAddButtonsDataBinder(dataBindAdapter: DataBindAdapter,
-                                     private val listener: QueueEntryAddButtonsListener?)
-    : DataBinder<QueueEntryAddButtonsDataBinder.ViewHolder>(dataBindAdapter) {
+    private val listener: QueueEntryAddButtonsListener?)
+  : DataBinder<QueueEntryAddButtonsDataBinder.ViewHolder>(dataBindAdapter) {
 
-    override fun newViewHolder(parent: ViewGroup): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_queue_buttons, parent, false)
-        return ViewHolder(view)
+  override fun newViewHolder(parent: ViewGroup): ViewHolder {
+    val view = LayoutInflater.from(parent.context)
+        .inflate(R.layout.fragment_queue_buttons, parent, false)
+    return ViewHolder(view)
+  }
+
+  override fun bindViewHolder(holder: ViewHolder, position: Int) {
+    holder.searchButton.setOnClickListener {
+      listener?.onSearchClick()
     }
-
-    override fun bindViewHolder(holder: ViewHolder, position: Int) {
-        holder.searchButton.setOnClickListener {
-            listener?.onSearchClick()
-        }
-        holder.searchButton.setOnLongClickListener {
-            Toast.makeText(it.context, it.contentDescription, Toast.LENGTH_SHORT).show()
-            true
-        }
-        holder.suggestButton.setOnClickListener {
-            listener?.onSuggestionsClick()
-        }
-        holder.suggestButton.setOnLongClickListener {
-            Toast.makeText(it.context, it.contentDescription, Toast.LENGTH_SHORT).show()
-            true
-        }
+    holder.searchButton.setOnLongClickListener {
+      Toast.makeText(it.context, it.contentDescription, Toast.LENGTH_SHORT).show()
+      true
     }
-
-    override fun getItemCount(): Int = 1
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val searchButton: ImageButton = view.findViewById(R.id.search_button) as ImageButton
-        val suggestButton: ImageButton = view.findViewById(R.id.suggest_button) as ImageButton
+    holder.suggestButton.setOnClickListener {
+      listener?.onSuggestionsClick()
     }
-
-    interface QueueEntryAddButtonsListener {
-        fun onSearchClick()
-        fun onSuggestionsClick()
+    holder.suggestButton.setOnLongClickListener {
+      Toast.makeText(it.context, it.contentDescription, Toast.LENGTH_SHORT).show()
+      true
     }
+  }
+
+  override fun getItemCount(): Int = 1
+
+  class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    val searchButton: ImageButton = view.findViewById(R.id.search_button) as ImageButton
+    val suggestButton: ImageButton = view.findViewById(R.id.suggest_button) as ImageButton
+  }
+
+  interface QueueEntryAddButtonsListener {
+    fun onSearchClick()
+    fun onSuggestionsClick()
+  }
 }

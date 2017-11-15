@@ -9,57 +9,58 @@ import java.util.concurrent.Callable
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 
-class HostDiscoverer @JvmOverloads constructor(private val onFinish: (String?) -> Unit = {}) : Runnable, Callable<String?> {
+class HostDiscoverer @JvmOverloads constructor(private val onFinish: (String?) -> Unit = {}) :
+    Runnable, Callable<String?> {
 
-    private val lock: Lock
-    private var result: String? = null
+  private val lock: Lock
+  private var result: String? = null
 
-    init {
-        this.lock = ReentrantLock()
+  init {
+    this.lock = ReentrantLock()
+  }
+
+  override fun run() {
+    call()
+  }
+
+  override fun call(): String? {
+    if (result != null || !lock.tryLock()) {
+      throw IllegalStateException()
     }
-
-    override fun run() {
-        call()
+    try {
+      result = autoDetect()
+      onFinish(result)
+      return result
+    } finally {
+      lock.unlock()
     }
+  }
 
-    override fun call(): String? {
-        if (result != null || !lock.tryLock()) {
-            throw IllegalStateException()
-        }
-        try {
-            result = autoDetect()
-            onFinish(result)
-            return result
-        } finally {
-            lock.unlock()
-        }
+  private fun autoDetect(): String? {
+    try {
+      MulticastSocket(PORT).use { socket ->
+        val groupAddress = InetAddress.getByName(GROUP_ADDRESS)
+        socket.joinGroup(groupAddress)
+        socket.soTimeout = 4000
+        val buffer = ByteArray(8)
+        val packet = DatagramPacket(buffer, buffer.size)
+        socket.broadcast = true
+        socket.receive(packet)
+        socket.leaveGroup(groupAddress)
+        return packet.address.hostAddress
+      }
+    } catch (e: IOException) {
+      Log.d(TAG, "Error auto detecting host", e)
+      return null
     }
+  }
 
-    private fun autoDetect(): String? {
-        try {
-            MulticastSocket(PORT).use { socket ->
-                val groupAddress = InetAddress.getByName(GROUP_ADDRESS)
-                socket.joinGroup(groupAddress)
-                socket.soTimeout = 4000
-                val buffer = ByteArray(8)
-                val packet = DatagramPacket(buffer, buffer.size)
-                socket.broadcast = true
-                socket.receive(packet)
-                socket.leaveGroup(groupAddress)
-                return packet.address.hostAddress
-            }
-        } catch (e: IOException) {
-            Log.d(TAG, "Error auto detecting host", e)
-            return null
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        private val TAG = HostDiscoverer::class.java.simpleName
-        @JvmStatic
-        private val GROUP_ADDRESS = "224.0.0.142"
-        @JvmStatic
-        private val PORT = 42945
-    }
+  companion object {
+    @JvmStatic
+    private val TAG = HostDiscoverer::class.java.simpleName
+    @JvmStatic
+    private val GROUP_ADDRESS = "224.0.0.142"
+    @JvmStatic
+    private val PORT = 42945
+  }
 }
