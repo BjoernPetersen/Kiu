@@ -28,7 +28,7 @@ private fun connect(context: Context) {
 }
 
 private fun isConnected(context: Context): Boolean {
-  val manager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+  val manager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
   if (!manager.isWifiEnabled) return false
   return manager.connectionInfo.networkId != -1
 }
