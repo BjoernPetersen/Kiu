@@ -10,6 +10,7 @@ import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.ToxicBakery.viewpager.transforms.RotateUpTransformer
@@ -39,7 +40,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
     val actionBar = supportActionBar ?: throw IllegalStateException()
     actionBar.setDisplayHomeAsUpEnabled(true)
 
-    val viewPager = findViewById(R.id.view_pager) as ViewPager
+    val viewPager: ViewPager = findViewById(R.id.view_pager)
     this.viewPager = viewPager
     viewPager.setPageTransformer(true, RotateUpTransformer())
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -71,7 +72,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
     val searchView = menuItem.actionView as SearchView
     searchView.setIconifiedByDefault(false)
     searchView.queryHint = getString(R.string.search_hint)
-    val magView = searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon)
+    val magView: View = searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon)
     (magView.parent as ViewGroup).removeView(magView)
     searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
       override fun onQueryTextSubmit(query: String): Boolean = true

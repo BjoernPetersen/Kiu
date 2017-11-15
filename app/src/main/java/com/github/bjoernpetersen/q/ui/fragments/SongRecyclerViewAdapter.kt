@@ -72,11 +72,11 @@ class SongRecyclerViewAdapter(private val mValues: List<Song>,
   override fun getItemCount(): Int = mValues.size
 
   class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-    val albumArtView: ImageView = view.findViewById(R.id.album_art) as ImageView
-    val titleView: TextView = view.findViewById(R.id.song_title) as TextView
-    val descriptionView: TextView = view.findViewById(R.id.song_description) as TextView
-    val durationView: TextView = view.findViewById(R.id.song_duration) as TextView
-    val addButton: Button = view.findViewById(R.id.add_button) as Button
+    val albumArtView: ImageView = view.findViewById(R.id.album_art)
+    val titleView: TextView = view.findViewById(R.id.song_title)
+    val descriptionView: TextView = view.findViewById(R.id.song_description)
+    val durationView: TextView = view.findViewById(R.id.song_duration)
+    val addButton: Button = view.findViewById(R.id.add_button)
     var song: Song? = null
     val context: Context
       get() = view.context

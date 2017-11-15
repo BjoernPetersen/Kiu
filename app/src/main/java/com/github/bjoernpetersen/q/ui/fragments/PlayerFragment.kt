@@ -13,9 +13,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import com.github.bjoernpetersen.jmusicbot.client.model.PlayerState
 import com.github.bjoernpetersen.q.R
@@ -29,6 +26,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_player.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
@@ -53,9 +51,9 @@ class PlayerFragment : Fragment() {
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
     val view = view ?: throw IllegalStateException()
-    view.findViewById(R.id.song_title).isSelected = true
-    view.findViewById(R.id.song_description).isSelected = true
-    view.findViewById(R.id.song_queuer).isSelected = true
+    song_title.isSelected = true
+    song_description.isSelected = true
+    song_queuer.isSelected = true
     view.setOnTouchListener(NextSwipeListener(context))
   }
 
@@ -134,10 +132,9 @@ class PlayerFragment : Fragment() {
   }
 
   private fun updatedState(playerState: PlayerState) {
-    val view = view ?: return
     // update play/pause button
     val state = playerState.state
-    val playPause = view.findViewById(R.id.play_pause) as ImageButton
+    val playPause = play_pause
     if (state == PlayerState.StateEnum.PLAY) {
       // show pause button
       playPause.setImageResource(R.drawable.ic_pause_circle_filled)
@@ -149,10 +146,10 @@ class PlayerFragment : Fragment() {
     }
 
     // update current entry info
-    val title = view.findViewById(R.id.song_title) as TextView
-    val description = view.findViewById(R.id.song_description) as TextView
-    val duration = view.findViewById(R.id.song_duration) as TextView
-    val queuer = view.findViewById(R.id.song_queuer) as TextView
+    val title = song_title
+    val description = song_description
+    val duration = song_duration
+    val queuer = song_queuer
 
     val songEntry = playerState.songEntry
     if (songEntry == null) {
@@ -196,7 +193,7 @@ class PlayerFragment : Fragment() {
     }
 
     val albumArtUrl = song.albumArtUrl
-    val albumArt = view.findViewById(R.id.album_art) as ImageView
+    val albumArt = album_art
     Picasso.with(context)
         .load(albumArtUrl)
         .placeholder(R.drawable.ic_broken_image)

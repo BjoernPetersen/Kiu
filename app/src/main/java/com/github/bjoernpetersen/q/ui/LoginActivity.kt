@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
     setContentView(R.layout.activity_login)
     setTitle(R.string.title_login)
 
-    password = (findViewById(R.id.password) as EditText).apply {
+    password = findViewById<EditText>(R.id.password).apply {
       addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
       })
     }
 
-    userName = (findViewById(R.id.username) as EditText).apply {
+    userName = findViewById<EditText>(R.id.username).apply {
       addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
       })
     }
 
-    login = (findViewById(R.id.login_button) as Button).apply {
+    login = findViewById<Button>(R.id.login_button).apply {
       setOnClickListener { login() }
     }
   }

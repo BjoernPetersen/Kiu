@@ -125,12 +125,12 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
 
 
   class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-    val albumArtView: ImageView = view.findViewById(R.id.album_art) as ImageView
-    val titleView: TextView = view.findViewById(R.id.song_title) as TextView
-    val descriptionView: TextView = view.findViewById(R.id.song_description) as TextView
-    val durationView: TextView = view.findViewById(R.id.song_duration) as TextView
-    val queuerView: TextView = view.findViewById(R.id.song_queuer) as TextView
-    val contextMenu: ImageButton = view.findViewById(R.id.context_menu) as ImageButton
+    val albumArtView: ImageView = view.findViewById(R.id.album_art)
+    val titleView: TextView = view.findViewById(R.id.song_title)
+    val descriptionView: TextView = view.findViewById(R.id.song_description)
+    val durationView: TextView = view.findViewById(R.id.song_duration)
+    val queuerView: TextView = view.findViewById(R.id.song_queuer)
+    val contextMenu: ImageButton = view.findViewById(R.id.context_menu)
     var entry: QueueEntry? = null
     val context: Context
       get() = view.context

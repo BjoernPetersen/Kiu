@@ -18,6 +18,6 @@ class LoadingFragment : Fragment() {
       inflater?.inflate(R.layout.fragment_loading, container, false)
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-    view?.findViewById(R.id.progress)?.animate()
+    view?.findViewById<View>(R.id.progress)?.animate()
   }
 }

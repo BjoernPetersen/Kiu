@@ -40,8 +40,8 @@ class QueueEntryAddButtonsDataBinder(dataBindAdapter: DataBindAdapter,
   override fun getItemCount(): Int = 1
 
   class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val searchButton: ImageButton = view.findViewById(R.id.search_button) as ImageButton
-    val suggestButton: ImageButton = view.findViewById(R.id.suggest_button) as ImageButton
+    val searchButton: ImageButton = view.findViewById(R.id.search_button)
+    val suggestButton: ImageButton = view.findViewById(R.id.suggest_button)
   }
 
   interface QueueEntryAddButtonsListener {

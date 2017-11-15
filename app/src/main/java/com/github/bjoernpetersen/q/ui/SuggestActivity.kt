@@ -35,7 +35,7 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
     val actionBar = supportActionBar ?: throw IllegalStateException()
     actionBar.setDisplayHomeAsUpEnabled(true)
 
-    val viewPager = findViewById(R.id.view_pager) as ViewPager
+    val viewPager: ViewPager = findViewById(R.id.view_pager)
     this.viewPager = viewPager
     viewPager.setPageTransformer(true, RotateUpTransformer())
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
