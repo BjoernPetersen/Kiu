@@ -16,11 +16,14 @@ import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.Config
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.HostDiscoverer
+import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAdapter.QueueEntryType
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener
 import com.github.bjoernpetersen.q.ui.runOnUiThread
-import java.net.SocketException
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
+import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
@@ -124,14 +127,14 @@ class QueueFragment : Fragment() {
       val queue = Connection.getQueue()
       runOnUiThread { QueueState.queue = queue }
     } catch (e: ApiException) {
-      if (e.cause is SocketException) {
+      if (e.cause is IOException) {
         // try reconnecting
-        Thread(HostDiscoverer({ value ->
-          Log.i(TAG, "Found host: " + value)
-          if (value != null) {
-            Config.host = value
-          }
-        })).start()
+        Observable.fromCallable(HostDiscoverer())
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+              Log.i(tag(), "Found new host: " + it)
+              Config.host = it
+            }, { Log.v(tag(), "Could not retrieve new host", it) })
       }
       Log.v(TAG, "Could not get queue", e)
     } catch (e: RuntimeException) {
