@@ -20,12 +20,11 @@ import com.github.bjoernpetersen.jmusicbot.client.model.Song
 import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
+import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.fragments.SearchFragment
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment
 import kotlinx.android.synthetic.main.activity_search.*
 import java.util.*
-
-private val TAG = SearchActivity::class.java.simpleName
 
 class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteractionListener,
     SongFragment.OnListFragmentInteractionListener {
@@ -109,7 +108,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
         val providers = Connection.getProviders()
         runOnUiThread { updateProviders(providers) }
       } catch (e: ApiException) {
-        Log.v(TAG, "Could not retrieve providers", e)
+        Log.v(tag(), "Could not retrieve providers", e)
         runOnUiThread {
           Toast.makeText(
               this,
@@ -143,10 +142,10 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
       QueueState.queue = queueEntries
     } catch (e: ApiException) {
       if (e.code == 401) {
-        Log.v(TAG, "Could not add song, trying again with cleared auth...")
+        Log.v(tag(), "Could not add song, trying again with cleared auth...")
         Auth.clear()
         enqueue(song)
-      } else Log.d(TAG, "Couldn't add song to queue. (${e.code})", e)
+      } else Log.d(tag(), "Couldn't add song to queue. (${e.code})", e)
     } catch (e: RegisterException) {
       if (e.reason === RegisterException.Reason.TAKEN) {
         runOnUiThread {
@@ -172,7 +171,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
         startActivity(Intent(this, LoginActivity::class.java))
       }
     } catch (e: AuthException) {
-      Log.d(TAG, "Could not add song", e)
+      Log.d(tag(), "Could not add song", e)
     }
   }
 
