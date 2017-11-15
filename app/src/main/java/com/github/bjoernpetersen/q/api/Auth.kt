@@ -205,7 +205,7 @@ internal object Auth {
       when (e.code) {
         400 -> throw LoginException(LoginException.Reason.WRONG_UUID)
         401 -> throw LoginException(LoginException.Reason.NEEDS_AUTH)
-        404 -> throw LoginException(LoginException.Reason.UNKNOWN)
+        404 -> throw LoginException(LoginException.Reason.NOT_FOUND)
         else -> throw UnknownAuthException("Error code: " + e.code, e)
       }
     }
@@ -224,7 +224,7 @@ internal object Auth {
       when (e.code) {
         401 -> throw LoginException(LoginException.Reason.NEEDS_AUTH)
         403 -> throw LoginException(LoginException.Reason.WRONG_PASSWORD)
-        404 -> throw LoginException(LoginException.Reason.UNKNOWN)
+        404 -> throw LoginException(LoginException.Reason.NOT_FOUND)
         else -> throw UnknownAuthException(e)
       }
     }
@@ -280,7 +280,7 @@ class LoginException : AuthException {
   }
 
   enum class Reason {
-    WRONG_PASSWORD, WRONG_UUID, UNKNOWN, NEEDS_AUTH, NO_USER
+    WRONG_PASSWORD, WRONG_UUID, NOT_FOUND, NEEDS_AUTH, NO_USER
   }
 }
 
