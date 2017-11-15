@@ -22,6 +22,7 @@ import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
 import com.github.bjoernpetersen.q.ui.fragments.SearchFragment
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment
+import kotlinx.android.synthetic.main.activity_search.*
 import java.util.*
 
 private val TAG = SearchActivity::class.java.simpleName
@@ -29,7 +30,6 @@ private val TAG = SearchActivity::class.java.simpleName
 class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteractionListener,
     SongFragment.OnListFragmentInteractionListener {
 
-  private var viewPager: ViewPager? = null
   private var query: String? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +40,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
     val actionBar = supportActionBar ?: throw IllegalStateException()
     actionBar.setDisplayHomeAsUpEnabled(true)
 
-    val viewPager: ViewPager = findViewById(R.id.view_pager)
-    this.viewPager = viewPager
+    val viewPager: ViewPager = view_pager
     viewPager.setPageTransformer(true, RotateUpTransformer())
     viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
       override fun onPageScrolled(position: Int, positionOffset: Float,
@@ -56,7 +55,6 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
   }
 
   override fun onDestroy() {
-    viewPager = null
     super.onDestroy()
   }
 
@@ -125,14 +123,14 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
   }
 
   private fun updateProviders(providers: List<NamedPlugin>) {
-    viewPager?.adapter = SearchFragmentPagerAdapter(supportFragmentManager, providers)
+    view_pager?.adapter = SearchFragmentPagerAdapter(supportFragmentManager, providers)
   }
 
-  private fun refreshSearchResults() = viewPager?.apply { refreshSearchResults(currentItem) }
+  private fun refreshSearchResults() = view_pager?.apply { refreshSearchResults(currentItem) }
 
   private fun refreshSearchResults(position: Int) {
     query?.apply {
-      (viewPager?.adapter as? SearchFragmentPagerAdapter)
+      (view_pager?.adapter as? SearchFragmentPagerAdapter)
           ?.getItem(position)
           ?.updateResults(this)
     }

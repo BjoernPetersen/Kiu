@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.github.bjoernpetersen.q.R
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBindAdapter
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBinder
+import kotlinx.android.synthetic.main.fragment_queue_buttons.view.*
 
 class QueueEntryAddButtonsDataBinder(dataBindAdapter: DataBindAdapter,
     private val listener: QueueEntryAddButtonsListener?)
@@ -40,8 +41,8 @@ class QueueEntryAddButtonsDataBinder(dataBindAdapter: DataBindAdapter,
   override fun getItemCount(): Int = 1
 
   class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    val searchButton: ImageButton = view.findViewById(R.id.search_button)
-    val suggestButton: ImageButton = view.findViewById(R.id.suggest_button)
+    val searchButton: ImageButton = view.search_button
+    val suggestButton: ImageButton = view.suggest_button
   }
 
   interface QueueEntryAddButtonsListener {

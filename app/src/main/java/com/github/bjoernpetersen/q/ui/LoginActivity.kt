@@ -6,64 +6,46 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
+import kotlinx.android.synthetic.main.activity_login.*
 
 private val TAG = LoginActivity::class.java.simpleName
 
 class LoginActivity : AppCompatActivity() {
-
-  private var login: Button? = null
-  private var userName: EditText? = null
-  private var password: EditText? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_login)
     setTitle(R.string.title_login)
 
-    password = findViewById<EditText>(R.id.password).apply {
-      addTextChangedListener(object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+    password.addTextChangedListener(object : TextWatcher {
+      override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+      override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
-        override fun afterTextChanged(s: Editable) {
-          changePassword(s.toString())
-          error = null
-        }
-      })
-    }
+      override fun afterTextChanged(s: Editable) {
+        changePassword(s.toString())
+        password.error = null
+      }
+    })
 
-    userName = findViewById<EditText>(R.id.username).apply {
-      addTextChangedListener(object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+    username.addTextChangedListener(object : TextWatcher {
+      override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+      override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
-        override fun afterTextChanged(s: Editable) {
-          error = null
-        }
-      })
-    }
+      override fun afterTextChanged(s: Editable) {
+        username.error = null
+      }
+    })
 
-    login = findViewById<Button>(R.id.login_button).apply {
-      setOnClickListener { login() }
-    }
+    login_button.setOnClickListener { login() }
   }
 
   private fun changePassword(password: String) {
     Config.password = password.trim()
-  }
-
-  override fun onDestroy() {
-    this.password = null
-    this.userName = null
-    this.login = null
-    super.onDestroy()
   }
 
   override fun onResume() {
@@ -72,9 +54,9 @@ class LoginActivity : AppCompatActivity() {
   }
 
   private fun login() {
-    val userName = this.userName?.text?.toString()?.trim() ?: return
+    val userName = username?.text?.toString()?.trim() ?: return
     if (userName.isEmpty()) {
-      this.userName?.error = getString(R.string.error_empty)
+      username.error = getString(R.string.error_empty)
       return
     }
 
@@ -124,11 +106,11 @@ class LoginActivity : AppCompatActivity() {
 
       when (reason) {
         RegisterException.Reason.TAKEN -> {
-          userName?.error = getString(R.string.error_username_taken)
+          username?.error = getString(R.string.error_username_taken)
         }
         else -> {
           Log.wtf(TAG, "Registering failed for reason " + reason)
-          userName?.error = "Not sure what went wrong"
+          username?.error = "Not sure what went wrong"
         }
       }
     })
@@ -147,11 +129,11 @@ class LoginActivity : AppCompatActivity() {
           password?.error = getString(R.string.wrong_password)
         }
         LoginException.Reason.WRONG_UUID -> {
-          userName?.error = getString(R.string.error_username_taken)
+          username?.error = getString(R.string.error_username_taken)
         }
         else -> {
           Log.wtf(TAG, "Login failed for reason " + reason)
-          userName!!.error = "Not sure what went wrong"
+          username!!.error = "Not sure what went wrong"
         }
       }
     })
@@ -167,8 +149,8 @@ class LoginActivity : AppCompatActivity() {
   }
 
   internal fun setInputEnabled(enable: Boolean) {
-    userName?.isEnabled = enable
+    username?.isEnabled = enable
     password?.isEnabled = enable
-    login?.isEnabled = enable
+    login_button?.isEnabled = enable
   }
 }
