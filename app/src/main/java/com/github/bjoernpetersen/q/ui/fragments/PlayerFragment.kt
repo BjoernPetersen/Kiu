@@ -33,7 +33,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
-private val TAG = PlayerFragment::class.java.simpleName
 private const val SWIPE_THRESHOLD = 100
 private const val SWIPE_VELOCITY_THRESHOLD = 100
 
