@@ -129,7 +129,14 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
       }
     } catch (e: RegisterException) {
       if (e.reason === RegisterException.Reason.TAKEN) {
-        runOnUiThread { startActivity(Intent(this, LoginActivity::class.java)) }
+        runOnUiThread {
+          Toast.makeText(
+              this@SuggestActivity,
+              "Your username is already taken.",
+              Toast.LENGTH_SHORT
+          ).show()
+          startActivity(Intent(this, LoginActivity::class.java))
+        }
       }
     } catch (e: LoginException) {
       runOnUiThread { startActivity(Intent(this, LoginActivity::class.java)) }

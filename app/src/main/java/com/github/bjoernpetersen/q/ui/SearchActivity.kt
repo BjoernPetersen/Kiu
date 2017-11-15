@@ -149,7 +149,14 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
       } else Log.d(TAG, "Couldn't add song to queue. (${e.code})", e)
     } catch (e: RegisterException) {
       if (e.reason === RegisterException.Reason.TAKEN) {
-        runOnUiThread { startActivity(Intent(this, LoginActivity::class.java)) }
+        runOnUiThread {
+          Toast.makeText(
+              this@SearchActivity,
+              "Your username is already taken.",
+              Toast.LENGTH_SHORT
+          ).show()
+          startActivity(Intent(this, LoginActivity::class.java))
+        }
       }
     } catch (e: LoginException) {
       runOnUiThread { startActivity(Intent(this, LoginActivity::class.java)) }
