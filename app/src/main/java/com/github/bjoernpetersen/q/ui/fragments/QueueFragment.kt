@@ -27,7 +27,7 @@ import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 private val TAG = QueueFragment::class.java.simpleName
-private val ITEMS_KEY = QueueFragment::class.java.name + "items"
+private val ITEMS_KEY = QueueFragment::class.java.name + ".items"
 
 /**
  * A fragment representing a list of Items.
