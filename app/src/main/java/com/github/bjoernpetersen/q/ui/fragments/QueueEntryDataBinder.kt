@@ -3,6 +3,7 @@ package com.github.bjoernpetersen.q.ui.fragments
 import android.content.Context
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,13 +18,14 @@ import com.github.bjoernpetersen.q.api.Auth
 import com.github.bjoernpetersen.q.api.AuthException
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.Permission
+import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.asDuration
 import com.squareup.picasso.Callback.EmptyCallback
 import com.squareup.picasso.Picasso
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBindAdapter
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBinder
+import kotlinx.android.synthetic.main.fragment_queue.view.*
 import java.util.*
-
 
 class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: QueueEntryListener?) :
     DataBinder<QueueEntryDataBinder.ViewHolder>(adapter) {
@@ -62,10 +64,10 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
             albumArtView.visibility = View.VISIBLE
           }
         })
-    setContent(holder.titleView, song.title)
-    setContent(holder.descriptionView, song.description)
-    setContent(holder.durationView, song.duration.asDuration())
-    setContent(holder.queuerView, entry.userName)
+    holder.titleView.setContent(song.title)
+    holder.descriptionView.setContent(song.description)
+    holder.durationView.setContent(song.duration.asDuration())
+    holder.queuerView.setContent(entry.userName)
 
     holder.view.setOnClickListener {
       holder.entry?.let { listener?.onClick(it) }
@@ -110,12 +112,12 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
     }
   }
 
-  private fun setContent(view: TextView, content: String?) {
-    if (content == null || content.isEmpty()) {
-      view.visibility = View.GONE
+  private fun TextView.setContent(content: String?) {
+    if (content.isNullOrBlank()) {
+      visibility = View.GONE
     } else {
-      view.visibility = View.VISIBLE
-      view.text = content
+      visibility = View.VISIBLE
+      text = content
     }
   }
 
@@ -123,14 +125,13 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
 
   internal fun getItem(position: Int): QueueEntry = items[position]
 
-
   class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-    val albumArtView: ImageView = view.findViewById(R.id.album_art)
-    val titleView: TextView = view.findViewById(R.id.song_title)
-    val descriptionView: TextView = view.findViewById(R.id.song_description)
-    val durationView: TextView = view.findViewById(R.id.song_duration)
-    val queuerView: TextView = view.findViewById(R.id.song_queuer)
-    val contextMenu: ImageButton = view.findViewById(R.id.context_menu)
+    val albumArtView: ImageView = view.album_art
+    val titleView: TextView = view.song_title
+    val descriptionView: TextView = view.song_description
+    val durationView: TextView = view.song_duration
+    val queuerView: TextView = view.song_queuer
+    val contextMenu: ImageButton = view.context_menu
     var entry: QueueEntry? = null
     val context: Context
       get() = view.context
