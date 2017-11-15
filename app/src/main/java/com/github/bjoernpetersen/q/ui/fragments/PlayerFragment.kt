@@ -20,6 +20,7 @@ import com.github.bjoernpetersen.q.api.Auth
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.Permission
 import com.github.bjoernpetersen.q.tag
+import com.github.bjoernpetersen.q.ui.ObserverUser
 import com.squareup.picasso.Picasso
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -27,6 +28,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_player.*
+import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
@@ -34,12 +36,12 @@ import kotlin.collections.ArrayList
 private const val SWIPE_THRESHOLD = 100
 private const val SWIPE_VELOCITY_THRESHOLD = 100
 
-class PlayerFragment : Fragment() {
+class PlayerFragment : Fragment(), ObserverUser {
 
-  private var observers: MutableList<Disposable> = Collections.unmodifiableList(ArrayList())
+  override lateinit var observers: MutableList<WeakReference<Disposable>>
 
-  private fun Disposable.store() {
-    observers.add(this)
+  override fun initObservers() {
+    observers = ArrayList()
   }
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -59,11 +61,11 @@ class PlayerFragment : Fragment() {
 
   override fun onStart() {
     super.onStart()
-    observers = ArrayList()
+    initObservers()
   }
 
   override fun onStop() {
-    observers.forEach(Disposable::dispose)
+    disposeObservers()
     super.onStop()
   }
 

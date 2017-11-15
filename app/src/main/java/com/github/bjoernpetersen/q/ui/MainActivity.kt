@@ -15,10 +15,13 @@ import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
 import com.github.bjoernpetersen.q.api.action.MoveSong
+import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueFragment
+import io.reactivex.exceptions.UndeliverableException
+import io.reactivex.plugins.RxJavaPlugins
 import io.sentry.Sentry
 import io.sentry.android.AndroidSentryClientFactory
 
@@ -31,6 +34,12 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
     super.onCreate(savedInstanceState)
     Sentry.init(SENTRY_DSN, AndroidSentryClientFactory(applicationContext))
     Config.init(this)
+    RxJavaPlugins.setErrorHandler {
+      when (it) {
+        is UndeliverableException -> Log.d(tag(), "Undeliverable error", it)
+        else -> Log.w(tag(), "Uncaught error", it)
+      }
+    }
     Thread({
       try {
         Auth.apiKey

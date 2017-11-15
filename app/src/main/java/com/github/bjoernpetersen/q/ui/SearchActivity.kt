@@ -23,13 +23,29 @@ import com.github.bjoernpetersen.q.api.*
 import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.fragments.SearchFragment
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search.*
-import java.util.*
+import java.lang.ref.WeakReference
 
 class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteractionListener,
-    SongFragment.OnListFragmentInteractionListener {
+    SongFragment.OnListFragmentInteractionListener, ObserverUser {
 
+  companion object {
+    @JvmStatic
+    val INITIAL_QUERY_EXTRA = SearchActivity::javaClass.name + ".initialQuery"
+    @JvmStatic
+    val INITIAL_PROVIDER_EXTRA = SearchActivity::javaClass.name + ".initialProvider"
+  }
+
+  override lateinit var observers: MutableList<WeakReference<Disposable>>
   private var query: String? = null
+
+  override fun initObservers() {
+    observers = ArrayList()
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -50,11 +66,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
       override fun onPageScrollStateChanged(state: Int) {}
     })
 
-    loadProviders()
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
+    query = intent.getStringExtra(INITIAL_QUERY_EXTRA)
   }
 
   override fun onResume() {
@@ -99,30 +111,46 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
     super.onStart()
     if (!Config.hasUser()) {
       startActivity(Intent(this, LoginActivity::class.java))
+      return
     }
+    initObservers()
+    loadProviders()
+  }
+
+  override fun onStop() {
+    disposeObservers()
+    super.onStop()
   }
 
   private fun loadProviders() {
-    Thread({
-      try {
-        val providers = Connection.getProviders()
-        runOnUiThread { updateProviders(providers) }
-      } catch (e: ApiException) {
-        Log.v(tag(), "Could not retrieve providers", e)
-        runOnUiThread {
-          Toast.makeText(
-              this,
-              getString(R.string.no_provider_found),
-              Toast.LENGTH_SHORT
-          ).show()
+    Observable.fromCallable { Connection.getProviders() }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
+          updateProviders(it)
+        }, {
+          Log.d(tag(), "Could not retrieve providers", it)
+          Toast.makeText(this, getString(R.string.no_provider_found), Toast.LENGTH_SHORT).show()
           finish()
-        }
-      }
-    }, "ProviderLoader").start()
+        }).store()
   }
 
   private fun updateProviders(providers: List<NamedPlugin>) {
     view_pager?.adapter = SearchFragmentPagerAdapter(supportFragmentManager, providers)
+    if (intent.hasExtra(INITIAL_PROVIDER_EXTRA)) {
+      val initialId = intent.getStringExtra(INITIAL_PROVIDER_EXTRA)
+      val index = providers
+          .map(NamedPlugin::getId)
+          .withIndex()
+          .firstOrNull { id -> id.value == initialId }
+          ?.index
+      if (index == null) {
+        Log.d(tag(), "Could not find initial provider")
+      } else {
+        view_pager.currentItem = index
+      }
+    }
+    refreshSearchResults()
   }
 
   private fun refreshSearchResults() = view_pager?.apply { refreshSearchResults(currentItem) }
@@ -135,51 +163,47 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
     }
   }
 
-  private fun enqueue(song: Song) {
-    try {
-      val token = Auth.apiKey.raw
-      val queueEntries = Connection.enqueue(token, song.id, song.provider.id)
-      QueueState.queue = queueEntries
-    } catch (e: ApiException) {
-      if (e.code == 401) {
-        Log.v(tag(), "Could not add song, trying again with cleared auth...")
-        Auth.clear()
-        enqueue(song)
-      } else Log.d(tag(), "Couldn't add song to queue. (${e.code})", e)
-    } catch (e: RegisterException) {
-      if (e.reason === RegisterException.Reason.TAKEN) {
-        runOnUiThread {
-          Toast.makeText(
-              this@SearchActivity,
-              "Your username is already taken.",
-              Toast.LENGTH_SHORT
-          ).show()
-          startActivity(Intent(this, LoginActivity::class.java))
-        }
-      }
-    } catch (e: LoginException) {
-      runOnUiThread {
-        if (e.reason == LoginException.Reason.WRONG_UUID
-            || e.reason == LoginException.Reason.WRONG_PASSWORD
-            || e.reason == LoginException.Reason.NEEDS_AUTH) {
-          Toast.makeText(
-              this@SearchActivity,
-              "Can't login with current username and password.",
-              Toast.LENGTH_SHORT
-          ).show()
-        }
-        startActivity(Intent(this, LoginActivity::class.java))
-      }
-    } catch (e: AuthException) {
-      Log.d(tag(), "Could not add song", e)
-    }
+  override fun onAdd(song: Song, failCallback: () -> Unit) {
+    Observable.fromCallable { Auth.apiKey.raw }
+        .map { Connection.enqueue(it, song.id, song.provider.id) }
+        .retry(1, {
+          if (it is ApiException && it.code == 401) {
+            Auth.clear(); true
+          } else false
+        })
+        .doOnNext { QueueState.queue = it }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
+          Log.d(tag(), "Successfully added song to queue: ${song.title}")
+        }, {
+          Log.d(tag(), "Could not add a song.")
+          failCallback()
+          when (it) {
+            is RegisterException -> if (it.reason == RegisterException.Reason.TAKEN) {
+              Toast.makeText(
+                  this,
+                  "Your username is already taken.",
+                  Toast.LENGTH_SHORT
+              ).show()
+              startActivity(Intent(this, LoginActivity::class.java))
+            }
+            is LoginException -> if (it.reason == LoginException.Reason.WRONG_UUID
+                || it.reason == LoginException.Reason.WRONG_PASSWORD
+                || it.reason == LoginException.Reason.NEEDS_AUTH) {
+              Toast.makeText(
+                  this,
+                  "Can't login with current username and password.",
+                  Toast.LENGTH_SHORT
+              ).show()
+              startActivity(Intent(this, LoginActivity::class.java))
+            }
+          }
+        })
+        .store()
   }
 
-  override fun onAdd(song: Song) {
-    Thread({ enqueue(song) }, "enqueueThread").start()
-  }
-
-  override fun showAdd(song: Song): Boolean = true
+  override fun showAdd(song: Song): Boolean = !QueueState.queue.map { it.song }.any { it == song }
 }
 
 internal class SearchFragmentPagerAdapter(fm: FragmentManager, providers: List<NamedPlugin>) :

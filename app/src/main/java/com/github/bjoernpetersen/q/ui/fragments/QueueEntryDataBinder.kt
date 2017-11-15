@@ -1,6 +1,7 @@
 package com.github.bjoernpetersen.q.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
 import com.github.bjoernpetersen.q.QueueState
@@ -19,6 +19,7 @@ import com.github.bjoernpetersen.q.api.AuthException
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.Permission
 import com.github.bjoernpetersen.q.api.action.MoveSong
+import com.github.bjoernpetersen.q.ui.SearchActivity
 import com.github.bjoernpetersen.q.ui.asDuration
 import com.squareup.picasso.Callback.EmptyCallback
 import com.squareup.picasso.Picasso
@@ -78,11 +79,14 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
     menu.setOnMenuItemClickListener { item ->
       when (item.itemId) {
         R.id.move_top -> {
-          MoveSong(entry, 0).defaultAction(holder.view.context)
+          MoveSong(entry, 0).defaultAction(holder.context)
           true
         }
         R.id.search_related -> {
-          Toast.makeText(holder.view.context, "Not implemented yet :/", Toast.LENGTH_SHORT).show()
+          val intent = Intent(holder.context, SearchActivity::class.java)
+              .putExtra(SearchActivity.INITIAL_QUERY_EXTRA, holder.entry?.song?.description)
+              .putExtra(SearchActivity.INITIAL_PROVIDER_EXTRA, holder.entry?.song?.provider?.id)
+          holder.context.startActivity(intent)
           true
         }
         R.id.remove_button -> {

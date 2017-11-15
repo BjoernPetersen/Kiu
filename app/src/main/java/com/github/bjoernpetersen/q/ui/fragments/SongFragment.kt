@@ -71,7 +71,7 @@ class SongFragment : Fragment() {
    */
   interface OnListFragmentInteractionListener {
 
-    fun onAdd(song: Song)
+    fun onAdd(song: Song, failCallback: () -> Unit)
     fun showAdd(song: Song): Boolean
   }
 

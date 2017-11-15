@@ -50,12 +50,14 @@ class SongRecyclerViewAdapter(private val mValues: List<Song>,
       holder.addButton.visibility = if (showAdd) View.VISIBLE else View.GONE
     }
 
-    holder.addButton.setOnClickListener {
+    val addButton = holder.addButton
+    addButton.setOnClickListener {
       if (null != mListener) {
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mListener.onAdd(song)
         holder.addButton.visibility = View.GONE
+        mListener.onAdd(song,
+            { addButton.visibility = if (mListener.showAdd(song)) View.VISIBLE else View.GONE })
       }
     }
   }
