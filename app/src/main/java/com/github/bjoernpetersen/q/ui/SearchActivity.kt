@@ -159,7 +159,18 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
         }
       }
     } catch (e: LoginException) {
-      runOnUiThread { startActivity(Intent(this, LoginActivity::class.java)) }
+      runOnUiThread {
+        if (e.reason == LoginException.Reason.WRONG_UUID
+            || e.reason == LoginException.Reason.WRONG_PASSWORD
+            || e.reason == LoginException.Reason.NEEDS_AUTH) {
+          Toast.makeText(
+              this@SearchActivity,
+              "Can't login with current username and password.",
+              Toast.LENGTH_SHORT
+          ).show()
+        }
+        startActivity(Intent(this, LoginActivity::class.java))
+      }
     } catch (e: AuthException) {
       Log.d(TAG, "Could not add song", e)
     }
