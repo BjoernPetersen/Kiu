@@ -1,8 +1,5 @@
 <resources>
   <string name="app_name">Q</string>
-
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
   <string name="play_pause">Play / Pause</string>
   <string name="suggested">Suggested</string>
   <string name="queue">Queue</string>
@@ -26,10 +23,10 @@
   <string name="search">Search</string>
   <string name="suggest">Suggestions</string>
   <string name="no_suggester_found">No Suggester found</string>
-  <string name="skipping_current_song">Skipping song...</string>
+  <string name="skipping_current_song">Skipping song…</string>
   <string name="skip_error">Could not skip song</string>
   <string name="connection_error">No connection to server</string>
-  <string name="trying_upgrade">Trying to upgrade...</string>
+  <string name="trying_upgrade">Trying to upgrade…</string>
   <string name="remove">Remove</string>
   <string name="title_suggestions">Suggestions</string>
   <string name="refresh">Refresh</string>
@@ -37,12 +34,13 @@
   <string name="connect_wifi">Connect now</string>
   <string name="refresh_permissions">Refresh permissions</string>
   <string name="refresh_success">Refresh successful</string>
-  <string name="refreshing_permissions">Refreshing permissions...</string>
+  <string name="refreshing_permissions">Refreshing permissions…</string>
   <string name="refresh_permissions_error">Failed to refresh permissions</string>
   <string name="move_to_top_confirm">Move this song to the top?</string>
   <string name="move_error">Error moving queue entry</string>
   <string name="search_related">Search related songs</string>
-  <string name="move_to_top">Move to top</string>
+  <string name="move">Move</string>
   <string name="enqueue">Enqueue</string>
   <string name="dislike_error">Could not remove suggestion</string>
+  <string name="move_confirm">Move to what position?</string>
 </resources>

@@ -2,6 +2,7 @@ package com.github.bjoernpetersen.q.ui.fragments
 
 import android.content.Context
 import android.content.Intent
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -78,8 +79,20 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
     menu.inflate(R.menu.query_item_menu)
     menu.setOnMenuItemClickListener { item ->
       when (item.itemId) {
-        R.id.move_top -> {
-          MoveSong(entry, 0).defaultAction(holder.context)
+        R.id.move -> {
+          val choices = QueueState.queue
+              .map { it.song }
+              .filter { it != song }
+              .map { it.title }
+              .toTypedArray()
+          AlertDialog.Builder(holder.context)
+              .setCancelable(true)
+              .setTitle(R.string.move_confirm)
+              .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+              .setItems(choices, { _, which ->
+                MoveSong(entry, which).defaultAction(holder.context)
+              })
+              .show()
           true
         }
         R.id.search_related -> {
@@ -117,7 +130,7 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
     holder.contextMenu.setOnClickListener {
       val apiKey = Auth.apiKeyNoRefresh
       val items = menu.menu
-      items.findItem(R.id.move_top).isVisible = Auth.hasPermissionNoRefresh(Permission.MOVE)
+      items.findItem(R.id.move).isVisible = Auth.hasPermissionNoRefresh(Permission.MOVE)
       items.findItem(R.id.search_related).isVisible
       items.findItem(R.id.remove_button).isVisible =
           apiKey != null && apiKey.userName == entry.userName
