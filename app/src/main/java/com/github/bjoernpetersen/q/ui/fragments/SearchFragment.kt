@@ -93,7 +93,7 @@ class SearchFragment : Fragment() {
 
   private fun showResults(result: List<Song>) {
     if (!isDetached) childFragmentManager.beginTransaction()
-        .replace(R.id.root, SongFragment.newInstance(result))
+        .replace(R.id.root, SongFragment.newInstance(result, R.menu.search_context_menu))
         .commit()
   }
 

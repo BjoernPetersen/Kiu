@@ -33,7 +33,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 import java.lang.ref.WeakReference
 
 class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteractionListener,
-    SongFragment.OnListFragmentInteractionListener, ObserverUser {
+    SongFragment.SongFragmentInteractionListener, ObserverUser {
 
   companion object {
     @JvmStatic
@@ -192,7 +192,11 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
     }
   }
 
-  override fun onAdd(song: Song, failCallback: () -> Unit) {
+  override fun onContextMenu(song: Song, menuItem: MenuItem,
+      enable: (Boolean) -> Unit): Boolean = true.also { onClick(song, enable) }
+
+  override fun onClick(song: Song, enable: (Boolean) -> Unit) {
+    enable(false)
     Observable.fromCallable { Auth.apiKey.raw }
         .map { Connection.enqueue(it, song.id, song.provider.id) }
         .retry(1, {
@@ -207,7 +211,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
           Log.d(tag(), "Successfully added song to queue: ${song.title}")
         }, {
           Log.d(tag(), "Could not add a song.")
-          failCallback()
+          enable(true)
           when (it) {
             is RegisterException -> if (it.reason == RegisterException.Reason.TAKEN) {
               Toast.makeText(
@@ -232,7 +236,12 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
         .store()
   }
 
-  override fun showAdd(song: Song): Boolean = !QueueState.queue.map { it.song }.any { it == song }
+  override fun isEnabled(song: Song): Boolean = !QueueState.queue.map { it.song }.any { it == song }
+
+  override fun isEnabled(song: Song, menuItemId: Int): Boolean = when (menuItemId) {
+    R.id.enqueue_button -> isEnabled(song)
+    else -> true
+  }
 }
 
 internal class SearchFragmentPagerAdapter(fm: FragmentManager,

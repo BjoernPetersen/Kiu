@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 import java.lang.ref.WeakReference
 
 class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteractionListener,
-    SongFragment.OnListFragmentInteractionListener, ObserverUser {
+    SongFragment.SongFragmentInteractionListener, ObserverUser {
 
   override lateinit var observers: MutableList<WeakReference<Disposable>>
   private var suggesters: List<NamedPlugin> = emptyList()
@@ -39,6 +39,12 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
         supportFragmentManager.executePendingTransactions()
         refreshSuggestions()
       }
+    }
+  private val activeSuggester: NamedPlugin?
+    get() {
+      val index = view_pager.currentItem
+      return if (index < suggesters.size) suggesters[index]
+      else null
     }
 
   override fun initObservers() {
@@ -124,8 +130,35 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
         ?.refresh()
   }
 
-  override fun onAdd(song: Song, failCallback: () -> Unit) {
+  override fun onContextMenu(song: Song, menuItem: MenuItem, enable: (Boolean) -> Unit): Boolean {
+    when (menuItem.itemId) {
+      R.id.enqueue_button -> onClick(song, enable)
+      R.id.remove_button -> dislike(song, enable)
+    }
+    return true
+  }
+
+  private fun dislike(song: Song, enable: (Boolean) -> Unit) {
+    enable(false)
+    val suggesterId = activeSuggester?.id ?: return
     Observable.fromCallable { Auth.apiKey.raw }
+        .subscribeOn(Schedulers.io())
+        .map { Connection.removeSuggestion(suggesterId, it, song.id, song.provider.id) }
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
+          Log.d(tag(), "Successfully disliked song.")
+        }, {
+          enable(true)
+          Toast.makeText(this, R.string.dislike_error, Toast.LENGTH_SHORT).show()
+          Log.d(tag(), "Could not remove suggestion", it)
+        })
+        .store()
+  }
+
+  override fun onClick(song: Song, enable: (Boolean) -> Unit) {
+    enable(false)
+    Observable.fromCallable { Auth.apiKey.raw }
+        .subscribeOn(Schedulers.io())
         .map { Connection.enqueue(it, song.id, song.provider.id) }
         .retry(1, {
           if (it is ApiException && it.code == 401) {
@@ -133,13 +166,12 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
           } else false
         })
         .doOnNext { QueueState.queue = it }
-        .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
           Log.d(tag(), "Successfully added song to queue: ${song.title}")
         }, {
           Log.d(tag(), "Could not add a song.")
-          failCallback()
+          enable(true)
           when (it) {
             is RegisterException -> if (it.reason == RegisterException.Reason.TAKEN) {
               Toast.makeText(
@@ -164,7 +196,13 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
         .store()
   }
 
-  override fun showAdd(song: Song): Boolean = !QueueState.queue.map { it.song }.any { it == song }
+  override fun isEnabled(song: Song): Boolean = !QueueState.queue.map { it.song }.any { it == song }
+
+  override fun isEnabled(song: Song, menuItemId: Int): Boolean = when (menuItemId) {
+    R.id.enqueue_button -> isEnabled(song)
+    R.id.remove_button -> Auth.hasPermissionNoRefresh(Permission.DISLIKE)
+    else -> true
+  }
 }
 
 internal class SuggestFragmentPagerAdapter(fm: FragmentManager,

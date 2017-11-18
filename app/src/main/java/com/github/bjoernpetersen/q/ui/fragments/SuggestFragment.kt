@@ -73,7 +73,7 @@ class SuggestFragment : Fragment() {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
           childFragmentManager.beginTransaction()
-              .replace(R.id.root, SongFragment.newInstance(it))
+              .replace(R.id.root, SongFragment.newInstance(it, R.menu.suggest_context_menu))
               .commit()
         }, {
           Log.v(tag(), "Could not get suggestions", it)
