@@ -1,11 +1,10 @@
 package com.github.bjoernpetersen.q.api.action
 
-import android.content.Context
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
 
-interface Action<V> : Callable<V> {
-  fun asObservable(): Observable<V> = Observable.fromCallable(this)
-  fun defaultAction(context: Context): Disposable
-}
+fun <V> Callable<V>.asObservable(): Observable<V> = Observable.fromCallable(this)
+    .subscribeOn(Schedulers.io())
+    .observeOn(AndroidSchedulers.mainThread())

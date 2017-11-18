@@ -11,13 +11,14 @@ import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin
 import com.github.bjoernpetersen.jmusicbot.client.model.Song
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.Connection
-import com.github.bjoernpetersen.q.api.HostDiscoverer
-import java.io.Closeable
+import com.github.bjoernpetersen.q.api.action.DiscoverHost
+import com.github.bjoernpetersen.q.tag
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import java.net.SocketTimeoutException
-import java.util.concurrent.*
 
-private val TAG = SearchFragment::class.java.simpleName
-private val ARG_PROVIDER = "provider"
 
 /**
  * A simple [Fragment] subclass.
@@ -29,7 +30,8 @@ class SearchFragment : Fragment() {
 
   var provider: NamedPlugin? = null
     private set
-  private var searchExecutor: SearchExecutor? = null
+  var searchObserver: Disposable? = null
+  private var lastQuery: String? = null
   private var mListener: OnFragmentInteractionListener? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,21 +54,44 @@ class SearchFragment : Fragment() {
     mListener = if (context is OnFragmentInteractionListener) context
     else throw RuntimeException(
         context.toString() + " must implement OnFragmentInteractionListener")
-    searchExecutor = SearchExecutor()
   }
 
   override fun onDetach() {
     super.onDetach()
-    searchExecutor?.close()
-    searchExecutor = null
     mListener = null
   }
 
-  fun updateResults(query: String) {
-    searchExecutor?.search(query)
+  override fun onStop() {
+    searchObserver?.dispose()
+    lastQuery = null
+    super.onStop()
   }
 
-  internal fun showResults(result: List<Song>) {
+  fun updateResults(query: String) {
+    val trimmedQuery = query.trim()
+    if (trimmedQuery == lastQuery) return
+    lastQuery = trimmedQuery
+
+    searchObserver?.dispose()
+
+    if (provider == null) throw IllegalStateException()
+
+    childFragmentManager.beginTransaction()
+        .replace(R.id.root, LoadingFragment())
+        .commit()
+
+    searchObserver = Observable.fromCallable { Connection.searchSong(provider!!.id, trimmedQuery) }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnError {
+          if (it.cause is SocketTimeoutException) DiscoverHost().defaultAction()
+        }
+        .subscribe(this::showResults, {
+          Log.d(tag(), "Error retrieving search results", it)
+        })
+  }
+
+  private fun showResults(result: List<Song>) {
     if (!isDetached) childFragmentManager.beginTransaction()
         .replace(R.id.root, SongFragment.newInstance(result))
         .commit()
@@ -83,62 +108,10 @@ class SearchFragment : Fragment() {
    */
   interface OnFragmentInteractionListener
 
-  private inner class SearchExecutor internal constructor() : Closeable {
-
-    private val executor: ExecutorService = Executors.newFixedThreadPool(2)
-    private val resultListenerTask: () -> Unit = this::onResult
-
-    private var currentQuery: String? = null
-    private var resultListener: Future<*>? = null
-    private var searchFuture: Future<List<Song>>? = null
-
-    private fun onResult() {
-      try {
-        val result = searchFuture!!.get()
-        if (!isDetached) {
-          val view = view
-          if (view == null) {
-            Log.w(TAG, "Not detached, but view is null")
-            return
-          }
-          view.post { showResults(result) }
-        }
-      } catch (e: InterruptedException) {
-        Log.v(TAG, "Interrupted while waiting for search results", e)
-      } catch (e: ExecutionException) {
-        Log.d(TAG, "Error retrieving search results", e)
-        if (e.cause is SocketTimeoutException) {
-          executor.submit(HostDiscoverer())
-        }
-      } catch (e: CancellationException) {
-        Log.v(TAG, "Search result waiter was cancelled")
-      }
-    }
-
-    internal fun search(query: String) {
-      if (query == currentQuery) {
-        return
-      }
-
-      resultListener?.cancel(true)
-      searchFuture?.cancel(true)
-
-      childFragmentManager.beginTransaction()
-          .replace(R.id.root, LoadingFragment())
-          .commit()
-
-      this.currentQuery = query
-      this.searchFuture = enqueue(query)
-      this.resultListener = executor.submit(resultListenerTask)
-    }
-
-    private fun enqueue(query: String): Future<List<Song>> =
-        executor.submit(Callable { Connection.searchSong(provider!!.id, query) })
-
-    override fun close() = executor.shutdown()
-  }
-
   companion object {
+    @JvmStatic
+    private val ARG_PROVIDER = SearchFragment::class.java.name + ".provider"
+
     @JvmStatic
     fun newInstance(provider: NamedPlugin): SearchFragment {
       val fragment = SearchFragment()

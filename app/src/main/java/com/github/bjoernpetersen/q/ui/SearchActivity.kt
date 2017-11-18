@@ -1,7 +1,9 @@
 package com.github.bjoernpetersen.q.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
@@ -35,13 +37,43 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
 
   companion object {
     @JvmStatic
+    private val LAST_PROVIDER_STATE = SearchActivity::javaClass.name + ".lastProvider"
+    @JvmStatic
     val INITIAL_QUERY_EXTRA = SearchActivity::javaClass.name + ".initialQuery"
     @JvmStatic
     val INITIAL_PROVIDER_EXTRA = SearchActivity::javaClass.name + ".initialProvider"
   }
 
   override lateinit var observers: MutableList<WeakReference<Disposable>>
+  private var preferredProvider: String? = null
+    set(value) {
+      field = value
+      getPreferences(Context.MODE_PRIVATE).edit()
+          .putString(LAST_PROVIDER_STATE, value)
+          .apply()
+    }
   private var query: String? = null
+  private var providers: List<NamedPlugin> = emptyList()
+    set(value) {
+      if (field != value) {
+        field = value
+        view_pager?.adapter = SearchFragmentPagerAdapter(supportFragmentManager, value)
+        supportFragmentManager.executePendingTransactions()
+        if (preferredProvider != null) {
+          val index = providers
+              .map(NamedPlugin::getId)
+              .withIndex()
+              .firstOrNull { id -> id.value == preferredProvider }
+              ?.index
+          if (index == null) {
+            Log.d(tag(), "Could not find initial provider")
+          } else {
+            view_pager.currentItem = index
+          }
+        }
+        refreshSearchResults()
+      }
+    }
 
   override fun initObservers() {
     observers = ArrayList()
@@ -62,27 +94,44 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
           positionOffsetPixels: Int) {
       }
 
-      override fun onPageSelected(position: Int) = refreshSearchResults(position)
+      override fun onPageSelected(position: Int) = refreshSearchResults()
       override fun onPageScrollStateChanged(state: Int) {}
     })
 
     query = intent.getStringExtra(INITIAL_QUERY_EXTRA)
+    preferredProvider = intent.getStringExtra(INITIAL_PROVIDER_EXTRA) ?:
+        getPreferences(Context.MODE_PRIVATE).getString(LAST_PROVIDER_STATE, null)
+  }
+
+  override fun onDestroy() {
+    view_pager.clearOnPageChangeListeners()
+    super.onDestroy()
   }
 
   override fun onResume() {
     super.onResume()
-    checkWifiState(this)
+    checkWifiState()
+  }
+
+  override fun onPause() {
+    val currentIndex = view_pager.currentItem
+    if (currentIndex < providers.size)
+      preferredProvider = providers[currentIndex].id
+    super.onPause()
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean = true.also {
     val inflater = menuInflater
     inflater.inflate(R.menu.search_menu, menu)
+
+    // hide search icon
     val menuItem = menu.findItem(R.id.search_bar)
     val searchView = menuItem.actionView as SearchView
     searchView.setIconifiedByDefault(false)
-    searchView.queryHint = getString(R.string.search_hint)
     val magView: View = searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon)
     (magView.parent as ViewGroup).removeView(magView)
+
+    searchView.queryHint = getString(R.string.search_hint)
     searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
       override fun onQueryTextSubmit(query: String): Boolean = true
       override fun onQueryTextChange(newText: String): Boolean = true.also {
@@ -127,7 +176,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
-          updateProviders(it)
+          providers = it
         }, {
           Log.d(tag(), "Could not retrieve providers", it)
           Toast.makeText(this, getString(R.string.no_provider_found), Toast.LENGTH_SHORT).show()
@@ -135,30 +184,10 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
         }).store()
   }
 
-  private fun updateProviders(providers: List<NamedPlugin>) {
-    view_pager?.adapter = SearchFragmentPagerAdapter(supportFragmentManager, providers)
-    if (intent.hasExtra(INITIAL_PROVIDER_EXTRA)) {
-      val initialId = intent.getStringExtra(INITIAL_PROVIDER_EXTRA)
-      val index = providers
-          .map(NamedPlugin::getId)
-          .withIndex()
-          .firstOrNull { id -> id.value == initialId }
-          ?.index
-      if (index == null) {
-        Log.d(tag(), "Could not find initial provider")
-      } else {
-        view_pager.currentItem = index
-      }
-    }
-    refreshSearchResults()
-  }
-
-  private fun refreshSearchResults() = view_pager?.apply { refreshSearchResults(currentItem) }
-
-  private fun refreshSearchResults(position: Int) {
+  private fun refreshSearchResults() {
     query?.apply {
       (view_pager?.adapter as? SearchFragmentPagerAdapter)
-          ?.getItem(position)
+          ?.getFragment(view_pager.currentItem)
           ?.updateResults(this)
     }
   }
@@ -183,7 +212,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
             is RegisterException -> if (it.reason == RegisterException.Reason.TAKEN) {
               Toast.makeText(
                   this,
-                  "Your username is already taken.",
+                  "Your username is already taken.", //TODO i18n
                   Toast.LENGTH_SHORT
               ).show()
               startActivity(Intent(this, LoginActivity::class.java))
@@ -193,7 +222,7 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
                 || it.reason == LoginException.Reason.NEEDS_AUTH) {
               Toast.makeText(
                   this,
-                  "Can't login with current username and password.",
+                  "Can't login with current username and password.", //TODO i18n
                   Toast.LENGTH_SHORT
               ).show()
               startActivity(Intent(this, LoginActivity::class.java))
@@ -206,25 +235,32 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
   override fun showAdd(song: Song): Boolean = !QueueState.queue.map { it.song }.any { it == song }
 }
 
-internal class SearchFragmentPagerAdapter(fm: FragmentManager, providers: List<NamedPlugin>) :
-    FragmentPagerAdapter(fm) {
+internal class SearchFragmentPagerAdapter(private val fm: FragmentManager,
+    private val providers: List<NamedPlugin>) : FragmentPagerAdapter(fm) {
 
-  private val fragments: MutableList<SearchFragment>
+  private val tags: MutableMap<Int, String> = HashMap(providers.size * 2)
 
-  init {
-    fragments = ArrayList(providers.size)
-    providers.mapTo(fragments) { SearchFragment.newInstance(it) }
+  internal fun getFragment(position: Int): SearchFragment? = tags[position]?.let {
+    fm.findFragmentByTag(it) as? SearchFragment
   }
+
+  override fun instantiateItem(container: ViewGroup?, position: Int): Any =
+      super.instantiateItem(container, position).also {
+        tags[position] = (it as SearchFragment).tag
+      }
 
   /**
    * Return the Fragment associated with a specified position.
    */
-  override fun getItem(position: Int): SearchFragment = fragments[position]
+  override fun getItem(position: Int): SearchFragment =
+      SearchFragment.newInstance(providers[position])
 
   /**
    * Return the number of views available.
    */
-  override fun getCount(): Int = fragments.size
+  override fun getCount(): Int = providers.size
 
-  override fun getPageTitle(position: Int): CharSequence? = getItem(position).provider?.name
+  override fun getPageTitle(position: Int): CharSequence? = providers[position].name
+
+  override fun saveState(): Parcelable? = null
 }

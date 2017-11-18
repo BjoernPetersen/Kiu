@@ -13,16 +13,12 @@ import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
 import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
-import com.github.bjoernpetersen.q.api.Config
 import com.github.bjoernpetersen.q.api.Connection
-import com.github.bjoernpetersen.q.api.HostDiscoverer
-import com.github.bjoernpetersen.q.tag
+import com.github.bjoernpetersen.q.api.action.DiscoverHost
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAdapter.QueueEntryType
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener
 import com.github.bjoernpetersen.q.ui.runOnUiThread
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -128,13 +124,7 @@ class QueueFragment : Fragment() {
       runOnUiThread { QueueState.queue = queue }
     } catch (e: ApiException) {
       if (e.cause is IOException) {
-        // try reconnecting
-        Observable.fromCallable(HostDiscoverer())
-            .subscribeOn(Schedulers.io())
-            .subscribe({
-              Log.i(tag(), "Found new host: " + it)
-              Config.host = it
-            }, { Log.v(tag(), "Could not retrieve new host", it) })
+        DiscoverHost().defaultAction()
       }
       Log.v(TAG, "Could not get queue", e)
     } catch (e: RuntimeException) {

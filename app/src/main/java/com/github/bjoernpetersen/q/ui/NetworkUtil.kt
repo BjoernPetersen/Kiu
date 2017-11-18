@@ -10,25 +10,25 @@ import android.provider.Settings
 import android.support.v7.app.AlertDialog
 import com.github.bjoernpetersen.q.R
 
-fun checkWifiState(context: Context) {
-  if (isConnected(context)) return
+fun Context.checkWifiState(context: Context = this) {
+  if (context.isConnected()) return
   AlertDialog.Builder(context)
       .setMessage(R.string.wifi_disabled)
-      .setPositiveButton(android.R.string.ok, { dialog, which -> dialog.dismiss() })
-      .setNeutralButton(R.string.connect_wifi, { dialog, which -> connect(context) })
+      .setPositiveButton(android.R.string.ok, { dialog, _ -> dialog.dismiss() })
+      .setNeutralButton(R.string.connect_wifi, { dialog, _ -> dialog.dismiss(); connect() })
       .show()
 }
 
-private fun connect(context: Context) {
+private fun Context.connect() {
   val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
   try {
-    context.startActivity(intent)
+    startActivity(intent)
   } catch (ignored: ActivityNotFoundException) {
   }
 }
 
-private fun isConnected(context: Context): Boolean {
-  val manager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+private fun Context.isConnected(): Boolean {
+  val manager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
   if (!manager.isWifiEnabled) return false
   return manager.connectionInfo.networkId != -1
 }

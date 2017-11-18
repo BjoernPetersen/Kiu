@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
+import com.github.bjoernpetersen.q.api.action.DiscoverHost
 import kotlinx.android.synthetic.main.activity_login.*
 
 private val TAG = LoginActivity::class.java.simpleName
@@ -77,17 +78,13 @@ class LoginActivity : AppCompatActivity() {
           Log.d(TAG, "Could not change password", e)
           loginFailure(e.reason)
         } catch (e: ConnectionException) {
-          val host = HostDiscoverer().call()
-          if (host != null) {
-            Config.host = host
+          DiscoverHost().defaultAction({
             this.run()
-          } else {
-            runOnUiThread {
-              setInputEnabled(true)
-              Toast.makeText(this@LoginActivity, R.string.connection_error, Toast.LENGTH_SHORT)
-                  .show()
-            }
-          }
+          }, {
+            setInputEnabled(true)
+            Toast.makeText(this@LoginActivity, R.string.connection_error, Toast.LENGTH_SHORT)
+                .show()
+          })
         } catch (e: AuthException) {
           Log.wtf(TAG, e)
         }

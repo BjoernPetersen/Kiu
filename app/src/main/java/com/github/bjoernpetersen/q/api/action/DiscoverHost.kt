@@ -1,5 +1,9 @@
-package com.github.bjoernpetersen.q.api
+package com.github.bjoernpetersen.q.api.action
 
+import android.util.Log
+import com.github.bjoernpetersen.q.api.Config
+import com.github.bjoernpetersen.q.tag
+import io.reactivex.disposables.Disposable
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
@@ -9,7 +13,7 @@ import java.util.concurrent.Callable
 private const val GROUP_ADDRESS = "224.0.0.142"
 private const val PORT = 42945
 
-class HostDiscoverer : Callable<String> {
+class DiscoverHost : Callable<String> {
   @Throws(IOException::class)
   override fun call(): String {
     MulticastSocket(PORT).use { socket ->
@@ -24,4 +28,15 @@ class HostDiscoverer : Callable<String> {
       return packet.address.hostAddress
     }
   }
+
+  fun defaultAction(alsoOnSuccess: (String) -> Unit = {},
+      alsoOnError: (Throwable) -> Unit = {}): Disposable =
+      asObservable()
+          .subscribe({
+            if (Config.host != it) {
+              Log.i(tag(), "Found new host: " + it)
+              Config.host = it
+            }
+            alsoOnSuccess(it)
+          }, { Log.v(tag(), "Could not retrieve host", it); alsoOnError(it) })
 }
