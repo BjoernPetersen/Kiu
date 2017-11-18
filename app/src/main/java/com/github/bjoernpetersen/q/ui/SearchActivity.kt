@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
@@ -23,6 +22,7 @@ import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
 import com.github.bjoernpetersen.q.tag
+import com.github.bjoernpetersen.q.ui.fragments.CachedFragmentPagerAdapter
 import com.github.bjoernpetersen.q.ui.fragments.SearchFragment
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment
 import io.reactivex.Observable
@@ -235,19 +235,9 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
   override fun showAdd(song: Song): Boolean = !QueueState.queue.map { it.song }.any { it == song }
 }
 
-internal class SearchFragmentPagerAdapter(private val fm: FragmentManager,
-    private val providers: List<NamedPlugin>) : FragmentPagerAdapter(fm) {
-
-  private val tags: MutableMap<Int, String> = HashMap(providers.size * 2)
-
-  internal fun getFragment(position: Int): SearchFragment? = tags[position]?.let {
-    fm.findFragmentByTag(it) as? SearchFragment
-  }
-
-  override fun instantiateItem(container: ViewGroup?, position: Int): Any =
-      super.instantiateItem(container, position).also {
-        tags[position] = (it as SearchFragment).tag
-      }
+internal class SearchFragmentPagerAdapter(fm: FragmentManager,
+    private val providers: List<NamedPlugin>) :
+    CachedFragmentPagerAdapter<SearchFragment>(fm, providers.size) {
 
   /**
    * Return the Fragment associated with a specified position.

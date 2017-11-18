@@ -7,15 +7,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin
-import com.github.bjoernpetersen.jmusicbot.client.model.Song
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.Connection
-import com.github.bjoernpetersen.q.ui.runOnUiThread
+import com.github.bjoernpetersen.q.tag
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
-private val TAG = SuggestFragment::class.java.simpleName
-private const val ARG_SUGGESTER = "suggester"
 
 /**
  * A simple [Fragment] subclass.
@@ -59,14 +58,8 @@ class SuggestFragment : Fragment() {
     mListener = null
   }
 
-  fun update() {
+  fun refresh() {
     loadSuggestions()
-  }
-
-  private fun showResults(result: List<Song>) {
-    childFragmentManager.beginTransaction()
-        .replace(R.id.root, SongFragment.newInstance(result))
-        .commit()
   }
 
   private fun loadSuggestions() {
@@ -74,21 +67,17 @@ class SuggestFragment : Fragment() {
         .replace(R.id.root, LoadingFragment())
         .commit()
 
-    Thread({
-      suggester?.let { suggester ->
-        try {
-          val songs = Connection.suggestSong(suggester.id, null)
-          runOnUiThread { showResults(songs) }
-        } catch (e: ApiException) {
-          Log.v(TAG, "Could not load suggestions", e)
-          runOnUiThread {
-            if (!isDetached) {
-              // TODO show error fragment
-            }
-          }
-        }
-      }
-    }).start()
+    val suggester = suggester!!
+    Observable.fromCallable { Connection.suggestSong(suggester.id, null) }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
+          childFragmentManager.beginTransaction()
+              .replace(R.id.root, SongFragment.newInstance(it))
+              .commit()
+        }, {
+          Log.v(tag(), "Could not get suggestions", it)
+        })
   }
 
   /**
@@ -103,6 +92,9 @@ class SuggestFragment : Fragment() {
   interface OnFragmentInteractionListener
 
   companion object {
+    @JvmStatic
+    private val ARG_SUGGESTER = SuggestFragment::class.java.name + ".suggester"
+
     @JvmStatic
     fun newInstance(suggester: NamedPlugin): SuggestFragment {
       val fragment = SuggestFragment()

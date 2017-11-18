@@ -3,7 +3,6 @@ package com.github.bjoernpetersen.q.ui
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -18,19 +17,29 @@ import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
 import com.github.bjoernpetersen.q.tag
+import com.github.bjoernpetersen.q.ui.fragments.CachedFragmentPagerAdapter
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment
 import com.github.bjoernpetersen.q.ui.fragments.SuggestFragment
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_search.*
 import java.lang.ref.WeakReference
 
 class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteractionListener,
     SongFragment.OnListFragmentInteractionListener, ObserverUser {
 
   override lateinit var observers: MutableList<WeakReference<Disposable>>
-  private var viewPager: ViewPager? = null
+  private var suggesters: List<NamedPlugin> = emptyList()
+    set(value) {
+      if (field != value) {
+        field = value
+        view_pager?.adapter = SuggestFragmentPagerAdapter(supportFragmentManager, value)
+        supportFragmentManager.executePendingTransactions()
+        refreshSuggestions()
+      }
+    }
 
   override fun initObservers() {
     observers = ArrayList()
@@ -44,21 +53,19 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
     val actionBar = supportActionBar ?: throw IllegalStateException()
     actionBar.setDisplayHomeAsUpEnabled(true)
 
-    val viewPager: ViewPager = findViewById(R.id.view_pager)
-    this.viewPager = viewPager
-    viewPager.setPageTransformer(true, RotateUpTransformer())
-    viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+    view_pager.setPageTransformer(true, RotateUpTransformer())
+    view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
       override fun onPageScrolled(position: Int, positionOffset: Float,
           positionOffsetPixels: Int) {
       }
 
-      override fun onPageSelected(position: Int) = refreshSuggestions(position)
+      override fun onPageSelected(position: Int) = refreshSuggestions()
       override fun onPageScrollStateChanged(state: Int) {}
     })
   }
 
   override fun onDestroy() {
-    viewPager = null
+    view_pager.clearOnPageChangeListeners()
     super.onDestroy()
   }
 
@@ -95,7 +102,7 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
 
   override fun onResume() {
     super.onResume()
-    checkWifiState(this)
+    checkWifiState()
   }
 
   private fun loadSuggesters() {
@@ -103,7 +110,7 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
-          updateSuggesters(it)
+          suggesters = it
         }, {
           Log.d(tag(), "Could not retrieve suggesters", it)
           Toast.makeText(this, getString(R.string.no_suggester_found), Toast.LENGTH_SHORT).show()
@@ -111,16 +118,10 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
         }).store()
   }
 
-  private fun updateSuggesters(suggesters: List<NamedPlugin>) {
-    viewPager?.adapter = SuggestFragmentPagerAdapter(supportFragmentManager, suggesters)
-  }
-
-  private fun refreshSuggestions() = viewPager?.apply {
-    refreshSuggestions(currentItem)
-  }
-
-  private fun refreshSuggestions(position: Int) {
-    (viewPager?.adapter as? SuggestFragmentPagerAdapter)?.getItem(position)?.update()
+  private fun refreshSuggestions() {
+    (view_pager.adapter as? SuggestFragmentPagerAdapter)
+        ?.getFragment(view_pager.currentItem)
+        ?.refresh()
   }
 
   override fun onAdd(song: Song, failCallback: () -> Unit) {
@@ -166,30 +167,20 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
   override fun showAdd(song: Song): Boolean = !QueueState.queue.map { it.song }.any { it == song }
 }
 
-internal class SuggestFragmentPagerAdapter(fm: FragmentManager, suggesters: List<NamedPlugin>) :
-    FragmentPagerAdapter(fm) {
-
-  private val fragments: MutableList<SuggestFragment>
-  private val titles: MutableList<String>
-
-  init {
-    fragments = ArrayList(suggesters.size)
-    titles = ArrayList(suggesters.size)
-    for (suggester in suggesters) {
-      fragments.add(SuggestFragment.newInstance(suggester))
-      titles.add(suggester.name)
-    }
-  }
+internal class SuggestFragmentPagerAdapter(fm: FragmentManager,
+    private val suggesters: List<NamedPlugin>) :
+    CachedFragmentPagerAdapter<SuggestFragment>(fm, suggesters.size) {
 
   /**
    * Return the Fragment associated with a specified position.
    */
-  override fun getItem(position: Int): SuggestFragment = fragments[position]
+  override fun getItem(position: Int): SuggestFragment =
+      SuggestFragment.newInstance(suggesters[position])
 
   /**
    * Return the number of views available.
    */
-  override fun getCount(): Int = fragments.size
+  override fun getCount(): Int = suggesters.size
 
-  override fun getPageTitle(position: Int): CharSequence = titles[position]
+  override fun getPageTitle(position: Int): CharSequence = suggesters[position].name
 }
