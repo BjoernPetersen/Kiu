@@ -145,11 +145,13 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
     val menuItem = menu.findItem(R.id.search_bar)
     val searchView = menuItem.actionView as SearchView
     searchView.setQuery(query, false)
+    showKeyboard(searchView)
     return super.onPrepareOptionsMenu(menu)
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
     android.R.id.home -> {
+      hideKeyboard()
       finish()
       true
     }
