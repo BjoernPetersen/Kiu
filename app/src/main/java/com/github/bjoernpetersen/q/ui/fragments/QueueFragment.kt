@@ -20,14 +20,12 @@ import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAdapter.QueueEntryType
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener
-import com.github.bjoernpetersen.q.ui.runOnUiThread
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-private val TAG = QueueFragment::class.java.simpleName
 private val ITEMS_KEY = QueueFragment::class.java.name + ".items"
 
 /**
@@ -42,16 +40,14 @@ class QueueFragment : Fragment() {
   private var addButtonsListener: QueueEntryAddButtonsListener? = null
   private var entryListener: QueueEntryListener? = null
   private var updater: Disposable? = null
-  private var listeners: MutableList<Any>? = null
+  private var listener: ((List<QueueEntry>, List<QueueEntry>) -> Unit)? = null
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
     val view = inflater.inflate(R.layout.fragment_queue_list, container, false)
         as? RecyclerView ?: throw IllegalStateException()
 
-    // Set the adapter
-    // TODO set items
-    val error = { throw IllegalStateException("Should have been set in OnAttach!") }
+    val error = { throw IllegalStateException("Should have been set in onAttach!") }
     val adapter = QueueEntryAdapter(entryListener ?: error(), addButtonsListener ?: error())
     view.adapter = adapter
     view.addItemDecoration(DividerItemDecoration(view.context, DividerItemDecoration.VERTICAL))
@@ -71,10 +67,8 @@ class QueueFragment : Fragment() {
     super.onStart()
     updateQueue(QueueState.queue)
 
-    val listener = { _: Any, newQueue: List<QueueEntry> -> runOnUiThread { updateQueue(newQueue) } }
-    listeners = ArrayList()
-    listeners?.add(listener) ?: throw IllegalStateException()
-    QueueState.addListener(listener)
+    listener = { _, newQueue: List<QueueEntry> -> updateQueue(newQueue) }
+    QueueState.addListener(listener!!)
 
     updater = startUpdater()
   }
@@ -82,7 +76,8 @@ class QueueFragment : Fragment() {
   override fun onStop() {
     updater?.dispose()
     updater = null
-    listeners = null
+    QueueState.removeListener(listener!!)
+    listener = null
     super.onStop()
   }
 
