@@ -15,14 +15,16 @@ import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.action.DiscoverHost
+import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAdapter.QueueEntryType
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener
 import com.github.bjoernpetersen.q.ui.runOnUiThread
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import java.io.IOException
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
 private val TAG = QueueFragment::class.java.simpleName
@@ -39,20 +41,8 @@ class QueueFragment : Fragment() {
   private var dataBinder: QueueEntryDataBinder? = null
   private var addButtonsListener: QueueEntryAddButtonsListener? = null
   private var entryListener: QueueEntryListener? = null
-  private var updater: ScheduledExecutorService? = null
-  private var updateTask: ScheduledFuture<*>? = null
+  private var updater: Disposable? = null
   private var listeners: MutableList<Any>? = null
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    updater = Executors.newSingleThreadScheduledExecutor()
-  }
-
-  override fun onDestroy() {
-    updater?.shutdown()
-    updater = null
-    super.onDestroy()
-  }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
@@ -65,8 +55,8 @@ class QueueFragment : Fragment() {
     val adapter = QueueEntryAdapter(entryListener ?: error(), addButtonsListener ?: error())
     view.adapter = adapter
     view.addItemDecoration(DividerItemDecoration(view.context, DividerItemDecoration.VERTICAL))
-    val items: List<QueueEntry> = savedInstanceState?.getParcelableArrayList(
-        ITEMS_KEY) ?: ArrayList()
+    val items: List<QueueEntry> =
+        savedInstanceState?.getParcelableArrayList(ITEMS_KEY) ?: ArrayList()
     dataBinder = adapter.getDataBinder(QueueEntryType.QUEUE_ENTRY)
     dataBinder!!.items = items
     return view
@@ -80,14 +70,19 @@ class QueueFragment : Fragment() {
   override fun onStart() {
     super.onStart()
     updateQueue(QueueState.queue)
+
     val listener = { _: Any, newQueue: List<QueueEntry> -> runOnUiThread { updateQueue(newQueue) } }
+    listeners = ArrayList()
     listeners?.add(listener) ?: throw IllegalStateException()
     QueueState.addListener(listener)
-    updateTask = updater?.scheduleWithFixedDelay(this::retrieveUpdate, 0, 2, TimeUnit.SECONDS)
+
+    updater = startUpdater()
   }
 
   override fun onStop() {
-    updateTask?.cancel(true)
+    updater?.dispose()
+    updater = null
+    listeners = null
     super.onStop()
   }
 
@@ -98,7 +93,6 @@ class QueueFragment : Fragment() {
 
   override fun onAttach(context: Context?) {
     super.onAttach(context)
-    listeners = ArrayList()
     entryListener = context as? QueueEntryListener ?:
         throw RuntimeException(context?.toString() + " must implement QueueEntryListener")
 
@@ -110,27 +104,27 @@ class QueueFragment : Fragment() {
     super.onDetach()
     entryListener = null
     addButtonsListener = null
-    listeners = null
   }
 
   private fun updateQueue(queue: List<QueueEntry>) {
     dataBinder?.items = queue
   }
 
-  private fun retrieveUpdate() {
-    Log.v(TAG, "Retrieving queue...")
-    try {
-      val queue = Connection.getQueue()
-      runOnUiThread { QueueState.queue = queue }
-    } catch (e: ApiException) {
-      if (e.cause is IOException) {
-        DiscoverHost().defaultAction()
-      }
-      Log.v(TAG, "Could not get queue", e)
-    } catch (e: RuntimeException) {
-      Log.wtf(TAG, e)
-    }
-  }
+  private fun startUpdater() = Observable.interval(2, TimeUnit.SECONDS)
+      .subscribeOn(Schedulers.io())
+      .map { Connection.getQueue() }
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe({
+        QueueState.queue = it
+      }, {
+        Log.d(tag(), "Could not retrieve Queue.")
+        when (it) {
+          is ApiException -> if (it.cause is IOException) {
+            DiscoverHost().defaultAction()
+          }
+          is RuntimeException -> Log.wtf(tag(), it)
+        }
+      })
 
   companion object {
     @JvmStatic
