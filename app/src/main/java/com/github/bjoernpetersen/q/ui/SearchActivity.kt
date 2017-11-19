@@ -158,11 +158,11 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
 
   override fun onStart() {
     super.onStart()
+    initObservers()
     if (!Config.hasUser()) {
       startActivity(Intent(this, LoginActivity::class.java))
       return
     }
-    initObservers()
     loadProviders()
   }
 

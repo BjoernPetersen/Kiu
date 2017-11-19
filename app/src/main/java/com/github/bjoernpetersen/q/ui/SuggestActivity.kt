@@ -93,11 +93,11 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
 
   override fun onStart() {
     super.onStart()
+    initObservers()
     if (!Config.hasUser()) {
       startActivity(Intent(this, LoginActivity::class.java))
       return
     }
-    initObservers()
     loadSuggesters()
   }
 
