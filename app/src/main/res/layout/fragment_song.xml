@@ -4,8 +4,8 @@
   android:id="@+id/root"
   android:layout_width="match_parent"
   android:layout_height="65dp"
-  android:paddingTop="5dp"
-  android:paddingBottom="5dp"
+  android:paddingTop="@dimen/viewMargin"
+  android:paddingBottom="@dimen/viewMargin"
   android:background="@android:color/white">
 
   <ImageView
@@ -20,7 +20,7 @@
   <LinearLayout
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
+    android:layout_marginLeft="@dimen/viewMargin"
     android:orientation="vertical"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toRightOf="@id/album_art"

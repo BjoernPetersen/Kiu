@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="text_margin">16dp</dimen>
+  <dimen name="textMargin">3dp</dimen>
+  <dimen name="borderMargin">5dp</dimen>
+  <dimen name="viewMargin">3dp</dimen>
 </resources>
