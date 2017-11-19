@@ -165,9 +165,9 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
             Auth.clear(); true
           } else false
         })
-        .doOnNext { QueueState.queue = it }
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
+          QueueState.queue = it
           Log.d(tag(), "Successfully added song to queue: ${song.title}")
         }, {
           Log.d(tag(), "Could not add a song.")

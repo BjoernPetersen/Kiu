@@ -204,10 +204,10 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
             Auth.clear(); true
           } else false
         })
-        .doOnNext { QueueState.queue = it }
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({
+          QueueState.queue = it
           Log.d(tag(), "Successfully added song to queue: ${song.title}")
         }, {
           Log.d(tag(), "Could not add a song.")

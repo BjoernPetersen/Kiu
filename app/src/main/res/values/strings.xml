@@ -43,4 +43,5 @@
   <string name="enqueue">Enqueue</string>
   <string name="dislike_error">Could not remove suggestion</string>
   <string name="move_confirm">Move to what position?</string>
+  <string name="remove_error">Could not remove song</string>
 </resources>

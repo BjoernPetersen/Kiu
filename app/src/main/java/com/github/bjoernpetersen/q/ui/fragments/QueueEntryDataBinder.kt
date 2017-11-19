@@ -5,27 +5,32 @@ import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.QueueEntry
 import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.Auth
-import com.github.bjoernpetersen.q.api.AuthException
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.Permission
 import com.github.bjoernpetersen.q.api.action.MoveSong
+import com.github.bjoernpetersen.q.api.action.onMainThread
+import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.SearchActivity
 import com.github.bjoernpetersen.q.ui.asDuration
 import com.squareup.picasso.Callback.EmptyCallback
 import com.squareup.picasso.Picasso
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBindAdapter
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBinder
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_queue.view.*
 import java.util.*
 
@@ -103,25 +108,22 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
           true
         }
         R.id.remove_button -> {
-          Thread({
-            try {
-              val token = Auth.apiKey.raw
-              val newQueue = Connection.dequeue(
-                  token, song.id, song.provider.id
-              )
-              QueueState.queue = newQueue
-            } catch (e: ApiException) {
-              if (e.code == 403) {
-                Auth.clear()
-              } else {
-                e.printStackTrace()
-                // TODO show toast
-              }
-            } catch (e: AuthException) {
-              e.printStackTrace()
-              // TODO show toast
-            }
-          }).start()
+          Observable.fromCallable { Auth.apiKey }
+              .subscribeOn(Schedulers.io())
+              .map { it.raw }
+              .map { Connection.dequeue(it, song.id, song.provider.id) }
+              .onMainThread()
+              .subscribe({
+                QueueState.queue = it
+              }, {
+                Toast.makeText(holder.context, R.string.remove_error, Toast.LENGTH_SHORT).show()
+                Log.d(tag(), "Could not remove song from queue", it)
+                when (it) {
+                  is ApiException -> if (it.code == 403) {
+                    Auth.clear()
+                  }
+                }
+              })
           true
         }
         else -> false

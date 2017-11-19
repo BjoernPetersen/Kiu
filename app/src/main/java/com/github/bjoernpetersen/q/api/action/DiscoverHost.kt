@@ -30,13 +30,13 @@ class DiscoverHost : Callable<String> {
   }
 
   fun defaultAction(alsoOnSuccess: (String) -> Unit = {},
-      alsoOnError: (Throwable) -> Unit = {}): Disposable =
-      asObservable()
-          .subscribe({
-            if (Config.host != it) {
-              Log.i(tag(), "Found new host: " + it)
-              Config.host = it
-            }
-            alsoOnSuccess(it)
-          }, { Log.v(tag(), "Could not retrieve host", it); alsoOnError(it) })
+      alsoOnError: (Throwable) -> Unit = {}): Disposable = asObservable()
+      .onMainThread()
+      .subscribe({
+        if (Config.host != it) {
+          Log.i(tag(), "Found new host: " + it)
+          Config.host = it
+        }
+        alsoOnSuccess(it)
+      }, { Log.v(tag(), "Could not retrieve host", it); alsoOnError(it) })
 }

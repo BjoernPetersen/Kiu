@@ -7,4 +7,5 @@ import java.util.concurrent.Callable
 
 fun <V> Callable<V>.asObservable(): Observable<V> = Observable.fromCallable(this)
     .subscribeOn(Schedulers.io())
-    .observeOn(AndroidSchedulers.mainThread())
+
+fun <V> Observable<V>.onMainThread(): Observable<V> = observeOn(AndroidSchedulers.mainThread())
