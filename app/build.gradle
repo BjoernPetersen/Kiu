@@ -18,7 +18,11 @@ android {
             minifyEnabled false
         }
     }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
 }
+
 
 repositories {
     maven { url "https://jitpack.io" }
