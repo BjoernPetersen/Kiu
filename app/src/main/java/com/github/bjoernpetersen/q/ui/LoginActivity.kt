@@ -10,6 +10,10 @@ import android.widget.Toast
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.*
 import com.github.bjoernpetersen.q.api.action.DiscoverHost
+import com.github.bjoernpetersen.q.tag
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 
 private val TAG = LoginActivity::class.java.simpleName
@@ -62,90 +66,94 @@ class LoginActivity : AppCompatActivity() {
     }
 
     setInputEnabled(false)
-    Thread(object : Runnable {
-      override fun run() {
-        Config.user = userName
-        try {
-          Auth.apiKey
+    Config.user = userName
+    Observable.fromCallable { Auth.apiKey }
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({
           loginSuccess()
-        } catch (e: RegisterException) {
-          Log.d(TAG, "Could not register", e)
-          loginFailure(e.reason)
-        } catch (e: LoginException) {
-          Log.d(TAG, "Could not login", e)
-          loginFailure(e.reason)
-        } catch (e: ChangePasswordException) {
-          Log.d(TAG, "Could not change password", e)
-          loginFailure(e.reason)
-        } catch (e: ConnectionException) {
-          DiscoverHost().defaultAction({
-            this.run()
-          }, {
-            setInputEnabled(true)
-            Toast.makeText(this@LoginActivity, R.string.connection_error, Toast.LENGTH_SHORT)
-                .show()
-          })
-        } catch (e: AuthException) {
-          Log.wtf(TAG, e)
-        }
-
-      }
-    }, "loginThread").start()
+        }, {
+          when (it) {
+            is RegisterException -> {
+              Log.d(tag(), "Could not register", it)
+              loginFailure(it.reason)
+            }
+            is LoginException -> {
+              Log.d(tag(), "Could not log in", it)
+              loginFailure(it.reason)
+            }
+            is ChangePasswordException -> {
+              Log.d(tag(), "Could not change password", it)
+              loginFailure(it.reason)
+            }
+            is ConnectionException -> {
+              Log.d(tag(), "Connection exception", it)
+              Toast.makeText(this, R.string.trying_discover, Toast.LENGTH_SHORT).show()
+              DiscoverHost().defaultAction({
+                Toast.makeText(this, R.string.discover_success, Toast.LENGTH_SHORT).show()
+                setInputEnabled(true)
+              }, {
+                Toast.makeText(this, R.string.connection_error, Toast.LENGTH_SHORT).show()
+                setInputEnabled(true)
+              })
+            }
+            is ServerErrorException -> {
+              Log.d(tag(), "Server error", it)
+              Toast.makeText(this, R.string.server_error, Toast.LENGTH_SHORT).show()
+              setInputEnabled(true)
+            }
+            is AuthException -> Log.wtf(tag(), it)
+          }
+        })
   }
 
   private fun loginSuccess() {
-    runOnUiThread { finish() }
+    finish()
   }
 
   private fun loginFailure(reason: RegisterException.Reason) {
-    runOnUiThread({
-      setInputEnabled(true)
+    setInputEnabled(true)
 
-      when (reason) {
-        RegisterException.Reason.TAKEN -> {
-          username?.error = getString(R.string.error_username_taken)
-        }
-        else -> {
-          Log.wtf(TAG, "Registering failed for reason " + reason)
-          username?.error = "Not sure what went wrong"
-        }
+    when (reason) {
+      RegisterException.Reason.TAKEN -> {
+        username?.error = getString(R.string.error_username_taken)
       }
-    })
-  }
-
-  private fun loginFailure(reason: LoginException.Reason) {
-    runOnUiThread({
-      setInputEnabled(true)
-
-      when (reason) {
-        LoginException.Reason.NEEDS_AUTH -> {
-          password?.visibility = View.VISIBLE
-          Toast.makeText(this@LoginActivity, R.string.needs_password, Toast.LENGTH_SHORT).show()
-        }
-        LoginException.Reason.WRONG_PASSWORD -> {
-          password?.error = getString(R.string.wrong_password)
-        }
-        LoginException.Reason.WRONG_UUID -> {
-          username?.error = getString(R.string.error_username_taken)
-        }
-        else -> {
-          Log.wtf(TAG, "Login failed for reason " + reason)
-          username!!.error = "Not sure what went wrong"
-        }
+      else -> {
+        Log.wtf(TAG, "Registering failed for reason " + reason)
+        username?.error = "Not sure what went wrong"
       }
-    })
-  }
-
-  private fun loginFailure(reason: ChangePasswordException.Reason) {
-    runOnUiThread {
-      setInputEnabled(true)
-
-      Log.wtf(TAG, "Got ChangePasswordException at login " + reason)
-      Toast.makeText(this@LoginActivity, R.string.unknown_error, Toast.LENGTH_SHORT).show()
     }
   }
 
-  internal fun setInputEnabled(enable: Boolean) {
+  private fun loginFailure(reason: LoginException.Reason) {
+    setInputEnabled(true)
+
+    when (reason) {
+      LoginException.Reason.NEEDS_AUTH -> {
+        password?.visibility = View.VISIBLE
+        Toast.makeText(this@LoginActivity, R.string.needs_password, Toast.LENGTH_SHORT).show()
+      }
+      LoginException.Reason.WRONG_PASSWORD -> {
+        password?.error = getString(R.string.wrong_password)
+      }
+      LoginException.Reason.WRONG_UUID -> {
+        username?.error = getString(R.string.error_username_taken)
+      }
+      else -> {
+        Log.wtf(TAG, "Login failed for reason " + reason)
+        username!!.error = "Not sure what went wrong"
+      }
+    }
+  }
+
+  private fun loginFailure(reason: ChangePasswordException.Reason) {
+    setInputEnabled(true)
+
+    Log.wtf(TAG, "Got ChangePasswordException at login " + reason)
+    Toast.makeText(this@LoginActivity, R.string.unknown_error, Toast.LENGTH_SHORT).show()
+  }
+
+  private fun setInputEnabled(enable: Boolean) {
     username?.isEnabled = enable
     password?.isEnabled = enable
     login_button?.isEnabled = enable

@@ -44,4 +44,7 @@
   <string name="dislike_error">Could not remove suggestion</string>
   <string name="move_confirm">Move to what position?</string>
   <string name="remove_error">Could not remove song</string>
+  <string name="trying_discover">Trying to discover server…</string>
+  <string name="discover_success">Found server in network</string>
+  <string name="server_error">An unknown server error occurred</string>
 </resources>

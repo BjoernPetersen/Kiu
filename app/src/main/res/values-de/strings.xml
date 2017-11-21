@@ -44,4 +44,7 @@
   <string name="dislike_error">Vorschlag konnte nicht entfernt werden</string>
   <string name="move_confirm">Wohin verschieben?</string>
   <string name="remove_error">Song konnte nicht entfernt werden</string>
+  <string name="trying_discover">Suche Server im Netzwerk…</string>
+  <string name="discover_success">Server im Netzwerk gefunden</string>
+  <string name="server_error">Ein unbekannter Server-Fehler ist aufgetreten</string>
 </resources>
