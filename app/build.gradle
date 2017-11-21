@@ -39,7 +39,6 @@ dependencies {
     implementation 'io.sentry:sentry-android:1.6.3'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.hadisatrio:Optional:v1.0.1'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.github.bjoernpetersen:musicbot-android-client:0.8.0'
     implementation 'com.auth0.android:jwtdecode:1.1.1'
