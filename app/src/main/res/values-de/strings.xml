@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="play_pause">Play / Pause</string>
+  <string name="suggested">Vorgeschlagen</string>
+  <string name="queue">Warteschlange</string>
+  <string name="title_search">Suche</string>
+  <string name="no_provider_found">Kein Provider gefunden</string>
+  <string name="search_hint">Nach Songs suchen…</string>
+  <string name="username_hint">Gib deinen Namen ein</string>
+  <string name="login">Einloggen</string>
+  <string name="title_login">Login</string>
+  <string name="error_empty">Darf nicht leer sein</string>
+  <string name="enter_your_password">Gib dein Passwort ein</string>
+  <string name="error_username_taken">Nutzername bereits vergeben</string>
+  <string name="needs_password">Ein Passwort wird benötigt</string>
+  <string name="wrong_password">Falsches Passwort</string>
+  <string name="logout">Logout</string>
+  <string name="upgrade">Nutzer permanent machen</string>
+  <string name="unknown_error">Ein unbekannter Fehler ist aufgetreten</string>
+  <string name="invalid_password">Ungültiges Passwort</string>
+  <string name="invalid_credentials">Die alten Zugangsdaten waren falsch. Versuche dich aus- und wieder einzuloggen.</string>
+  <string name="upgrade_success">Passwort erfolgreich gesetzt.</string>
+  <string name="search">Suchen</string>
+  <string name="suggest">Vorschlagen</string>
+  <string name="no_suggester_found">Kein Suggester gefunden</string>
+  <string name="skipping_current_song">Überspringe Song…</string>
+  <string name="skip_error">Song konnte nicht übersprungen werden</string>
+  <string name="connection_error">Keine Verbindung zum Server</string>
+  <string name="trying_upgrade">Versuche, Passwort zu setzen…</string>
+  <string name="remove">Entfernen</string>
+  <string name="title_suggestions">Vorschläge</string>
+  <string name="refresh">Aktualisieren</string>
+  <string name="wifi_disabled">Diese App benötigt eine aktive WLAN-Verbindung</string>
+  <string name="connect_wifi">Jetzt verbinden</string>
+  <string name="refresh_permissions">Berechtigungen aktualisieren</string>
+  <string name="refresh_success">Aktualisierung erfolgreich</string>
+  <string name="refreshing_permissions">Aktualisiere Berechtigungen…</string>
+  <string name="refresh_permissions_error">Aktualisierung der Berechtigungen fehlgeschlagen</string>
+  <string name="move_to_top_confirm">Diesen Song als nächstes spielen?</string>
+  <string name="move_error">Song konnte nicht verschoben werden</string>
+  <string name="search_related">Ähnliche Songs suchen</string>
+  <string name="move">Verschieben</string>
+  <string name="enqueue">Hinzufügen</string>
+  <string name="dislike_error">Vorschlag konnte nicht entfernt werden</string>
+  <string name="move_confirm">Wohin verschieben?</string>
+  <string name="remove_error">Song konnte nicht entfernt werden</string>
+</resources>

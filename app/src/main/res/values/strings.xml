@@ -1,17 +1,17 @@
 <resources>
-  <string name="app_name">Q</string>
+  <string name="app_name" translatable="false">Q</string>
   <string name="play_pause">Play / Pause</string>
   <string name="suggested">Suggested</string>
   <string name="queue">Queue</string>
   <string name="title_search">Search</string>
   <string name="no_provider_found">No providers found</string>
   <string name="search_hint">Search for songs</string>
-  <string name="username_hint">Enter a username</string>
+  <string name="username_hint">Enter your name</string>
   <string name="login">Login</string>
   <string name="title_login">Login</string>
   <string name="error_empty">Can\'t be empty</string>
   <string name="enter_your_password">Enter your password</string>
-  <string name="error_username_taken">Username is already taken</string>
+  <string name="error_username_taken">Username already taken</string>
   <string name="needs_password">You need to enter your password</string>
   <string name="wrong_password">Wrong password</string>
   <string name="logout">Logout</string>
@@ -19,14 +19,14 @@
   <string name="unknown_error">An unknown error occurred</string>
   <string name="invalid_password">Invalid password</string>
   <string name="invalid_credentials">The old credentials were invalid. Try logging out and in again.</string>
-  <string name="upgrade_success">Successfully upgraded</string>
+  <string name="upgrade_success">Successfully set password.</string>
   <string name="search">Search</string>
-  <string name="suggest">Suggestions</string>
+  <string name="suggest">Sugggest</string>
   <string name="no_suggester_found">No Suggester found</string>
   <string name="skipping_current_song">Skipping song…</string>
   <string name="skip_error">Could not skip song</string>
   <string name="connection_error">No connection to server</string>
-  <string name="trying_upgrade">Trying to upgrade…</string>
+  <string name="trying_upgrade">Trying to set password…</string>
   <string name="remove">Remove</string>
   <string name="title_suggestions">Suggestions</string>
   <string name="refresh">Refresh</string>
