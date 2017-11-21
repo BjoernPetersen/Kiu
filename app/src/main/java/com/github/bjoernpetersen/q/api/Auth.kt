@@ -125,6 +125,7 @@ internal object Auth {
     } catch (e: ApiException) {
       when (e.code) {
         409 -> throw RegisterException(RegisterException.Reason.TAKEN)
+        in 500..599 -> throw ServerErrorException(e.code)
         else -> throw UnknownAuthException(e)
       }
     }
@@ -152,6 +153,7 @@ internal object Auth {
         400 -> throw ChangePasswordException(ChangePasswordException.Reason.INVALID_PASSWORD)
         401 -> throw ChangePasswordException(ChangePasswordException.Reason.INVALID_TOKEN)
         403 -> throw ChangePasswordException(ChangePasswordException.Reason.WRONG_OLD_PASSWORD)
+        in 500..599 -> throw ServerErrorException(e.code)
         else -> throw UnknownAuthException(e)
       }
     }
@@ -170,11 +172,11 @@ internal object Auth {
     // try to login as guest
     try {
       val apiKey = loginGuest(user)
-      if (Config.hasPassword()) {
+      return if (Config.hasPassword()) {
         // upgrade account
-        return upgrade(apiKey)
+        upgrade(apiKey)
       } else {
-        return apiKey
+        apiKey
       }
     } catch (e: LoginException) {
       Log.d(TAG, "Guest login failed", e);
@@ -206,6 +208,7 @@ internal object Auth {
         400 -> throw LoginException(LoginException.Reason.WRONG_UUID)
         401 -> throw LoginException(LoginException.Reason.NEEDS_AUTH)
         404 -> throw LoginException(LoginException.Reason.NOT_FOUND)
+        in 500..599 -> throw ServerErrorException(e.code)
         else -> throw UnknownAuthException("Error code: " + e.code, e)
       }
     }
@@ -225,6 +228,7 @@ internal object Auth {
         401 -> throw LoginException(LoginException.Reason.NEEDS_AUTH)
         403 -> throw LoginException(LoginException.Reason.WRONG_PASSWORD)
         404 -> throw LoginException(LoginException.Reason.NOT_FOUND)
+        in 500..599 -> throw ServerErrorException(e.code)
         else -> throw UnknownAuthException(e)
       }
     }
@@ -236,7 +240,6 @@ sealed class AuthException : Exception {
   constructor(message: String) : super(message)
   constructor(cause: Throwable) : super(cause)
   constructor(message: String, cause: Throwable) : super(message, cause)
-
 }
 
 class RegisterException : AuthException {
@@ -288,6 +291,10 @@ class ConnectionException : AuthException {
   constructor(message: String) : super(message)
   constructor(message: String, cause: Throwable) : super(message, cause)
   constructor(cause: Throwable) : super(cause)
+}
+
+class ServerErrorException : AuthException {
+  constructor(code: Int) : super("Server error $code")
 }
 
 class UnknownAuthException : RuntimeException {

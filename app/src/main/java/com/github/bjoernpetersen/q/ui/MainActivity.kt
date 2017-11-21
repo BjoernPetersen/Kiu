@@ -20,8 +20,11 @@ import com.github.bjoernpetersen.q.ui.fragments.PlayerFragment
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueFragment
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.exceptions.UndeliverableException
 import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.schedulers.Schedulers
 import io.sentry.Sentry
 import io.sentry.android.AndroidSentryClientFactory
 
@@ -88,21 +91,18 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
           .setCancelable(false)
           .show()
       Auth.clear()
-      Thread({
-        try {
-          Auth.apiKey
-          runOnUiThread {
+      Observable.fromCallable { Auth.apiKey }
+          .subscribeOn(Schedulers.io())
+          .doOnError { Auth.clear() }
+          .retry(1)
+          .observeOn(AndroidSchedulers.mainThread())
+          .doOnTerminate { dialog.dismiss() }
+          .subscribe({
             Toast.makeText(this, R.string.refresh_success, Toast.LENGTH_LONG).show()
-          }
-        } catch (e: AuthException) {
-          Log.i(TAG, "Could not refresh API key", e)
-          runOnUiThread {
+          }, {
+            Log.d(tag(), "Could not refresh API key", it)
             Toast.makeText(this, R.string.refresh_permissions_error, Toast.LENGTH_LONG).show()
-          }
-        } finally {
-          dialog.dismiss()
-        }
-      }, "permission-refresher").start()
+          })
       true
     }
     R.id.logout -> {
