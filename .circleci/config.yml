@@ -11,6 +11,9 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
+          name: Changing permission for gradlew
+          command: chmod +x gradlew
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - save_cache:
