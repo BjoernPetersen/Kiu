@@ -31,25 +31,25 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'io.sentry:sentry-android:1.2.1'
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.hadisatrio:Optional:v1.0.1'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.github.bjoernpetersen:musicbot-android-client:0.8.0'
-    compile 'com.auth0.android:jwtdecode:1.1.1'
-    compile 'com.android.support:support-v4:26.1.0'
-    compile 'com.android.support:recyclerview-v7:26.1.0'
-    compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
-    compile 'com.yqritc:recyclerview-multiple-viewtypes-adapter:1.1.0'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.5'
-    testCompile 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'io.sentry:sentry-android:1.2.1'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.hadisatrio:Optional:v1.0.1'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.github.bjoernpetersen:musicbot-android-client:0.8.0'
+    implementation 'com.auth0.android:jwtdecode:1.1.1'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+    implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
+    implementation 'com.yqritc:recyclerview-multiple-viewtypes-adapter:1.1.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
+    testImplementation 'junit:junit:4.12'
 }
 
 
