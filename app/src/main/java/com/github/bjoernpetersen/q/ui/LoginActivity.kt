@@ -134,6 +134,7 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this@LoginActivity, R.string.needs_password, Toast.LENGTH_SHORT).show()
       }
       LoginException.Reason.WRONG_PASSWORD -> {
+        password?.visibility = View.VISIBLE
         password?.error = getString(R.string.wrong_password)
       }
       LoginException.Reason.WRONG_UUID -> {
