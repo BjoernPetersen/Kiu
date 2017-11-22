@@ -15,12 +15,12 @@ import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.action.DiscoverHost
-import com.github.bjoernpetersen.q.api.action.onMainThread
 import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAdapter.QueueEntryType
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryAddButtonsDataBinder.QueueEntryAddButtonsListener
 import com.github.bjoernpetersen.q.ui.fragments.QueueEntryDataBinder.QueueEntryListener
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.IOException
@@ -108,7 +108,7 @@ class QueueFragment : Fragment() {
   private fun startUpdater() = Observable.interval(2, TimeUnit.SECONDS)
       .subscribeOn(Schedulers.io())
       .map { Connection.getQueue() }
-      .onMainThread()
+      .observeOn(AndroidSchedulers.mainThread())
       .subscribe({
         QueueState.queue = it
       }, {

@@ -21,7 +21,6 @@ import com.github.bjoernpetersen.q.api.Auth
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.Permission
 import com.github.bjoernpetersen.q.api.action.MoveSong
-import com.github.bjoernpetersen.q.api.action.onMainThread
 import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.SearchActivity
 import com.github.bjoernpetersen.q.ui.asDuration
@@ -30,6 +29,7 @@ import com.squareup.picasso.Picasso
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBindAdapter
 import com.yqritc.recyclerviewmultipleviewtypesadapter.DataBinder
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_queue.view.*
 import java.util.*
@@ -112,7 +112,7 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
               .subscribeOn(Schedulers.io())
               .map { it.raw }
               .map { Connection.dequeue(it, song.id, song.provider.id) }
-              .onMainThread()
+              .observeOn(AndroidSchedulers.mainThread())
               .subscribe({
                 QueueState.queue = it
               }, {

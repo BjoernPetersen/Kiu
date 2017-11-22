@@ -3,7 +3,9 @@ package com.github.bjoernpetersen.q.api.action
 import android.util.Log
 import com.github.bjoernpetersen.q.api.Config
 import com.github.bjoernpetersen.q.tag
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.toSingle
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
@@ -30,8 +32,8 @@ class DiscoverHost : Callable<String> {
   }
 
   fun defaultAction(alsoOnSuccess: (String) -> Unit = {},
-      alsoOnError: (Throwable) -> Unit = {}): Disposable = asObservable()
-      .onMainThread()
+      alsoOnError: (Throwable) -> Unit = {}): Disposable = toSingle()
+      .observeOn(AndroidSchedulers.mainThread())
       .subscribe({
         if (Config.host != it) {
           Log.i(tag(), "Found new host: " + it)

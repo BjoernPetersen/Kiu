@@ -11,7 +11,9 @@ import com.github.bjoernpetersen.q.api.Auth
 import com.github.bjoernpetersen.q.api.AuthException
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.tag
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.toSingle
 import java.util.concurrent.Callable
 
 class MoveSong(val queueEntry: QueueEntry, val index: Int = 0) : Callable<List<QueueEntry>> {
@@ -21,8 +23,8 @@ class MoveSong(val queueEntry: QueueEntry, val index: Int = 0) : Callable<List<Q
     return Connection.moveEntry(token, index, queueEntry)
   }
 
-  fun defaultAction(context: Context): Disposable = asObservable()
-      .onMainThread()
+  fun defaultAction(context: Context): Disposable = toSingle()
+      .observeOn(AndroidSchedulers.mainThread())
       .subscribe({
         QueueState.queue = it
         Log.v(tag(), "Successfully moved a song.")
