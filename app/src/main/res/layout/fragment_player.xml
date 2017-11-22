@@ -24,7 +24,8 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/borderMargin"
     android:layout_marginBottom="@dimen/borderMargin"
-    android:layout_marginLeft="@dimen/borderMargin"
+    android:layout_marginLeft="@dimen/viewMargin"
+
     android:orientation="vertical"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toRightOf="@id/album_art"
