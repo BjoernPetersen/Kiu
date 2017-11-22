@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <dimen name="textMargin">3dp</dimen>
-  <dimen name="borderMargin">5dp</dimen>
-  <dimen name="viewMargin">3dp</dimen>
+  <dimen name="borderMargin">3dp</dimen>
+  <dimen name="viewMargin">2dp</dimen>
 </resources>
