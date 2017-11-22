@@ -1,5 +1,5 @@
 <resources>
-  <string name="app_name" translatable="false">Q</string>
+  <string name="app_name" translatable="false">Kiu</string>
   <string name="play_pause">Play / Pause</string>
   <string name="suggested">Suggested</string>
   <string name="queue">Queue</string>
