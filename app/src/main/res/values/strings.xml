@@ -47,4 +47,5 @@
   <string name="trying_discover">Trying to discover server…</string>
   <string name="discover_success">Found server in network</string>
   <string name="server_error">An unknown server error occurred</string>
+  <string name="skip">Skip</string>
 </resources>

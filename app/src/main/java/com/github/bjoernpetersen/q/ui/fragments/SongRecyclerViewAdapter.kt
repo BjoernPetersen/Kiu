@@ -14,6 +14,7 @@ import com.github.bjoernpetersen.jmusicbot.client.model.Song
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.ui.asDuration
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment.SongFragmentInteractionListener
+import com.github.bjoernpetersen.q.ui.isVisible
 import com.squareup.picasso.Callback.EmptyCallback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_song.view.*
@@ -32,12 +33,6 @@ class SongRecyclerViewAdapter(private val mValues: List<Song>,
         .inflate(R.layout.fragment_song, parent, false)
     return ViewHolder(view)
   }
-
-  private var View.isVisible: Boolean
-    get() = visibility == View.VISIBLE
-    set(value) {
-      visibility = if (value) View.VISIBLE else View.GONE
-    }
 
   private var View.isActive: Boolean
     get() = isEnabled

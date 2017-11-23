@@ -2,18 +2,16 @@
 
 package com.github.bjoernpetersen.q.ui
 
-import android.os.Looper
-import android.support.v4.app.Fragment
+import android.view.View
 import io.reactivex.disposables.Disposable
 import java.lang.ref.WeakReference
 import java.util.*
 
-private fun isUiThread(): Boolean = Looper.getMainLooper().thread === Thread.currentThread()
-
-fun Fragment.runOnUiThread(runnable: () -> Unit) {
-  if (!isUiThread()) this.view?.post(runnable)
-  else runnable()
-}
+var View.isVisible: Boolean
+  get() = visibility == View.VISIBLE
+  set(value) {
+    visibility = if (value) View.VISIBLE else View.GONE
+  }
 
 fun Int.asDuration(): String? {
   if (this == 0) {
