@@ -48,4 +48,5 @@
   <string name="discover_success">Server im Netzwerk gefunden</string>
   <string name="server_error">Ein unbekannter Server-Fehler ist aufgetreten</string>
   <string name="skip">Überspringen</string>
+  <string name="star">Merken</string>
 </resources>
