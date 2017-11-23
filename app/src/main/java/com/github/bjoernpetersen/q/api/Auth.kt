@@ -6,11 +6,10 @@ import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.LoginCredentials
 import com.github.bjoernpetersen.jmusicbot.client.model.PasswordChange
 import com.github.bjoernpetersen.jmusicbot.client.model.RegisterCredentials
+import com.github.bjoernpetersen.q.tag
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
-
-private val TAG = "Auth"
 
 internal object Auth {
   private var _apiKey: ApiKey? = null
@@ -74,7 +73,7 @@ internal object Auth {
   fun hasPermission(permission: Permission): Boolean {
     if (hasPermissionNoRefresh(permission)) return true
 
-    Log.d(TAG, "REFRESHING TOKEN")
+    Log.d(tag(), "REFRESHING TOKEN")
 
     // Check if permission has changed on server side
     return try {
@@ -92,7 +91,7 @@ internal object Auth {
     try {
       apiKey = login()
     } catch (e: LoginException) {
-      Log.d(TAG, "Login failed", e)
+      Log.d(tag(), "Login failed", e)
       if (e.reason == LoginException.Reason.WRONG_PASSWORD
           || e.reason == LoginException.Reason.NEEDS_AUTH) {
         throw e
@@ -179,7 +178,7 @@ internal object Auth {
         apiKey
       }
     } catch (e: LoginException) {
-      Log.d(TAG, "Guest login failed", e);
+      Log.d(tag(), "Guest login failed", e);
       when (e.reason) {
         LoginException.Reason.NEEDS_AUTH -> {
         }
@@ -187,12 +186,12 @@ internal object Auth {
       }
     }
 
-    Log.d(TAG, "Trying full login")
+    Log.d(tag(), "Trying full login")
     // try to login as full user
     try {
       return loginFull(user)
     } catch (e: LoginException) {
-      Log.d(TAG, "Full login failed", e);
+      Log.d(tag(), "Full login failed", e);
       throw e
     }
   }
