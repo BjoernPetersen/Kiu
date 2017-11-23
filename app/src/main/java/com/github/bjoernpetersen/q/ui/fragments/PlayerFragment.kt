@@ -106,6 +106,7 @@ class PlayerFragment : Fragment(), ObserverUser {
       }
     }
     Auth.registerListener(apiKeyListener)
+    apiKeyListener(Auth.apiKeyNoRefresh)
     this.apiKeyListener = apiKeyListener
   }
 
