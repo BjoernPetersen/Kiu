@@ -10,13 +10,18 @@ import com.github.bjoernpetersen.q.tag
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
+import java.util.*
+
+typealias ApiKeyListener = (ApiKey?) -> Unit
 
 internal object Auth {
   private var _apiKey: ApiKey? = null
     set(value) {
       field = value
       Config.apiKey = value
+      listeners.forEach { it(value) }
     }
+  private val listeners: MutableList<ApiKeyListener> = LinkedList()
 
   fun clear() {
     _apiKey = null
@@ -34,6 +39,14 @@ internal object Auth {
         apiKey
       }
     }
+
+  fun registerListener(listener: ApiKeyListener) {
+    listeners.add(listener)
+  }
+
+  fun unregisterListener(listener: ApiKeyListener) {
+    listeners.remove(listener)
+  }
 
   private fun refreshApiKey(): ApiKey {
     try {

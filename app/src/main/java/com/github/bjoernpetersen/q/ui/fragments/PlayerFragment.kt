@@ -13,6 +13,7 @@ import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.PlayerState
 import com.github.bjoernpetersen.q.R
+import com.github.bjoernpetersen.q.api.ApiKeyListener
 import com.github.bjoernpetersen.q.api.Auth
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.Permission
@@ -34,6 +35,7 @@ import kotlin.collections.ArrayList
 class PlayerFragment : Fragment(), ObserverUser {
 
   override lateinit var observers: MutableList<WeakReference<Disposable>>
+  private var apiKeyListener: ApiKeyListener? = null
 
   override fun initObservers() {
     observers = ArrayList()
@@ -96,19 +98,20 @@ class PlayerFragment : Fragment(), ObserverUser {
     super.onStart()
     initObservers()
 
-    Observable.interval(1, TimeUnit.SECONDS)
-        .subscribeOn(Schedulers.io())
-        .map { Auth.hasPermissionNoRefresh(Permission.SKIP) }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          root.setLockDrag(!it)
-          if (!it) root.close(false)
-        }, {})
-        .store()
+    val apiKeyListener: ApiKeyListener = {
+      view?.post {
+        val canSkip = it?.permissions?.contains(Permission.SKIP) == true
+        root.setLockDrag(!canSkip)
+        if (!canSkip) root.close(false)
+      }
+    }
+    Auth.registerListener(apiKeyListener)
+    this.apiKeyListener = apiKeyListener
   }
 
   override fun onStop() {
     disposeObservers()
+    apiKeyListener?.let { Auth.unregisterListener(it) }
     super.onStop()
   }
 
