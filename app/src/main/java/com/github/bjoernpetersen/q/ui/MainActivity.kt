@@ -62,6 +62,14 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
         .commit()
   }
 
+  override fun onRestart() {
+    super.onRestart()
+    // this should be unnecessary, but I just can't figure out how to solve the grey bar issue (#18)
+    supportFragmentManager.beginTransaction()
+        .replace(R.id.song_list, QueueFragment.newInstance())
+        .commitNow()
+  }
+
   override fun onResume() {
     super.onResume()
     checkWifiState(this)
