@@ -4,28 +4,50 @@
   android:id="@+id/root"
   android:layout_width="match_parent"
   android:layout_height="80dp"
-  app:dragEdge="right"
+  app:dragEdge="left"
   app:mode="same_level">
 
-  <FrameLayout
-    android:layout_width="80dp"
+  <LinearLayout
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent2">
-    <TextView
-      android:id="@+id/skip_text"
-      android:textStyle="bold"
+    android:orientation="horizontal">
+    <!-- TODO show star button -->
+    <FrameLayout
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:text="@string/skip"
-      android:textColor="@android:color/black" />
-    <ProgressBar
-      android:id="@+id/skip_progress"
+      android:layout_height="match_parent"
+      android:padding="@dimen/textMargin"
+      android:background="@color/colorPrimaryLighter"
+      android:visibility="gone">
+      <Button
+        android:id="@+id/star_button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:text="@string/star"
+        android:textColor="@android:color/white" />
+    </FrameLayout>
+    <FrameLayout
+      android:id="@+id/skip_frame"
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:visibility="gone" />
-  </FrameLayout>
+      android:layout_height="match_parent"
+      android:padding="@dimen/textMargin"
+      android:background="@color/colorPrimaryLight">
+      <Button
+        android:id="@+id/skip_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:text="@string/skip"
+        android:textColor="@android:color/white" />
+      <ProgressBar
+        android:id="@+id/skip_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+    </FrameLayout>
+  </LinearLayout>
 
   <android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"

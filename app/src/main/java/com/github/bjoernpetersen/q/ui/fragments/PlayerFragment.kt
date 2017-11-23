@@ -49,42 +49,37 @@ class PlayerFragment : Fragment(), ObserverUser {
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    root.setSwipeListener(object : SwipeRevealLayout.SimpleSwipeListener() {
-      /**
-       * Called when the main view becomes completely opened.
-       */
-      override fun onOpened(view: SwipeRevealLayout) {
-        skip_text.isVisible = false
-        skip_progress.isVisible = true
-        skip_progress.animate()
-
-        view.open(true)
-        view.setLockDrag(true)
-
-        Single.fromCallable { Auth.apiKey }
-            .subscribeOn(Schedulers.io())
-            .map { it.raw }
-            .map { Connection.nextSong(it) }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-              updatedState(it)
-              close(view)
-            }, {
-              Log.d(this@PlayerFragment.tag(), "Skipping song failed", it)
-              Toast.makeText(context, R.string.skip_error, Toast.LENGTH_SHORT).show()
-              if (it is ApiException && it.code == 403) Auth.clear()
-              close(view)
-            }) //TODO store?
-      }
-
-      private fun close(view: SwipeRevealLayout) {
+    skip_button.setOnClickListener {
+      val close: (SwipeRevealLayout) -> Unit = {
         skip_progress.clearAnimation()
         skip_progress.isVisible = false
-        skip_text.isVisible = true
-        view.close(true)
-        view.setLockDrag(false)
+        skip_button.isVisible = true
+        it.setLockDrag(false)
       }
-    })
+
+      val swipeView = root
+      skip_button.isVisible = false
+      skip_progress.isVisible = true
+      skip_progress.animate()
+
+      swipeView.open(true)
+      swipeView.setLockDrag(true)
+
+      Single.fromCallable { Auth.apiKey }
+          .subscribeOn(Schedulers.io())
+          .map { it.raw }
+          .map { Connection.nextSong(it) }
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribe({
+            updatedState(it)
+            close(swipeView)
+          }, {
+            Log.d(this@PlayerFragment.tag(), "Skipping song failed", it)
+            Toast.makeText(context, R.string.skip_error, Toast.LENGTH_SHORT).show()
+            if (it is ApiException && it.code == 403) Auth.clear()
+            close(swipeView)
+          }) // TODO store?
+    }
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -101,8 +96,7 @@ class PlayerFragment : Fragment(), ObserverUser {
     val apiKeyListener: ApiKeyListener = {
       view?.post {
         val canSkip = it?.permissions?.contains(Permission.SKIP) == true
-        root.setLockDrag(!canSkip)
-        if (!canSkip) root.close(false)
+        skip_frame.isVisible = canSkip
       }
     }
     Auth.registerListener(apiKeyListener)
