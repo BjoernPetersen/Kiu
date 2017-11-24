@@ -38,7 +38,6 @@ class PlayerFragment : Fragment(), ObserverUser {
   override lateinit var observers: MutableList<WeakReference<Disposable>>
   private var apiKeyListener: ApiKeyListener? = null
   private var currentState: PlayerState? = null
-  private var starAccess: StarredAccess? = null
 
   override fun initObservers() {
     observers = ArrayList()
@@ -75,12 +74,10 @@ class PlayerFragment : Fragment(), ObserverUser {
     Auth.registerListener(apiKeyListener)
     apiKeyListener(Auth.apiKeyNoRefresh)
     this.apiKeyListener = apiKeyListener
-    starAccess = StarredAccess.instance(context.applicationContext)
     star_button.setOnClickListener { starCurrent(); root.close(true) }
   }
 
   override fun onStop() {
-    starAccess = null
     disposeObservers()
     apiKeyListener?.let { Auth.unregisterListener(it) }
     super.onStop()
@@ -155,14 +152,13 @@ class PlayerFragment : Fragment(), ObserverUser {
 
   private fun starCurrent() {
     currentState?.let { state ->
-      starAccess?.let { access ->
-        access.add(state.songEntry.song)
-            .subscribe({
-              Log.d(tag(), "Success")
-            }, {
-              Log.d(tag(), "Error", it)
-            })
-      }
+      StarredAccess.instance(context.applicationContext)
+          .add(state.songEntry.song)
+          .subscribe({
+            Log.d(tag(), "Success")
+          }, {
+            Log.d(tag(), "Error", it)
+          })
     }
   }
 

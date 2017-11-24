@@ -24,7 +24,6 @@ import java.lang.ref.WeakReference
 class StarActivity : AppCompatActivity(), ObserverUser,
     SongFragment.SongFragmentInteractionListener {
 
-  private var access: StarredAccess? = null
   override var observers: MutableList<WeakReference<Disposable>> = ArrayList(0)
 
   override fun initObservers() {
@@ -47,7 +46,7 @@ class StarActivity : AppCompatActivity(), ObserverUser,
     supportFragmentManager.beginTransaction()
         .add(R.id.song_list, LoadingFragment())
         .commit()
-    access = StarredAccess.instance(applicationContext).also {
+    StarredAccess.instance(applicationContext).let {
       it.getAll().subscribe({
         supportFragmentManager.beginTransaction()
             .replace(R.id.song_list, SongFragment.newInstance(it, R.menu.star_context_menu))
@@ -60,7 +59,6 @@ class StarActivity : AppCompatActivity(), ObserverUser,
 
   override fun onStop() {
     disposeObservers()
-    access = null
     super.onStop()
   }
 
@@ -92,7 +90,7 @@ class StarActivity : AppCompatActivity(), ObserverUser,
     R.id.google -> true.also { searchGoogle(song.title) }
     R.id.google_specific -> true.also { searchGoogle("${song.title} ${song.description}") }
     R.id.unstar -> true.also {
-      access?.remove(song)?.subscribe({
+      StarredAccess.instance(applicationContext).remove(song).subscribe({
         Log.d(tag(), "Unstarred song: ${song.title}")
       }, {
         Log.w(tag(), "Remove error for song ${song.title}", it)
