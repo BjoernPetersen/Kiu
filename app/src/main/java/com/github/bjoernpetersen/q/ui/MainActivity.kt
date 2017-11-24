@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
     // this should be unnecessary, but I just can't figure out how to solve the grey bar issue (#18)
     supportFragmentManager.beginTransaction()
         .replace(R.id.song_list, QueueFragment.newInstance())
-        .commitNow()
+        .commitNowAllowingStateLoss()
   }
 
   override fun onResume() {
