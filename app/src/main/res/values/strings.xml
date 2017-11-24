@@ -49,4 +49,12 @@
   <string name="server_error">An unknown server error occurred</string>
   <string name="skip">Skip</string>
   <string name="star">Star</string>
+  <string name="title_star">Starred songs</string>
+  <string name="unstar">Unstar</string>
+  <string name="show_starred">Show starred songs</string>
+  <string name="unstar_error">Could not unstar song</string>
+  <string name="enqueue_error">Enqueue failed</string>
+  <string name="login_error">Can\'t login with current username and password</string>
+  <string name="google_search">Search with Google</string>
+  <string name="google_search_specific">More specific search with Google</string>
 </resources>

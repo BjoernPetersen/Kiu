@@ -19,6 +19,8 @@ import com.squareup.picasso.Callback.EmptyCallback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_song.view.*
 
+typealias EnableCallback = (Boolean) -> Unit
+
 /**
  * [RecyclerView.Adapter] that can display a [Song] and makes a call to the
  * specified [SongFragmentInteractionListener].
@@ -42,8 +44,8 @@ class SongRecyclerViewAdapter(private val mValues: List<Song>,
     }
 
   override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    holder.song = mValues[position]
-    val song = holder.song!!
+    val song = mValues[position]
+    holder.song = song
     Picasso.with(holder.context).cancelRequest(holder.albumArtView)
     holder.albumArtView.isVisible = false
     Picasso.with(holder.context)

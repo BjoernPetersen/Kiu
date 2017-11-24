@@ -12,6 +12,10 @@
     android:title="@string/refresh_permissions"
     app:showAsAction="never" />
   <item
+    android:id="@+id/show_starred"
+    android:title="@string/show_starred"
+    app:showAsAction="never" />
+  <item
     android:id="@+id/logout"
     android:title="@string/logout"
     app:showAsAction="never" />

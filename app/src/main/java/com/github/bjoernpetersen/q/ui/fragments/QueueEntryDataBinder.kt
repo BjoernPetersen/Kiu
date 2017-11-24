@@ -21,6 +21,7 @@ import com.github.bjoernpetersen.q.api.Auth
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.Permission
 import com.github.bjoernpetersen.q.api.action.MoveSong
+import com.github.bjoernpetersen.q.star.StarredAccess
 import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.SearchActivity
 import com.github.bjoernpetersen.q.ui.asDuration
@@ -81,7 +82,7 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
     }
 
     val menu = PopupMenu(holder.view.context, holder.contextMenu)
-    menu.inflate(R.menu.query_item_menu)
+    menu.inflate(R.menu.queue_item_menu)
     menu.setOnMenuItemClickListener { item ->
       when (item.itemId) {
         R.id.move -> {
@@ -99,6 +100,11 @@ class QueueEntryDataBinder(adapter: DataBindAdapter, private val listener: Queue
               })
               .show()
           true
+        }
+        R.id.star_button -> true.also {
+          StarredAccess.instance(holder.context.applicationContext)
+              .add(song)
+              .subscribe({}, {})
         }
         R.id.search_related -> {
           val intent = Intent(holder.context, SearchActivity::class.java)

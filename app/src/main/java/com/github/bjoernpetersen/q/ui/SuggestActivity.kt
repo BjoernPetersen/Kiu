@@ -10,12 +10,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import com.ToxicBakery.viewpager.transforms.RotateUpTransformer
-import com.github.bjoernpetersen.jmusicbot.client.ApiException
 import com.github.bjoernpetersen.jmusicbot.client.model.NamedPlugin
 import com.github.bjoernpetersen.jmusicbot.client.model.Song
 import com.github.bjoernpetersen.q.QueueState
 import com.github.bjoernpetersen.q.R
-import com.github.bjoernpetersen.q.api.*
+import com.github.bjoernpetersen.q.api.Auth
+import com.github.bjoernpetersen.q.api.Config
+import com.github.bjoernpetersen.q.api.Connection
+import com.github.bjoernpetersen.q.api.Permission
+import com.github.bjoernpetersen.q.api.action.Enqueue
 import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.fragments.CachedFragmentPagerAdapter
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment
@@ -156,43 +159,8 @@ class SuggestActivity : AppCompatActivity(), SuggestFragment.OnFragmentInteracti
   }
 
   override fun onClick(song: Song, enable: (Boolean) -> Unit) {
-    enable(false)
-    Observable.fromCallable { Auth.apiKey.raw }
-        .subscribeOn(Schedulers.io())
-        .map { Connection.enqueue(it, song.id, song.provider.id) }
-        .retry(1, {
-          if (it is ApiException && it.code == 401) {
-            Auth.clear(); true
-          } else false
-        })
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe({
-          QueueState.queue = it
-          Log.d(tag(), "Successfully added song to queue: ${song.title}")
-        }, {
-          Log.d(tag(), "Could not add a song.")
-          enable(true)
-          when (it) {
-            is RegisterException -> if (it.reason == RegisterException.Reason.TAKEN) {
-              Toast.makeText(
-                  this,
-                  "Your username is already taken.",
-                  Toast.LENGTH_SHORT
-              ).show()
-              startActivity(Intent(this, LoginActivity::class.java))
-            }
-            is LoginException -> if (it.reason == LoginException.Reason.WRONG_UUID
-                || it.reason == LoginException.Reason.WRONG_PASSWORD
-                || it.reason == LoginException.Reason.NEEDS_AUTH) {
-              Toast.makeText(
-                  this,
-                  "Can't login with current username and password.",
-                  Toast.LENGTH_SHORT
-              ).show()
-              startActivity(Intent(this, LoginActivity::class.java))
-            }
-          }
-        })
+    Enqueue(song)
+        .defaultAction(this, enable)
         .store()
   }
 

@@ -15,7 +15,6 @@ import com.github.bjoernpetersen.jmusicbot.client.model.Song
 import com.github.bjoernpetersen.q.R
 import com.github.bjoernpetersen.q.ui.fragments.SongFragment.SongFragmentInteractionListener
 
-
 /**
  * A fragment representing a list of Items.
  *
@@ -75,7 +74,7 @@ class SongFragment : Fragment() {
    */
   interface SongFragmentInteractionListener {
 
-    fun onClick(song: Song, enable: (Boolean) -> Unit)
+    fun onClick(song: Song, enable: EnableCallback)
     fun isEnabled(song: Song): Boolean
     fun isEnabled(song: Song, @IdRes menuItemId: Int): Boolean
     fun onContextMenu(song: Song, menuItem: MenuItem, enable: (Boolean) -> Unit): Boolean

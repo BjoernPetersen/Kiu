@@ -49,4 +49,12 @@
   <string name="server_error">Ein unbekannter Server-Fehler ist aufgetreten</string>
   <string name="skip">Überspringen</string>
   <string name="star">Merken</string>
+  <string name="title_star">Markierte Songs</string>
+  <string name="unstar">Löschen</string>
+  <string name="show_starred">Markierte Songs anzeigen</string>
+  <string name="unstar_error">Konnte Markierung nicht löschen</string>
+  <string name="enqueue_error">Hinzufügen fehlgeschlagen</string>
+  <string name="login_error">Kann mit aktuellen Benutzerdaten nicht einloggen</string>
+  <string name="google_search">Google-Suche</string>
+  <string name="google_search_specific">Genauere Google-Suche</string>
 </resources>

@@ -4,6 +4,9 @@
     android:id="@+id/move"
     android:title="@string/move" />
   <item
+    android:id="@+id/star_button"
+    android:title="@string/star" />
+  <item
     android:id="@+id/search_related"
     android:title="@string/search_related" />
   <item

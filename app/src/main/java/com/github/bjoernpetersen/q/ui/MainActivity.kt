@@ -113,6 +113,10 @@ class MainActivity : AppCompatActivity(), QueueEntryListener, QueueEntryAddButto
           })
       true
     }
+    R.id.show_starred -> {
+      startActivity(Intent(this, StarActivity::class.java))
+      true
+    }
     R.id.logout -> {
       Config.reset()
       startActivity(Intent(this, LoginActivity::class.java))

@@ -11,13 +11,11 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:orientation="horizontal">
-    <!-- TODO show star button -->
     <FrameLayout
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
       android:padding="@dimen/textMargin"
-      android:background="@color/colorPrimaryLighter"
-      android:visibility="gone">
+      android:background="@color/colorPrimaryLighter">
       <Button
         android:id="@+id/star_button"
         android:layout_width="match_parent"

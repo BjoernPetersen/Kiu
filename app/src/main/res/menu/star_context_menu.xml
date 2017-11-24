@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+    android:id="@+id/enqueue_button"
+    android:title="@string/enqueue" />
+  <item
+    android:id="@+id/google"
+    android:title="@string/google_search" />
+  <item
+    android:id="@+id/google_specific"
+    android:title="@string/google_search_specific" />
+  <item
+    android:id="@+id/unstar"
+    android:title="@string/unstar" />
+</menu>

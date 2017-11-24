@@ -17,6 +17,7 @@ import com.github.bjoernpetersen.q.api.ApiKeyListener
 import com.github.bjoernpetersen.q.api.Auth
 import com.github.bjoernpetersen.q.api.Connection
 import com.github.bjoernpetersen.q.api.Permission
+import com.github.bjoernpetersen.q.star.StarredAccess
 import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.ObserverUser
 import com.github.bjoernpetersen.q.ui.isVisible
@@ -36,6 +37,8 @@ class PlayerFragment : Fragment(), ObserverUser {
 
   override lateinit var observers: MutableList<WeakReference<Disposable>>
   private var apiKeyListener: ApiKeyListener? = null
+  private var currentState: PlayerState? = null
+  private var starAccess: StarredAccess? = null
 
   override fun initObservers() {
     observers = ArrayList()
@@ -49,37 +52,7 @@ class PlayerFragment : Fragment(), ObserverUser {
 
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    skip_button.setOnClickListener {
-      val close: (SwipeRevealLayout) -> Unit = {
-        skip_progress.clearAnimation()
-        skip_progress.isVisible = false
-        skip_button.isVisible = true
-        it.setLockDrag(false)
-      }
-
-      val swipeView = root
-      skip_button.isVisible = false
-      skip_progress.isVisible = true
-      skip_progress.animate()
-
-      swipeView.open(true)
-      swipeView.setLockDrag(true)
-
-      Single.fromCallable { Auth.apiKey }
-          .subscribeOn(Schedulers.io())
-          .map { it.raw }
-          .map { Connection.nextSong(it) }
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe({
-            updatedState(it)
-            close(swipeView)
-          }, {
-            Log.d(this@PlayerFragment.tag(), "Skipping song failed", it)
-            Toast.makeText(context, R.string.skip_error, Toast.LENGTH_SHORT).show()
-            if (it is ApiException && it.code == 403) Auth.clear()
-            close(swipeView)
-          }) // TODO store?
-    }
+    skip_button.setOnClickListener { skip() }
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -102,9 +75,12 @@ class PlayerFragment : Fragment(), ObserverUser {
     Auth.registerListener(apiKeyListener)
     apiKeyListener(Auth.apiKeyNoRefresh)
     this.apiKeyListener = apiKeyListener
+    starAccess = StarredAccess.instance(context.applicationContext)
+    star_button.setOnClickListener { starCurrent(); root.close(true) }
   }
 
   override fun onStop() {
+    starAccess = null
     disposeObservers()
     apiKeyListener?.let { Auth.unregisterListener(it) }
     super.onStop()
@@ -145,36 +121,53 @@ class PlayerFragment : Fragment(), ObserverUser {
         .store()
   }
 
-  private fun next() {
-    Single.fromCallable { Auth.hasPermission(Permission.SKIP) }
+  private fun skip() {
+    val close: (SwipeRevealLayout) -> Unit = {
+      skip_progress.clearAnimation()
+      skip_progress.isVisible = false
+      skip_button.isVisible = true
+      it.setLockDrag(false)
+    }
+
+    val swipeView = root
+    skip_button.isVisible = false
+    skip_progress.isVisible = true
+    skip_progress.animate()
+
+    swipeView.open(true)
+    swipeView.setLockDrag(true)
+
+    Single.fromCallable { Auth.apiKey }
         .subscribeOn(Schedulers.io())
+        .map { it.raw }
+        .map { Connection.nextSong(it) }
         .observeOn(AndroidSchedulers.mainThread())
-        .retry(2)
         .subscribe({
-          if (it && isVisible) {
-            val toast: Toast = Toast
-                .makeText(context, R.string.skipping_current_song, Toast.LENGTH_SHORT)
-                .apply { show() }
-            Observable.fromCallable { Auth.apiKey.raw }
-                .subscribeOn(Schedulers.io())
-                .map { Connection.nextSong(it) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { updatedState(it) },
-                    {
-                      toast.cancel()
-                      Log.i(tag(), "Could not skip current song", it)
-                      Toast.makeText(context, R.string.skip_error, Toast.LENGTH_SHORT).show()
-                      Auth.clear()
-                    }
-                )
-                .store()
-          }
-        }, { Log.d(tag(), "Could not retrieve permissions") })
-        .store()
+          updatedState(it)
+          close(swipeView)
+        }, {
+          Log.d(this@PlayerFragment.tag(), "Skipping song failed", it)
+          Toast.makeText(context, R.string.skip_error, Toast.LENGTH_SHORT).show()
+          if (it is ApiException && it.code == 403) Auth.clear()
+          close(swipeView)
+        }) // TODO store?
+  }
+
+  private fun starCurrent() {
+    currentState?.let { state ->
+      starAccess?.let { access ->
+        access.add(state.songEntry.song)
+            .subscribe({
+              Log.d(tag(), "Success")
+            }, {
+              Log.d(tag(), "Error", it)
+            })
+      }
+    }
   }
 
   private fun updatedState(playerState: PlayerState) {
+    currentState = playerState
     // update play/pause button
     val state = playerState.state
     val playPause = play_pause
