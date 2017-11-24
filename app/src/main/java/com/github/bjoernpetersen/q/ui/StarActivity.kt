@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.annotation.IdRes
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.MenuItem
@@ -110,6 +111,9 @@ class StarActivity : AppCompatActivity(), ObserverUser,
       .map { it.song }
       .none { it.id == song.id && it.provider.id == song.provider.id }
 
-  override fun isEnabled(song: Song, menuItemId: Int): Boolean = true
+  override fun isEnabled(song: Song, @IdRes menuItemId: Int): Boolean = when (menuItemId) {
+    R.id.enqueue_button -> isEnabled(song)
+    else -> true
+  }
 }
 
