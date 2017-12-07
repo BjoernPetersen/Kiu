@@ -210,6 +210,10 @@ class SearchActivity : AppCompatActivity(), SearchFragment.OnFragmentInteraction
     R.id.enqueue_button -> isEnabled(song)
     else -> true
   }
+
+  override fun onSongListTouch() {
+    hideKeyboard()
+  }
 }
 
 internal class SearchFragmentPagerAdapter(fm: FragmentManager,

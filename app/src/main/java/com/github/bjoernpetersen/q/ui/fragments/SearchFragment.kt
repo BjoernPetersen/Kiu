@@ -30,7 +30,7 @@ class SearchFragment : Fragment() {
 
   var provider: NamedPlugin? = null
     private set
-  var searchObserver: Disposable? = null
+  private var searchObserver: Disposable? = null
   private var lastQuery: String? = null
   private var mListener: OnFragmentInteractionListener? = null
 

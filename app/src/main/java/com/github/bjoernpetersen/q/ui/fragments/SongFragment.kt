@@ -78,6 +78,7 @@ class SongFragment : Fragment() {
     fun isEnabled(song: Song): Boolean
     fun isEnabled(song: Song, @IdRes menuItemId: Int): Boolean
     fun onContextMenu(song: Song, menuItem: MenuItem, enable: (Boolean) -> Unit): Boolean
+    fun onSongListTouch() = Unit
   }
 
   companion object {

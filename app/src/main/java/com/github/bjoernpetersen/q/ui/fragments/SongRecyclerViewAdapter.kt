@@ -64,6 +64,7 @@ class SongRecyclerViewAdapter(private val mValues: List<Song>,
       if (mListener?.isEnabled(song) == true)
         mListener.onClick(song, { view.isActive = it })
     }
+    view.setOnTouchListener { _, _ -> false.also { mListener?.onSongListTouch() } }
 
     if (contextRes == null) {
       contextButton.isVisible = false
