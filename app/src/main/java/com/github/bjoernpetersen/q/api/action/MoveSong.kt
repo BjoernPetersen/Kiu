@@ -14,6 +14,7 @@ import com.github.bjoernpetersen.q.tag
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toSingle
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
 
 class MoveSong(val queueEntry: QueueEntry, val index: Int = 0) : Callable<List<QueueEntry>> {
@@ -24,6 +25,7 @@ class MoveSong(val queueEntry: QueueEntry, val index: Int = 0) : Callable<List<Q
   }
 
   fun defaultAction(context: Context): Disposable = toSingle()
+      .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe({
         QueueState.queue = it
@@ -32,6 +34,7 @@ class MoveSong(val queueEntry: QueueEntry, val index: Int = 0) : Callable<List<Q
         when (it) {
           is AuthException -> Log.d(tag(), "Could not get token", it)
           is ApiException -> Log.d(tag(), "Could not move entry (code: ${it.code}", it)
+          else -> Log.i(tag(), "Error moving entry", it)
         }
         Toast.makeText(context, R.string.move_error, Toast.LENGTH_SHORT).show()
       })

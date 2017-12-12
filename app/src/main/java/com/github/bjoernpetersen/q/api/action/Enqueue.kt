@@ -16,9 +16,9 @@ import com.github.bjoernpetersen.q.api.RegisterException
 import com.github.bjoernpetersen.q.tag
 import com.github.bjoernpetersen.q.ui.LoginActivity
 import com.github.bjoernpetersen.q.ui.fragments.EnableCallback
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.Callable
 
@@ -29,7 +29,7 @@ class Enqueue(private val song: Song) : Callable<List<QueueEntry>> {
 
   fun defaultAction(context: Context, enable: EnableCallback): Disposable {
     enable(false)
-    return Single.fromCallable(this)
+    return toSingle()
         .subscribeOn(Schedulers.io())
         .retry({ times, e ->
           if (times < 2 && e is ApiException && e.code == 401) {

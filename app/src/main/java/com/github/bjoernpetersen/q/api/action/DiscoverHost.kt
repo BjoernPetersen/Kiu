@@ -6,6 +6,7 @@ import com.github.bjoernpetersen.q.tag
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.toSingle
+import io.reactivex.schedulers.Schedulers
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.InetAddress
@@ -33,6 +34,7 @@ class DiscoverHost : Callable<String> {
 
   fun defaultAction(alsoOnSuccess: (String) -> Unit = {},
       alsoOnError: (Throwable) -> Unit = {}): Disposable = toSingle()
+      .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe({
         if (Config.host != it) {
