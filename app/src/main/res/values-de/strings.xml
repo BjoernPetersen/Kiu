@@ -15,7 +15,7 @@
   <string name="needs_password">Ein Passwort wird benötigt</string>
   <string name="wrong_password">Falsches Passwort</string>
   <string name="logout">Logout</string>
-  <string name="upgrade">Nutzer permanent machen</string>
+  <string name="upgrade">Ein Passwort setzen</string>
   <string name="unknown_error">Ein unbekannter Fehler ist aufgetreten</string>
   <string name="invalid_password">Ungültiges Passwort</string>
   <string name="invalid_credentials">Die alten Zugangsdaten waren falsch. Versuche dich aus- und wieder einzuloggen.</string>

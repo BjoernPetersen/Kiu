@@ -5,9 +5,9 @@
   <string name="queue">Queue</string>
   <string name="title_search">Search</string>
   <string name="no_provider_found">No providers found</string>
-  <string name="search_hint">Search for songs</string>
+  <string name="search_hint">Search for songs…</string>
   <string name="username_hint">Enter your name</string>
-  <string name="login">Login</string>
+  <string name="login">Log in</string>
   <string name="title_login">Login</string>
   <string name="error_empty">Can\'t be empty</string>
   <string name="enter_your_password">Enter your password</string>
@@ -15,7 +15,7 @@
   <string name="needs_password">You need to enter your password</string>
   <string name="wrong_password">Wrong password</string>
   <string name="logout">Logout</string>
-  <string name="upgrade">Make user permanent</string>
+  <string name="upgrade">Set a password</string>
   <string name="unknown_error">An unknown error occurred</string>
   <string name="invalid_password">Invalid password</string>
   <string name="invalid_credentials">The old credentials were invalid. Try logging out and in again.</string>
