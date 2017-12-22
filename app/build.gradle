@@ -10,7 +10,7 @@ android {
         applicationId "com.github.bjoernpetersen.q"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 13
+        versionCode 14
         versionName "0.9.0-alpha"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
