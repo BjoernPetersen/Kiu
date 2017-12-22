@@ -70,7 +70,7 @@ class QueueFragment : Fragment() {
     listener = { _, newQueue: List<QueueEntry> -> updateQueue(newQueue) }
     QueueState.addListener(listener!!)
 
-    updater = startUpdater()
+    updater = startUpdater(context!!)
   }
 
   override fun onStop() {
@@ -105,7 +105,7 @@ class QueueFragment : Fragment() {
     dataBinder?.items = queue
   }
 
-  private fun startUpdater() = Observable.interval(2, TimeUnit.SECONDS)
+  private fun startUpdater(context: Context) = Observable.interval(2, TimeUnit.SECONDS)
       .subscribeOn(Schedulers.io())
       .map { Connection.getQueue() }
       .observeOn(AndroidSchedulers.mainThread())
@@ -115,7 +115,8 @@ class QueueFragment : Fragment() {
         Log.d(tag(), "Could not retrieve Queue.")
         when (it) {
           is ApiException -> if (it.cause is IOException) {
-            DiscoverHost().defaultAction()
+            Log.d(tag(), "Trying to discover host...")
+            DiscoverHost(context).defaultAction()
           }
           is RuntimeException -> Log.wtf(tag(), it)
         }

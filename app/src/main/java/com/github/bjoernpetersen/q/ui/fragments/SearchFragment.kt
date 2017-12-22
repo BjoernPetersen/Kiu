@@ -84,7 +84,8 @@ class SearchFragment : Fragment() {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnError {
-          if (it.cause is SocketTimeoutException) DiscoverHost().defaultAction()
+          val context: Context? = context
+          if (context != null && it.cause is SocketTimeoutException) DiscoverHost(context).defaultAction()
         }
         .subscribe(this::showResults, {
           Log.d(tag(), "Error retrieving search results", it)

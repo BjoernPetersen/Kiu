@@ -1,5 +1,7 @@
 package com.github.bjoernpetersen.q.api.action
 
+import android.content.Context
+import android.net.wifi.WifiManager
 import android.util.Log
 import com.github.bjoernpetersen.q.api.Config
 import com.github.bjoernpetersen.q.tag
@@ -15,20 +17,28 @@ import java.util.concurrent.Callable
 
 private const val GROUP_ADDRESS = "224.0.0.142"
 private const val PORT = 42945
+private const val LOCK_TAG = "kiu_broadcast"
 
-class DiscoverHost : Callable<String> {
+class DiscoverHost(private val context: Context) : Callable<String> {
   @Throws(IOException::class)
   override fun call(): String {
-    MulticastSocket(PORT).use { socket ->
-      val groupAddress = InetAddress.getByName(GROUP_ADDRESS)
-      socket.joinGroup(groupAddress)
-      socket.soTimeout = 4000
-      val buffer = ByteArray(8)
-      val packet = DatagramPacket(buffer, buffer.size)
-      socket.broadcast = true
-      socket.receive(packet)
-      socket.leaveGroup(groupAddress)
-      return packet.address.hostAddress
+    val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    val lock = wifiManager.createMulticastLock(LOCK_TAG)
+    lock.acquire()
+    try {
+      MulticastSocket(PORT).use { socket ->
+        val groupAddress = InetAddress.getByName(GROUP_ADDRESS)
+        socket.joinGroup(groupAddress)
+        socket.soTimeout = 4000
+        val buffer = ByteArray(8)
+        val packet = DatagramPacket(buffer, buffer.size)
+        socket.broadcast = true
+        socket.receive(packet)
+        socket.leaveGroup(groupAddress)
+        return packet.address.hostAddress
+      }
+    } finally {
+      lock.release()
     }
   }
 

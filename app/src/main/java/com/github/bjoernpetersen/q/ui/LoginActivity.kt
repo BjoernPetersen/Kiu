@@ -89,7 +89,7 @@ class LoginActivity : AppCompatActivity() {
             is ConnectionException -> {
               Log.d(tag(), "Connection exception", it)
               Toast.makeText(this, R.string.trying_discover, Toast.LENGTH_SHORT).show()
-              DiscoverHost().defaultAction({
+              DiscoverHost(this).defaultAction({
                 Toast.makeText(this, R.string.discover_success, Toast.LENGTH_SHORT).show()
                 setInputEnabled(true)
               }, {
