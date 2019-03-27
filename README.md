@@ -5,7 +5,7 @@
 
 Android Client for [JMusicBot](https://github.com/BjoernPetersen/MusicBot)
 
-## WARNING: Deprectated
+## WARNING: Deprecated
 
 This project is no longer under development and does not support newer versions of the MusicBot.
 Use [EnQ](https://github.com/IIIuminator/EnQ) instead.
