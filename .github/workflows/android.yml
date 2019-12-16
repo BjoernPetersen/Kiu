@@ -1,0 +1,27 @@
+name: Android
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install flutter
+        run: git clone https://github.com/flutter/flutter.git ~/flutter --branch v1.11.0
+      - name: Add Flutter to PATH
+        run: echo "::add-path::~/flutter/bin"
+      - name: Check out repo
+        uses: actions/checkout@v1
+      - name: Get dependencies
+        run: flutter pub get
+      - name: Save key password
+        run: echo $key_pass > android/key.properties
+        env:
+          key_pass: ${{ secrets.key_pass }}
+      - name: Build apk
+        run: flutter build appbundle --release
+      - name: Save App bundle
+        uses: actions/upload-artifact@v1
+        with:
+          name: appbundle
+          path: build/app/outputs/bundle/debug/app-debug.aab
