@@ -8,6 +8,9 @@ import 'package:kiu/data/preferences.dart';
 import 'package:kiu/data/urls.dart';
 import 'package:kiu/view/widget/input_dialog.dart';
 import 'package:kiu/view/widget/loader.dart';
+import 'package:kiu/view/page/overflow.dart';
+
+import 'overflow.dart';
 
 class BotPage extends StatefulWidget {
   @override
@@ -52,7 +55,9 @@ class _BotPageState extends State<BotPage> {
         title: Text('Bot detection'),
         actions: <Widget>[
           _createRefreshButton(),
+          createOverflowItems(),
         ],
+
       );
 
   Future<void> _setIp(String ip) async {
