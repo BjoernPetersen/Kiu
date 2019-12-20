@@ -40,6 +40,10 @@ class _SearchPageState extends State<SearchPage> {
     } on IOException {
       connectionManager.reset();
       return [];
+    } catch (e) {
+      // TODO handle StateError
+      print(e);
+      return [];
     }
   }
 

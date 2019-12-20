@@ -53,11 +53,6 @@ class _LoadingDelegateState<T> extends State<LoadingDelegate<T>> {
   Widget build(BuildContext context) {
     if (_item == null) {
       if (_isError) {
-        try {
-          Material.of(context);
-        } catch (e) {
-          return Text("Error");
-        }
         return IconButton(
           icon: Icon(Icons.refresh),
           onPressed: _load,

@@ -14,8 +14,14 @@ import 'package:kiu/view/widget/suggestions_content.dart';
 
 class SuggestionsPage extends StatelessWidget {
   Future<List<NamedPlugin>> _loadSuggesters() async {
-    final bot = await service<ConnectionManager>().getService();
-    return await bot.getSuggesters();
+    try {
+      final bot = await service<ConnectionManager>().getService();
+      return await bot.getSuggesters();
+    } catch (e) {
+      // TODO handle this
+      print(e);
+      return [];
+    }
   }
 
   Widget build(BuildContext context) => LoadingDelegate(
