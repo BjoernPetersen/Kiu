@@ -43,7 +43,10 @@ class _PlayerControlState extends State<PlayerControl> {
   Widget build(BuildContext context) {
     final state = _state;
     if (state == null) {
-      return Container();
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Center(child: Text('No data')),
+      );
     }
     final type = state.state;
     switch (type) {
@@ -52,7 +55,7 @@ class _PlayerControlState extends State<PlayerControl> {
         return _createControl(_songInfo(state.songEntry), state);
       case PlayerStateType.stop:
       case PlayerStateType.error:
-        return _createControl(Container(), state);
+        return _createControl(Center(child: Text('Player is stopped')), state);
     }
   }
 
