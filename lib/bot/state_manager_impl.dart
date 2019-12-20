@@ -72,6 +72,7 @@ class _PeriodicChecker<T> {
 
   _stop() {
     _timer.cancel();
+    _timer = null;
     _job = null;
   }
 

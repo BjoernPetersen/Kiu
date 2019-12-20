@@ -24,6 +24,7 @@ class _QueueListState extends State<QueueList> {
   void initState() {
     super.initState();
     _tokenListener = () => this.setState(() {});
+    connectionManager.addTokenListener(_tokenListener);
     final manager = service<StateManager>();
     _queue = manager.lastQueue ?? [];
     _queueSubscription = manager.queue.listen(_onQueueChange);
@@ -37,9 +38,10 @@ class _QueueListState extends State<QueueList> {
   }
 
   _onQueueChange(List<SongEntry> queue) {
-    setState(() {
-      _queue = queue;
-    });
+    if (_queue != queue)
+      setState(() {
+        _queue = queue;
+      });
   }
 
   Widget _buildQueueItem(BuildContext context, int index) {

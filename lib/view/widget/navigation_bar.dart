@@ -13,7 +13,9 @@ class NavigationBar extends StatelessWidget {
   Widget build(BuildContext context) => BottomNavigationBar(
         currentIndex: category.index,
         type: BottomNavigationBarType.fixed,
+        // TODO remove sublist when favorites are implemented
         items: BottomCategory.values
+            .sublist(0, 3)
             .map((category) => BottomNavigationBarItem(
                   icon: category.icon,
                   activeIcon: category.activeIcon,

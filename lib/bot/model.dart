@@ -100,6 +100,17 @@ class SongEntry {
 
   factory SongEntry.fromJson(Map<String, dynamic> json) =>
       _$SongEntryFromJson(json);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SongEntry &&
+          runtimeType == other.runtimeType &&
+          song == other.song &&
+          userName == other.userName;
+
+  @override
+  int get hashCode => song.hashCode ^ userName.hashCode;
 }
 
 @JsonSerializable()

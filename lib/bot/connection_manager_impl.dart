@@ -90,7 +90,6 @@ class Token {
     final List<dynamic> permissions = parsed.getClaim("permissions");
     final parsedPermissions =
         permissions.map(parsePermission).where((it) => it != null).toSet();
-    print("PERMISSION: $parsedPermissions");
     return Token(value, expiration, parsedPermissions);
   }
 

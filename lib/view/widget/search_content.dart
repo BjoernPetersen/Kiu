@@ -20,6 +20,7 @@ class SearchContent extends StatefulWidget {
 class _SearchContentState extends State<SearchContent> {
   final String providerId;
   final TextEditingController query;
+  String previousQuery;
   CancelableOperation operation;
   List<Song> results;
 
@@ -28,23 +29,23 @@ class _SearchContentState extends State<SearchContent> {
   @override
   void initState() {
     super.initState();
-    if (query.text.isNotEmpty) {
-      _onQueryChange();
-    }
+    _onQueryChange();
     query.addListener(_onQueryChange);
   }
 
   _onQueryChange() {
+    final query = this.query.text.trim();
+    if (query == previousQuery) return;
+    previousQuery = query;
     operation?.cancel();
     setState(() {
       results = null;
     });
-    final query = this.query.text;
     if (query.isEmpty) {
       operation = null;
     } else {
       operation = CancelableOperation.fromFuture(_search(query)).then((it) {
-        if (it != null) {
+        if (it != null && mounted) {
           setState(() {
             results = it;
           });

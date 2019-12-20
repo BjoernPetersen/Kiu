@@ -46,6 +46,10 @@ abstract class BotService {
   Future<List<SongEntry>> enqueue(
       @Query("songId") String songId, @Query("providerId") String providerId);
 
+  @DELETE("/player/queue")
+  Future<List<SongEntry>> dequeue(
+      @Query("songId") String songId, @Query("providerId") String providerId);
+
   @PUT("/player")
   Future<PlayerState> changePlayerState(@Body() PlayerStateChange change);
 }
