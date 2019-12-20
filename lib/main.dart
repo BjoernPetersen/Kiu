@@ -30,7 +30,6 @@ class Kiu extends StatelessWidget {
         primaryColor: Color(0xFFBBC0CA),
       ),
       initialRoute: _initialRoute(),
-      showPerformanceOverlay: true,
       routes: {
         "/queue": (_) => QueuePage(),
         "/selectBot": (_) => BotPage(),
