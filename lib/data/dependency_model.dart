@@ -5,6 +5,8 @@ import 'package:kiu/bot/discovery_service.dart';
 import 'package:kiu/bot/discovery_service_impl.dart';
 import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/bot/login_service_impl.dart';
+import 'package:kiu/bot/state_manager.dart';
+import 'package:kiu/bot/state_manager_impl.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -19,6 +21,8 @@ class DependencyModel {
     service.registerSingleton<LoginService>(LoginServiceImpl());
     service.registerSingleton<DiscoveryService>(DiscoveryServiceImpl());
     service.registerSingleton<ConnectionManager>(ConnectionManagerImpl());
+    service.registerSingleton<StateManager>(
+        StateManagerImpl(service<ConnectionManager>()));
     final instanceId = Preference.install_id.getString();
     if (instanceId == null) {
       final uuid = Uuid(options: {'grng': UuidUtil.cryptoRNG});

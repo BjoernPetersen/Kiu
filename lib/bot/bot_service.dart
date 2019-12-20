@@ -15,9 +15,22 @@ abstract class BotService {
 
   @POST("/user")
   Future<String> register(@Body() RegisterCredentials credentials);
+
+  @GET("/player")
+  Future<PlayerState> getPlayerState();
+
+  @GET("/player/queue")
+  Future<List<SongEntry>> getQueue();
+
+  @PUT("/player/queue/order")
+  Future<List<SongEntry>> moveEntry(
+    @Query("index") int index,
+    @Query("songId") String songId,
+    @Query("providerId") String providerId,
+  );
 }
 
 String get baseUrl {
   final ip = Preference.bot_ip.getString();
-  return ip == null ? null : "http://${Preference.bot_ip.getString()}";
+  return ip == null ? null : "http://${Preference.bot_ip.getString()}:42945";
 }

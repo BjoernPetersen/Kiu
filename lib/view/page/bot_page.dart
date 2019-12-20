@@ -55,7 +55,6 @@ class _BotPageState extends State<BotPage> {
         title: Text('Bot detection'),
         actions: <Widget>[
           _createRefreshButton(),
-          createOverflowItems(),
         ],
 
       );

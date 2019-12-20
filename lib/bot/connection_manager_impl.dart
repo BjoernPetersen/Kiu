@@ -1,16 +1,26 @@
+import 'dart:async';
+
 import 'package:corsac_jwt/corsac_jwt.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/bot/permission.dart';
+import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/data/preferences.dart';
 
 class ConnectionManagerImpl implements ConnectionManager {
   BotService _service;
-  Token _token;
+  final ValueNotifier<Token> _token = ValueNotifier(null);
+
+  ConnectionManagerImpl() {
+    _token.addListener(() => Preference.token.setString(_token.value.value));
+  }
 
   @override
   bool hasPermission(Permission permission) =>
-      _token?.permissions?.contains(permission);
+      _token.value?.permissions?.contains(permission) ?? false;
 
   @override
   Future<BotService> getService() async {
@@ -23,11 +33,22 @@ class ConnectionManagerImpl implements ConnectionManager {
   }
 
   @override
+  addTokenListener(Function() listener) {
+    _token.addListener(listener);
+  }
+
+  @override
+  removeTokenListener(Function() listener) {
+    _token.removeListener(listener);
+  }
+
+  @override
   bool hasBot() => baseUrl != null;
 
   @override
   void reset() {
     this._service = null;
+    this._token.value = null;
   }
 
   Future<BotService> _createService() async {
@@ -35,14 +56,23 @@ class ConnectionManagerImpl implements ConnectionManager {
     if (_baseUrl == null) {
       throw StateError('No bot selected');
     }
-    final token = _token ?? await _refreshToken();
+    final token = _token.value ?? await _refreshToken();
 
-    final options = BaseOptions(headers: {"Authorization": "Bearer $token"});
+    final options = BaseOptions(
+      headers: {"Authorization": "Bearer $token"},
+      connectTimeout: 4000,
+    );
     return BotService(Dio(options), _baseUrl);
   }
 
   Future<Token> _refreshToken() async {
-    // TODO refresh
+    final value = await service<LoginService>().login(
+      Preference.username.getString(),
+      Preference.password.getString(),
+    );
+    final token = Token.fromValue(value);
+    _token.value = token;
+    return token;
   }
 }
 
@@ -57,8 +87,10 @@ class Token {
     final parsed = JWT.parse(value);
     final expiration =
         DateTime.fromMillisecondsSinceEpoch(parsed.expiresAt * 1000);
-    final List<String> permissions = parsed.getClaim("permissions");
-    final parsedPermissions = permissions.map(parsePermission).toSet();
+    final List<dynamic> permissions = parsed.getClaim("permissions");
+    final parsedPermissions =
+        permissions.map(parsePermission).where((it) => it != null).toSet();
+    print("PERMISSION: $parsedPermissions");
     return Token(value, expiration, parsedPermissions);
   }
 

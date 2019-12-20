@@ -24,7 +24,7 @@ enum Permission {
   EXIT,
 }
 
-Permission parsePermission(String value) {
+Permission parsePermission(dynamic value) {
   switch (value) {
     case 'skip':
       return Permission.SKIP;
@@ -41,6 +41,7 @@ Permission parsePermission(String value) {
     case 'exit':
       return Permission.EXIT;
     default:
-      throw ArgumentError('Unknown permission: $value');
+      print('Unknown permission: $value');
+      return null;
   }
 }

@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/page/overflow.dart';
 import 'package:kiu/view/widget/loader.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,10 +22,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+
+    _name.text = Preference.username.getString();
+
     _name.addListener(() => setState(() {
           _nameError = InputError.none;
           _passError = InputError.none;
-          // _requiresPassword = false;
+          Preference.username.setString(_name.text);
+          _requiresPassword = false;
         }));
     _password.addListener(() => setState(() {
           _passError = InputError.none;
@@ -42,12 +47,15 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text("Sign in"),
+          actions: <Widget>[
+            createOverflowItems(context, hidden: [Choice.logout]),
+          ],
         ),
         floatingActionButton: _isLoading
             ? null
             : FloatingActionButton(
                 child: Icon(Icons.navigate_next),
-                onPressed: _performSignIn,
+                onPressed: () => _performSignIn(context),
                 tooltip: 'Continue',
               ),
         body: _isLoading ? Loader(text: "Please wait") : _createBody(context),
@@ -75,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
       TextField(
         controller: _name,
         decoration: InputDecoration(
-          hintText: "Enter your name",
+          hintText: "Your name",
           errorText: _nameError.text,
         ),
       ),
@@ -86,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
         obscureText: true,
         controller: _password,
         decoration: InputDecoration(
-          hintText: "Enter a password",
+          hintText: "A password",
           errorText: _passError.text,
         ),
       ));
@@ -95,9 +103,9 @@ class _LoginPageState extends State<LoginPage> {
     return result;
   }
 
-  Future<void> _performSignIn() async {
-    final text = _name.value.text.trim();
-    if (text.isEmpty) {
+  Future<void> _performSignIn(BuildContext context) async {
+    final name = _name.value.text.trim();
+    if (name.isEmpty) {
       setState(() {
         _nameError = InputError.blank;
       });
@@ -106,14 +114,18 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = true;
       });
 
+      final navigator = Navigator.of(context);
       final login = service<LoginService>();
       try {
         final password = _requiresPassword ? _password.value.text : null;
-        final token = await login.login(text, password);
+        final token = await login.login(name, password);
+        Preference.username.setString(name);
+        Preference.password.setString(password);
         Preference.token.setString(token);
+        navigator.pushReplacementNamed('/queue');
       } on MissingBotException {
         Fluttertoast.showToast(msg: 'No bot selected');
-        Navigator.pushNamed(context, "/selectBot");
+        navigator.pushNamed("/selectBot");
       } on IOException {
         Fluttertoast.showToast(
             msg: "IO error. Please try again or choose different bot");

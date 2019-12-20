@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/page/bot_page.dart';
 import 'package:kiu/view/page/login_page.dart';
+import 'package:kiu/view/page/queue_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,10 +29,21 @@ class Kiu extends StatelessWidget {
         // is not restarted.
         primaryColor: Color(0xFFBBC0CA),
       ),
-      home: LoginPage(),
+      initialRoute: _initialRoute(),
+      showPerformanceOverlay: true,
       routes: {
+        "/queue": (_) => QueuePage(),
         "/selectBot": (_) => BotPage(),
+        "/login": (_) => LoginPage(),
       },
     );
+  }
+}
+
+String _initialRoute() {
+  if (Preference.username == null) {
+    return "/login";
+  } else {
+    return "/queue";
   }
 }

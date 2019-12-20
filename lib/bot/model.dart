@@ -90,3 +90,32 @@ class Volume {
 
   factory Volume.fromJson(Map<String, dynamic> json) => _$VolumeFromJson(json);
 }
+
+@JsonSerializable()
+class PlayerState {
+  @JsonKey(fromJson: _stateFromJson)
+  final PlayerStateType state;
+  final SongEntry songEntry;
+  final int progress;
+
+  PlayerState({this.state, this.songEntry, this.progress});
+
+  factory PlayerState.fromJson(Map<String, dynamic> json) =>
+      _$PlayerStateFromJson(json);
+}
+
+enum PlayerStateType { play, pause, stop, error }
+
+PlayerStateType _stateFromJson(dynamic value) {
+  switch (value) {
+    case "PLAY":
+      return PlayerStateType.play;
+    case "PAUSE":
+      return PlayerStateType.pause;
+    case "STOP":
+      return PlayerStateType.stop;
+    case "ERROR":
+    default:
+      return PlayerStateType.error;
+  }
+}

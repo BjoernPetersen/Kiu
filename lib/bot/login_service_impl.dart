@@ -13,7 +13,8 @@ class LoginServiceImpl implements LoginService {
     if (_baseUrl == null) {
       throw MissingBotException();
     }
-    return BotService(Dio(), _baseUrl);
+    final options = BaseOptions(connectTimeout: 4000);
+    return BotService(Dio(options), _baseUrl);
   }
 
   String basicHeader(String username, String password) {
@@ -29,6 +30,7 @@ class LoginServiceImpl implements LoginService {
       case DioErrorType.SEND_TIMEOUT:
       case DioErrorType.RECEIVE_TIMEOUT:
       case DioErrorType.DEFAULT:
+        print(e);
         throw IOException();
       default:
         return;

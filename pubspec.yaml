@@ -31,6 +31,10 @@ dependencies:
   multicast_lock: ^0.0.5
   fluttertoast: ^3.0.0
   uuid: ^2.0.0
+  duration: ^2.0.0
+  reorderables: ^0.2.0
+  sprintf: ^4.0.0
+  cached_network_image: ^2.0.0-rc
 
 dev_dependencies:
   flutter_test:
