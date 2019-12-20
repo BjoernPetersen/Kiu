@@ -1,16 +1,9 @@
-# kiu
+<img src="logo/kiu_noname.png" alt="Kiu Logo" height="100px" align="right"/>
 
-Android client for MusicBot
+# Kiu [![GitHub (pre-)release](https://img.shields.io/github/release/BjoernPetersen/Kiu/all.svg)](https://github.com/BjoernPetersen/Kiu/releases) [![GitHub license](https://img.shields.io/github/license/BjoernPetersen/Kiu.svg)](https://github.com/BjoernPetersen/Kiu/blob/master/LICENSE)
 
-## Getting Started
+Android Client for [MusicBot](https://github.com/BjoernPetersen/MusicBot).
 
-This project is a starting point for a Flutter application.
+## Alpha test
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+[You can become an alpha tester here.](http://kiu.party)
