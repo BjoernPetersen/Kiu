@@ -30,7 +30,6 @@ class LoginServiceImpl implements LoginService {
       case DioErrorType.SEND_TIMEOUT:
       case DioErrorType.RECEIVE_TIMEOUT:
       case DioErrorType.DEFAULT:
-        print(e);
         throw IOException();
       default:
         return;

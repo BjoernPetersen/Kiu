@@ -85,9 +85,8 @@ class _PeriodicChecker<T> {
   }
 
   Future<void> check() async {
-    // TODO this might fail
-    final service = await connectionManager.getService();
     try {
+      final service = await connectionManager.getService();
       final result = await call(service)
           .timeout(Duration(seconds: 5), onTimeout: () => null);
       update(result);

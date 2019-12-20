@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kiu/view/page/queue_page.dart';
+import 'package:kiu/view/page/search_page.dart';
 import 'package:kiu/view/page/suggestions_page.dart';
 
 class NavigationBar extends StatelessWidget {
@@ -74,6 +75,9 @@ extension on BottomCategory {
         break;
       case BottomCategory.suggestions:
         _routeTo(context, (_) => SuggestionsPage());
+        break;
+      case BottomCategory.search:
+        _routeTo(context, (_) => SearchPage());
         break;
       default:
         print('Page not implemented: $this');

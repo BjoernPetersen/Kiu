@@ -15,7 +15,7 @@ class ConnectionManagerImpl implements ConnectionManager {
   final ValueNotifier<Token> _token = ValueNotifier(null);
 
   ConnectionManagerImpl() {
-    _token.addListener(() => Preference.token.setString(_token.value.value));
+    _token.addListener(() => Preference.token.setString(_token.value?.value));
   }
 
   @override

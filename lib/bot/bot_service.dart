@@ -35,6 +35,13 @@ abstract class BotService {
   @GET("/suggester/{id}")
   Future<List<Song>> getSuggestions(@Path("id") String suggesterId);
 
+  @GET("/provider")
+  Future<List<NamedPlugin>> getProviders();
+
+  @GET("/provider/{id}")
+  Future<List<Song>> search(
+      @Path("id") String providerId, @Query("query") String query);
+
   @PUT("/player/queue")
   Future<List<SongEntry>> enqueue(
       @Query("songId") String songId, @Query("providerId") String providerId);

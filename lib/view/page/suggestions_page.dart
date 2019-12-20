@@ -12,12 +12,7 @@ import 'package:kiu/view/widget/navigation_bar.dart';
 import 'package:kiu/view/widget/save_tab.dart';
 import 'package:kiu/view/widget/suggestions_content.dart';
 
-class SuggestionsPage extends StatefulWidget {
-  @override
-  _SuggestionsPageState createState() => _SuggestionsPageState();
-}
-
-class _SuggestionsPageState extends State<SuggestionsPage> {
+class SuggestionsPage extends StatelessWidget {
   Future<List<NamedPlugin>> _loadSuggesters() async {
     final bot = await service<ConnectionManager>().getService();
     return await bot.getSuggesters();
