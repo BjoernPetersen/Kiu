@@ -7,6 +7,8 @@ enum Preference {
   password,
   token,
   bot_ip,
+  suggester_id,
+  provider_id,
 }
 
 extension PreferenceAccess on Preference {
@@ -23,6 +25,10 @@ extension PreferenceAccess on Preference {
         return "token";
       case Preference.bot_ip:
         return "bot_ip";
+      case Preference.suggester_id:
+        return "suggester_id";
+      case Preference.provider_id:
+        return "provider_id";
     }
   }
 

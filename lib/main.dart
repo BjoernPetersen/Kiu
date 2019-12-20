@@ -4,6 +4,7 @@ import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/page/bot_page.dart';
 import 'package:kiu/view/page/login_page.dart';
 import 'package:kiu/view/page/queue_page.dart';
+import 'package:kiu/view/page/suggestions_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,9 +32,10 @@ class Kiu extends StatelessWidget {
       ),
       initialRoute: _initialRoute(),
       routes: {
-        "/queue": (_) => QueuePage(),
         "/selectBot": (_) => BotPage(),
         "/login": (_) => LoginPage(),
+        "/queue": (_) => QueuePage(),
+        "/suggestions": (_) => SuggestionsPage(),
       },
     );
   }

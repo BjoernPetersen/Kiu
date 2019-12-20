@@ -24,7 +24,9 @@ class _QueueListState extends State<QueueList> {
   void initState() {
     super.initState();
     _tokenListener = () => this.setState(() {});
-    _queueSubscription = service<StateManager>().queue.listen(_onQueueChange);
+    final manager = service<StateManager>();
+    _queue = manager.lastQueue ?? [];
+    _queueSubscription = manager.queue.listen(_onQueueChange);
   }
 
   @override

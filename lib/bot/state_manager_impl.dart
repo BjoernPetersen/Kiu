@@ -24,7 +24,13 @@ class StateManagerImpl implements StateManager {
   Stream<PlayerState> get playerState => _stateChecker.stream;
 
   @override
+  PlayerState get lastPlayerState => _stateChecker.lastValue;
+
+  @override
   Stream<List<SongEntry>> get queue => _queueChecker.stream;
+
+  @override
+  List<SongEntry> get lastQueue => _queueChecker.lastValue;
 
   @override
   void updateState(PlayerState state) {
@@ -47,7 +53,7 @@ class _PeriodicChecker<T> {
   final Future<T> Function(BotService) call;
   final ConnectionManager connectionManager;
   final _state = StreamController<T>.broadcast();
-  T _lastValue;
+  T lastValue;
   Timer _timer;
   Future<void> _job;
 
@@ -57,7 +63,7 @@ class _PeriodicChecker<T> {
   }
 
   _start() {
-    _timer = Timer.periodic(Duration(seconds: 2), (_) {
+    _timer = Timer.periodic(Duration(seconds: 1), (_) {
       if (_job == null) {
         _job = check();
       }
@@ -71,10 +77,6 @@ class _PeriodicChecker<T> {
 
   _onListenerChange() {
     final hasListener = _state.hasListener;
-    if (hasListener && _lastValue != null) {
-      update(_lastValue);
-    }
-
     if (hasListener && _timer == null) {
       _start();
     } else if (!hasListener && _timer != null) {
@@ -104,7 +106,7 @@ class _PeriodicChecker<T> {
 
   void update(T value) {
     _state.add(value);
-    _lastValue = value;
+    lastValue = value;
   }
 
   void close() {

@@ -3,45 +3,45 @@ import 'package:kiu/bot/model.dart';
 import 'package:kiu/view/widget/album_art.dart';
 import 'package:kiu/view/widget/duration_text.dart';
 
-class SongCard extends StatelessWidget {
+class SongTile extends StatelessWidget {
   final Song song;
   final String username;
   final Widget trailing;
   final void Function() onPressed;
+  final bool enabled;
 
-  const SongCard(
+  const SongTile(
     this.song, {
-    Key key,
     this.username,
     this.trailing,
     this.onPressed,
-  }) : super(key: key);
+    this.enabled = true,
+  }) : super();
 
   @override
-  Widget build(BuildContext context) => Card(
-        child: ListTile(
-          leading: SizedBox(
-            width: 50,
-            height: 50,
-            child: AlbumArt(song),
-          ),
-          title: Text(
-            song.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: Text(
-            song.description,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          contentPadding: trailing == null
-              ? const EdgeInsets.symmetric(horizontal: 8)
-              : const EdgeInsets.only(left: 8),
-          dense: true,
-          trailing: _createTrailing(context),
-          onTap: onPressed,
+  Widget build(BuildContext context) => ListTile(
+        enabled: enabled,
+        leading: SizedBox(
+          width: 50,
+          height: 50,
+          child: AlbumArt(song),
         ),
+        title: Text(
+          song.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          song.description,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        contentPadding: trailing == null
+            ? const EdgeInsets.symmetric(horizontal: 8)
+            : const EdgeInsets.only(left: 8),
+        dense: true,
+        trailing: _createTrailing(context),
+        onTap: onPressed,
       );
 
   Widget _createRightInfo(BuildContext context) {

@@ -47,6 +47,16 @@ class NamedPlugin {
 
   factory NamedPlugin.fromJson(Map<String, dynamic> json) =>
       _$NamedPluginFromJson(json);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NamedPlugin &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 @JsonSerializable()
@@ -68,6 +78,17 @@ class Song {
   });
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Song &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          provider == other.provider;
+
+  @override
+  int get hashCode => id.hashCode ^ provider.hashCode;
 }
 
 @JsonSerializable()
@@ -118,4 +139,35 @@ PlayerStateType _stateFromJson(dynamic value) {
     default:
       return PlayerStateType.error;
   }
+}
+
+@JsonSerializable()
+class PlayerStateChange {
+  @JsonKey(toJson: _stateChangeToJson)
+  final PlayerStateChangeAction action;
+
+  PlayerStateChange(this.action);
+
+  Map<String, dynamic> toJson() {
+    return _$PlayerStateChangeToJson(this);
+  }
+}
+
+enum PlayerStateChangeAction { play, pause, skip }
+
+extension on PlayerStateChangeAction {
+  String get text {
+    switch (this) {
+      case PlayerStateChangeAction.play:
+        return "PLAY";
+      case PlayerStateChangeAction.pause:
+        return "PAUSE";
+      case PlayerStateChangeAction.skip:
+        return "SKIP";
+    }
+  }
+}
+
+String _stateChangeToJson(PlayerStateChangeAction action) {
+  return action.text;
 }

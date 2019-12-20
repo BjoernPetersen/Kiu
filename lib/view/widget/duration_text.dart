@@ -15,7 +15,7 @@ class DurationText extends StatelessWidget {
 }
 
 String _formatDuration(int durationSeconds) {
-  final duration = Duration(seconds: durationSeconds);
+  final duration = Duration(seconds: durationSeconds ?? 0);
   final hours = duration.inHours;
   final minutes = duration.inMinutes % 60;
   final seconds = duration.inSeconds % 60;

@@ -28,6 +28,19 @@ abstract class BotService {
     @Query("songId") String songId,
     @Query("providerId") String providerId,
   );
+
+  @GET("/suggester")
+  Future<List<NamedPlugin>> getSuggesters();
+
+  @GET("/suggester/{id}")
+  Future<List<Song>> getSuggestions(@Path("id") String suggesterId);
+
+  @PUT("/player/queue")
+  Future<List<SongEntry>> enqueue(
+      @Query("songId") String songId, @Query("providerId") String providerId);
+
+  @PUT("/player")
+  Future<PlayerState> changePlayerState(@Body() PlayerStateChange change);
 }
 
 String get baseUrl {

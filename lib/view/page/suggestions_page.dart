@@ -1,0 +1,78 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/model.dart';
+import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/page/overflow.dart';
+import 'package:kiu/view/widget/embedded_player.dart';
+import 'package:kiu/view/widget/loader.dart';
+import 'package:kiu/view/widget/loading_delegate.dart';
+import 'package:kiu/view/widget/navigation_bar.dart';
+import 'package:kiu/view/widget/save_tab.dart';
+import 'package:kiu/view/widget/suggestions_content.dart';
+
+class SuggestionsPage extends StatefulWidget {
+  @override
+  _SuggestionsPageState createState() => _SuggestionsPageState();
+}
+
+class _SuggestionsPageState extends State<SuggestionsPage> {
+  Future<List<NamedPlugin>> _loadSuggesters() async {
+    final bot = await service<ConnectionManager>().getService();
+    return await bot.getSuggesters();
+  }
+
+  Widget build(BuildContext context) => LoadingDelegate(
+        action: _loadSuggesters,
+        itemBuilder: (context, List<NamedPlugin> suggesters) =>
+            DefaultTabController(
+          length: suggesters.length,
+          initialIndex:
+              _indexOf(suggesters, Preference.suggester_id.getString()),
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text('Kiu'),
+              actions: <Widget>[createOverflowItems(context)],
+              bottom: TabBar(
+                tabs: suggesters
+                    .map((suggester) => Tab(
+                          child: Text(
+                            suggester.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 11),
+                          ),
+                        ))
+                    .toList(growable: false),
+              ),
+            ),
+            body: EmbeddedPlayer(
+              child: SaveTab(
+                save: (index) =>
+                    Preference.suggester_id.setString(suggesters[index].id),
+                child: TabBarView(
+                  children: suggesters
+                      .map((suggester) => SuggestionsContent(suggester))
+                      .toList(growable: false),
+                ),
+              ),
+            ),
+            bottomNavigationBar: NavigationBar(BottomCategory.suggestions),
+          ),
+        ),
+        loaderBuilder: (context) => Scaffold(
+          appBar: AppBar(
+            title: Text('Kiu'),
+            actions: <Widget>[createOverflowItems(context)],
+          ),
+          body: EmbeddedPlayer(child: Loader()),
+          bottomNavigationBar: NavigationBar(BottomCategory.suggestions),
+        ),
+      );
+}
+
+int _indexOf(List<NamedPlugin> list, String id) {
+  final index = list.indexWhere((it) => it.id == id);
+  return index == -1 ? 0 : index;
+}
