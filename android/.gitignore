@@ -6,4 +6,4 @@ gradle-wrapper.jar
 /local.properties
 GeneratedPluginRegistrant.java
 key.properties
-*.jks
+settings_aar.gradle
