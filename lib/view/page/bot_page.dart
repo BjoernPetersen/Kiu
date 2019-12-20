@@ -8,9 +8,6 @@ import 'package:kiu/data/preferences.dart';
 import 'package:kiu/data/urls.dart';
 import 'package:kiu/view/widget/input_dialog.dart';
 import 'package:kiu/view/widget/loader.dart';
-import 'package:kiu/view/page/overflow.dart';
-
-import 'overflow.dart';
 
 class BotPage extends StatefulWidget {
   @override
@@ -56,13 +53,17 @@ class _BotPageState extends State<BotPage> {
         actions: <Widget>[
           _createRefreshButton(),
         ],
-
       );
 
   Future<void> _setIp(String ip) async {
     await Preference.bot_ip.setString(ip);
     service<ConnectionManager>().reset();
-    Navigator.of(context).pop();
+    final nav = Navigator.of(context);
+    if (nav.canPop()) {
+      nav.pop();
+    } else {
+      nav.pushReplacementNamed("/login");
+    }
   }
 
   Future<void> _enterManually(context) async {

@@ -42,7 +42,7 @@ class Kiu extends StatelessWidget {
 }
 
 String _initialRoute() {
-  if (Preference.username == null) {
+  if (Preference.username.getString() == null) {
     return "/login";
   } else {
     return "/queue";

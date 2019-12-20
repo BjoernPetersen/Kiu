@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kiu/bot/connection_manager.dart';
-import 'package:kiu/bot/connection_manager_impl.dart';
 import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
@@ -19,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final _name = TextEditingController();
   InputError _nameError = InputError.none;
   final _password = TextEditingController();
+  String _lastPass = "";
   InputError _passError = InputError.none;
 
   @override
@@ -33,9 +33,14 @@ class _LoginPageState extends State<LoginPage> {
           Preference.username.setString(_name.text);
           _requiresPassword = false;
         }));
-    _password.addListener(() => setState(() {
+    _password.addListener(() {
+      if (_lastPass != _password.text) {
+        setState(() {
           _passError = InputError.none;
-        }));
+        });
+      }
+      _lastPass = _password.text;
+    });
   }
 
   @override
@@ -50,7 +55,10 @@ class _LoginPageState extends State<LoginPage> {
         appBar: AppBar(
           title: Text("Sign in"),
           actions: <Widget>[
-            createOverflowItems(context, hidden: [Choice.logout]),
+            createOverflowItems(context, hidden: [
+              Choice.logout,
+              Choice.refresh_token,
+            ]),
           ],
         ),
         floatingActionButton: _isLoading

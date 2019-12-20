@@ -21,8 +21,16 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final query = TextEditingController();
+  Future<List<NamedPlugin>> _loader;
 
-  Future<List<NamedPlugin>> _loadProviders() async {
+  Future<List<NamedPlugin>> _load(BuildContext context) {
+    if (_loader == null) {
+      _loader = _loadProviders(context);
+    }
+    return _loader;
+  }
+
+  Future<List<NamedPlugin>> _loadProviders(BuildContext context) async {
     final connectionManager = service<ConnectionManager>();
     try {
       final bot = await connectionManager.getService();
@@ -40,10 +48,10 @@ class _SearchPageState extends State<SearchPage> {
     } on IOException {
       connectionManager.reset();
       return [];
-    } catch (e) {
-      // TODO handle StateError
-      print(e);
-      return [];
+    } on StateError {
+      if (mounted) {
+        Navigator.pushNamed(context, "/selectBot");
+      }
     }
   }
 
@@ -55,7 +63,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) => LoadingDelegate(
-        action: _loadProviders,
+        action: () => _load(context),
         itemBuilder: (context, List<NamedPlugin> providers) =>
             DefaultTabController(
           length: providers.length,

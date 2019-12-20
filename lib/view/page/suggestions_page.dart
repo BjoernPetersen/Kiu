@@ -13,10 +13,13 @@ import 'package:kiu/view/widget/save_tab.dart';
 import 'package:kiu/view/widget/suggestions_content.dart';
 
 class SuggestionsPage extends StatelessWidget {
-  Future<List<NamedPlugin>> _loadSuggesters() async {
+  Future<List<NamedPlugin>> _loadSuggesters(BuildContext context) async {
     try {
       final bot = await service<ConnectionManager>().getService();
       return await bot.getSuggesters();
+    } on StateError {
+      Navigator.of(context).pushNamed("/selectBot");
+      return [];
     } catch (e) {
       // TODO handle this
       print(e);
@@ -25,7 +28,7 @@ class SuggestionsPage extends StatelessWidget {
   }
 
   Widget build(BuildContext context) => LoadingDelegate(
-        action: _loadSuggesters,
+        action: () => _loadSuggesters(context),
         itemBuilder: (context, List<NamedPlugin> suggesters) =>
             DefaultTabController(
           length: suggesters.length,
