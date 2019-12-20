@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/connection_manager_impl.dart';
 import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
@@ -92,6 +94,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_requiresPassword) {
       result.add(TextField(
         obscureText: true,
+        autofocus: true,
         controller: _password,
         decoration: InputDecoration(
           hintText: "A password",
@@ -122,6 +125,7 @@ class _LoginPageState extends State<LoginPage> {
         Preference.username.setString(name);
         Preference.password.setString(password);
         Preference.token.setString(token);
+        service<ConnectionManager>().reset();
         navigator.pushReplacementNamed('/queue');
       } on MissingBotException {
         Fluttertoast.showToast(msg: 'No bot selected');
