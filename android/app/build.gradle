@@ -55,9 +55,9 @@ android {
     signingConfigs {
         release {
             if (keystoreExists) {
-                keyAlias 'key'
+                keyAlias 'release'
                 keyPassword keystoreProperties['keyPassword']
-                storeFile file("${rootDir}/android.jks")
+                storeFile file("${rootDir}/android_old.jks")
                 storePassword keystoreProperties['keyPassword']
             }
         }
