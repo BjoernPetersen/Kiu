@@ -6,4 +6,4 @@ Android Client for [MusicBot](https://github.com/BjoernPetersen/MusicBot).
 
 ## Alpha test
 
-[You can become an alpha tester here.](http://kiu.party)
+[You can become an alpha tester here.](https://play.google.com/apps/testing/com.github.bjoernpetersen.q)
