@@ -57,7 +57,7 @@ android {
             if (keystoreExists) {
                 keyAlias 'release'
                 keyPassword keystoreProperties['keyPassword']
-                storeFile file("${rootDir}/android_old.jks")
+                storeFile file("${rootDir}/android.jks")
                 storePassword keystoreProperties['keyPassword']
             }
         }
