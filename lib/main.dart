@@ -29,6 +29,7 @@ class Kiu extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primaryColor: Color(0xFFBBC0CA),
+        highlightColor: Color(0xFFB0B5C1),
       ),
       initialRoute: _initialRoute(),
       routes: {
