@@ -5,6 +5,7 @@ import 'package:kiu/bot/discovery_service.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:kiu/data/urls.dart';
+import 'package:kiu/view/widget/bot_card.dart';
 import 'package:kiu/view/widget/input_dialog.dart';
 import 'package:kiu/view/widget/loader.dart';
 
@@ -126,8 +127,8 @@ class _BotPageState extends State<BotPage> {
         itemCount: bots.length,
         itemBuilder: (_, index) {
           final ip = bots[index];
-          return ListTile(
-            title: Text(ip),
+          return BotCard(
+            ip: ip,
             onTap: () => _setIp(ip),
           );
         },
