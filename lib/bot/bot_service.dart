@@ -23,11 +23,9 @@ abstract class BotService {
   Future<List<SongEntry>> getQueue();
 
   @PUT("/player/queue/order")
-  Future<List<SongEntry>> moveEntry(
-    @Query("index") int index,
-    @Query("songId") String songId,
-    @Query("providerId") String providerId,
-  );
+  Future<List<SongEntry>> moveEntry(@Query("index") int index,
+      @Query("songId") String songId,
+      @Query("providerId") String providerId,);
 
   @GET("/suggester")
   Future<List<NamedPlugin>> getSuggesters();
@@ -35,20 +33,27 @@ abstract class BotService {
   @GET("/suggester/{id}")
   Future<List<Song>> getSuggestions(@Path("id") String suggesterId);
 
+  @DELETE("/suggester/{suggesterId}")
+  Future<void> removeSuggestion({
+    @Path("suggesterId") String suggesterId,
+    @Query("providerId") String providerId,
+    @Query("songId") String songId,
+  });
+
   @GET("/provider")
   Future<List<NamedPlugin>> getProviders();
 
   @GET("/provider/{id}")
-  Future<List<Song>> search(
-      @Path("id") String providerId, @Query("query") String query);
+  Future<List<Song>> search(@Path("id") String providerId,
+      @Query("query") String query);
 
   @PUT("/player/queue")
-  Future<List<SongEntry>> enqueue(
-      @Query("songId") String songId, @Query("providerId") String providerId);
+  Future<List<SongEntry>> enqueue(@Query("songId") String songId,
+      @Query("providerId") String providerId);
 
   @DELETE("/player/queue")
-  Future<List<SongEntry>> dequeue(
-      @Query("songId") String songId, @Query("providerId") String providerId);
+  Future<List<SongEntry>> dequeue(@Query("songId") String songId,
+      @Query("providerId") String providerId);
 
   @PUT("/player")
   Future<PlayerState> changePlayerState(@Body() PlayerStateChange change);
