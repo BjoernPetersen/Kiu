@@ -136,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
         service<ConnectionManager>().reset();
         navigator.pushReplacementNamed('/queue');
       } on MissingBotException {
-        Fluttertoast.showToast(msg: 'No bot selected');
+        Fluttertoast.showToast(msg: 'Please select a bot');
         navigator.pushNamed("/selectBot");
       } on IOException {
         Fluttertoast.showToast(

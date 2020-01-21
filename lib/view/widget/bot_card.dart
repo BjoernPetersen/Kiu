@@ -13,7 +13,7 @@ class BotCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Card(
         child: ListTile(
-          title: Text("Bot at ip $ip"),
+          title: Text("Bot at IP $ip"),
           subtitle: Text("Tap to use this bot"),
           onTap: onTap,
         ),
