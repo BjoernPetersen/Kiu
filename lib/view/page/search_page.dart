@@ -61,6 +61,14 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
+  void _onClearTap() {
+    if (query.text.isEmpty) {
+      Navigator.pushReplacementNamed(context, "/queue");
+    } else {
+      query.clear();
+    }
+  }
+
   @override
   Widget build(BuildContext context) => LoadingDelegate(
         action: () => _load(context),
@@ -70,15 +78,17 @@ class _SearchPageState extends State<SearchPage> {
           initialIndex: _indexOf(providers, Preference.provider_id.getString()),
           child: Scaffold(
             appBar: AppBar(
-              leading: IconButton(
-                icon: Icon(Icons.clear),
-                onPressed: () => query.clear(),
-              ),
               title: TextField(
                 controller: query,
                 maxLines: 1,
                 autofocus: true,
-                decoration: InputDecoration(hintText: 'Search'),
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  suffix: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: _onClearTap,
+                  ),
+                ),
               ),
               actions: <Widget>[createOverflowItems(context)],
               bottom: TabBar(
