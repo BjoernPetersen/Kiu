@@ -20,10 +20,33 @@ jobs:
           key_pass: ${{ secrets.key_pass }}
       - name: Run code generation
         run: flutter pub run build_runner build
-      - name: Build apk
+      - name: Build app
         run: flutter build appbundle --release
-      - name: Save App bundle
+      - name: Save app bundle
         uses: actions/upload-artifact@v1
         with:
           name: appbundle
           path: build/app/outputs/bundle/release/app-release.aab
+  deploy:
+    name: Deploy to Play Store
+    runs-on: ubuntu-latest
+    needs: build
+    container:
+      image: ruby:2.7-slim
+    if: "startsWith( github.ref, 'refs/tags/v' )"
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v1
+      - name: Retrieve app bundle
+        uses: actions/download-artifact@v1
+        with:
+          name: appbundle
+          path: build/app/outputs/bundle/release
+      - name: Save console api token
+        run: echo $console_json > android/google_console_api.json
+        env:
+          console_json: ${{ secrets.google_console_api }}
+      - run: ls build/app/outputs/bundle/release
+      - run: |
+          cd android
+          bundle exec fastlane deploy
