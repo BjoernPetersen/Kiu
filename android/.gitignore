@@ -7,3 +7,5 @@ gradle-wrapper.jar
 GeneratedPluginRegistrant.java
 key.properties
 settings_aar.gradle
+google_console_api.json
+fastlane/report.xml
