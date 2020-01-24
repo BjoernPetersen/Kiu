@@ -3,7 +3,6 @@ default_platform(:android)
 desc "Deploy a new version to Google Play"
 lane :deploy do
     supply(
-        aab: "../build/app/outputs/bundle/release/app-release.aab",
         track: "alpha"
     )
 end
