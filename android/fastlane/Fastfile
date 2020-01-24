@@ -1,8 +1,1 @@
 default_platform(:android)
-
-desc "Deploy a new version to Google Play"
-lane :deploy do
-    supply(
-        track: "alpha"
-    )
-end
