@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kiu/bot/connection_manager.dart';
@@ -16,6 +18,7 @@ class QueuePage extends StatefulWidget {
 
 class _QueuePageState extends State<QueuePage> {
   bool _isHandlingShares = false;
+  StreamSubscription _shareSub;
 
   Future<void> _handleShare(String share) async {
     if (share == null) return;
@@ -32,7 +35,13 @@ class _QueuePageState extends State<QueuePage> {
   _handleShares() {
     _isHandlingShares = true;
     ReceiveSharingIntent.getInitialText().then(_handleShare);
-    ReceiveSharingIntent.getTextStream().listen(_handleShare);
+    _shareSub = ReceiveSharingIntent.getTextStream().listen(_handleShare);
+  }
+
+  @override
+  void dispose() {
+    _shareSub.cancel();
+    super.dispose();
   }
 
   @override
