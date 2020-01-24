@@ -25,11 +25,11 @@ SharingData _extractYoutubeLong(Uri uri) {
 }
 
 SharingData _extractYoutubeShort(Uri uri) {
-  return SharingData(providerId: YOUTUBE_ID, songId: uri.pathSegments.first);
+  return SharingData(providerId: YOUTUBE_ID, songId: uri.pathSegments[0]);
 }
 
 SharingData _extractSpotify(Uri uri) {
-  return SharingData(providerId: SPOTIFY_ID, songId: uri.pathSegments.first);
+  return SharingData(providerId: SPOTIFY_ID, songId: uri.pathSegments[1]);
 }
 
 SharingData extractSharingData(String url) {
