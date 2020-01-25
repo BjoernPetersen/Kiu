@@ -29,12 +29,9 @@ jobs:
           path: build/app/outputs/bundle/release/app-release.aab
   deploy:
     name: Deploy to Play Store
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: build
-    container:
-      image: ruby:2.7-slim
-    if: 'false'
-    #if: "false && startsWith( github.ref, 'refs/tags/v' )"
+    if: "startsWith( github.ref, 'refs/tags/v' )"
     steps:
       - name: Check out repo
         uses: actions/checkout@v1
@@ -47,7 +44,8 @@ jobs:
         run: echo $console_json > android/google_console_api.json
         env:
           console_json: ${{ secrets.google_console_api }}
-      - run: |
+      - name: Run fastlane
+        run: |
           cd android
-          export SUPPLY_AAB="android/app-release.aab"
-          bundle exec fastlane deploy
+          export SUPPLY_AAB="app-release.aab"
+          bundle exec fastlane supply
