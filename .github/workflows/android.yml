@@ -47,5 +47,6 @@ jobs:
       - name: Run fastlane
         run: |
           cd android
-          export SUPPLY_AAB="android/app-release.aab"
-          fastlane supply
+          ls
+          export SUPPLY_AAB="./android/app-release.aab"
+          bundle exec fastlane supply
