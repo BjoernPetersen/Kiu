@@ -33,9 +33,11 @@ SharingData _extractSpotify(Uri uri) {
 }
 
 SharingData extractSharingData(String url) {
-  final uri = Uri.tryParse(url);
+  final trimmed = url.trim().split(RegExp(r"\s", multiLine: true)).last;
+  if (trimmed.isEmpty) return null;
+  final uri = Uri.tryParse(trimmed);
   if (uri != null) {
-    switch (uri.host) {
+    switch (uri.host.toLowerCase()) {
       case "youtu.be":
         return _extractYoutubeShort(uri);
       case "youtube.com":
