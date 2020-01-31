@@ -39,6 +39,7 @@ class QueueCard extends StatelessWidget {
     if (connectionManager.hasPermission(Permission.SKIP)) {
       return IconButton(
         icon: Icon(Icons.delete),
+        tooltip: "Remove from queue",
         onPressed: () => _confirmDeletion(context),
       );
     } else {

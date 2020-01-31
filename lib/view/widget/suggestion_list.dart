@@ -45,7 +45,8 @@ class _SuggestionListState extends State<SuggestionList> {
         results: suggestions,
         trailingBuilder: (_, song) {
           return IconButton(
-            icon: Icon(Icons.delete),
+            tooltip: "Remove suggestion",
+            icon: Icon(Icons.thumb_down),
             onPressed: () => _delete(manager, song),
           );
         },
