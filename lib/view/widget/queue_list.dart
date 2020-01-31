@@ -140,6 +140,7 @@ class _QueueListState extends State<QueueList> {
   Widget build(BuildContext context) {
     return CustomScrollView(
       controller: ScrollController(
+        keepScrollOffset: false,
         initialScrollOffset: CARD_HEIGHT * _history.length,
       ),
       slivers: <Widget>[

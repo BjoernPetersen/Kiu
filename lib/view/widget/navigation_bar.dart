@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kiu/view/page/queue_page.dart';
 import 'package:kiu/view/page/search_page.dart';
 import 'package:kiu/view/page/suggestions_page.dart';
 import 'package:kiu/view/routing/unanimated_route.dart';
@@ -77,6 +78,7 @@ extension on BottomCategory {
     }
     switch (this) {
       case BottomCategory.queue:
+        nav.pushReplacement(UnanimatedRoute((_) => QueuePage()));
         break;
       case BottomCategory.suggestions:
         nav.push(UnanimatedRoute((_) => SuggestionsPage()));
