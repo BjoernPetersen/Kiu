@@ -22,6 +22,9 @@ abstract class BotService {
   @GET("/player/queue")
   Future<List<SongEntry>> getQueue();
 
+  @GET("/player/queue/history")
+  Future<List<SongEntry>> getQueueHistory();
+
   @PUT("/player/queue/order")
   Future<List<SongEntry>> moveEntry(@Query("index") int index,
       @Query("songId") String songId,

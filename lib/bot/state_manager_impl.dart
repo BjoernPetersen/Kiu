@@ -9,6 +9,7 @@ import 'package:kiu/bot/state_manager.dart';
 class StateManagerImpl implements StateManager {
   final _PeriodicChecker<PlayerState> _stateChecker;
   final _PeriodicChecker<List<SongEntry>> _queueChecker;
+  final _PeriodicChecker<List<SongEntry>> _queueHistoryChecker;
 
   StateManagerImpl(ConnectionManager connectionManager)
       : _stateChecker = _PeriodicChecker(
@@ -18,6 +19,10 @@ class StateManagerImpl implements StateManager {
         _queueChecker = _PeriodicChecker(
           connectionManager,
           (service) => service.getQueue(),
+        ),
+        _queueHistoryChecker = _PeriodicChecker(
+          connectionManager,
+          (service) => service.getQueueHistory(),
         );
 
   @override
@@ -33,6 +38,12 @@ class StateManagerImpl implements StateManager {
   List<SongEntry> get lastQueue => _queueChecker.lastValue;
 
   @override
+  Stream<List<SongEntry>> get queueHistory => _queueHistoryChecker.stream;
+
+  @override
+  List<SongEntry> get lastQueueHistory => _queueHistoryChecker.lastValue;
+
+  @override
   void updateState(PlayerState state) {
     _stateChecker.update(state);
   }
@@ -43,9 +54,15 @@ class StateManagerImpl implements StateManager {
   }
 
   @override
+  void updateQueueHistory(List<SongEntry> history) {
+    _queueChecker.update(history);
+  }
+
+  @override
   void close() {
     _stateChecker.close();
     _queueChecker.close();
+    _queueHistoryChecker.close();
   }
 }
 

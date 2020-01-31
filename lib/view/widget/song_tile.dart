@@ -9,6 +9,7 @@ class SongTile extends StatelessWidget {
   final Widget trailing;
   final void Function() onPressed;
   final bool enabled;
+  final String tooltip;
 
   const SongTile(
     this.song, {
@@ -16,10 +17,10 @@ class SongTile extends StatelessWidget {
     this.trailing,
     this.onPressed,
     this.enabled = true,
+    this.tooltip,
   }) : super();
 
-  @override
-  Widget build(BuildContext context) => ListTile(
+  Widget _buildTile(BuildContext context) => ListTile(
         enabled: enabled,
         leading: SizedBox(
           width: 50,
@@ -43,6 +44,18 @@ class SongTile extends StatelessWidget {
         trailing: _createTrailing(context),
         onTap: onPressed,
       );
+
+  @override
+  Widget build(BuildContext context) {
+    if (tooltip == null) {
+      return _buildTile(context);
+    } else {
+      return Tooltip(
+        message: tooltip,
+        child: _buildTile(context),
+      );
+    }
+  }
 
   Widget _createRightInfo(BuildContext context) {
     final children = <Widget>[
