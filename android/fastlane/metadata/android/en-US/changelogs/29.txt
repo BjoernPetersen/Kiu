@@ -1,0 +1,3 @@
+- Added player history
+- Going back from suggestions or search now leads to queue
+- Queue removals now have to be confirmed
