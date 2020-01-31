@@ -5,6 +5,8 @@ import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/page/queue_page.dart';
+import 'package:kiu/view/routing/unanimated_route.dart';
 import 'package:kiu/view/widget/embedded_player.dart';
 import 'package:kiu/view/widget/loader.dart';
 import 'package:kiu/view/widget/loading_delegate.dart';
@@ -63,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void _onClearTap() {
     if (query.text.isEmpty) {
-      Navigator.pushReplacementNamed(context, "/queue");
+      Navigator.pushReplacement(context, UnanimatedRoute((_) => QueuePage()));
     } else {
       query.clear();
     }

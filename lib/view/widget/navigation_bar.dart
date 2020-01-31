@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kiu/view/page/queue_page.dart';
 import 'package:kiu/view/page/search_page.dart';
 import 'package:kiu/view/page/suggestions_page.dart';
+import 'package:kiu/view/routing/unanimated_route.dart';
 
 class NavigationBar extends StatelessWidget {
   final BottomCategory category;
@@ -88,16 +89,6 @@ extension on BottomCategory {
 
   _routeTo(BuildContext context, Widget Function(BuildContext) builder) {
     final nav = Navigator.of(context);
-    nav.pushReplacement(_UnanimatedRoute(builder));
-  }
-}
-
-class _UnanimatedRoute<T> extends MaterialPageRoute<T> {
-  _UnanimatedRoute(WidgetBuilder builder) : super(builder: builder);
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    return child;
+    nav.pushReplacement(UnanimatedRoute(builder));
   }
 }
