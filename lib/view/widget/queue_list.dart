@@ -7,9 +7,12 @@ import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/widget/offset_fill_sliver.dart';
 import 'package:kiu/view/widget/queue_card.dart';
 import 'package:kiu/view/widget/song_tile.dart';
 import 'package:reorderables/reorderables.dart';
+
+const CARD_HEIGHT = 72.0;
 
 class QueueList extends StatefulWidget {
   @override
@@ -112,32 +115,43 @@ class _QueueListState extends State<QueueList> {
     service<StateManager>().updateQueue(newQueue);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildQueueList() {
     if (connectionManager.hasPermission(Permission.MOVE)) {
-      return CustomScrollView(
-        controller: PrimaryScrollController.of(context),
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              _buildHistoryItem,
-              childCount: _history.length,
-            ),
-          ),
-          ReorderableSliverList(
-            delegate: ReorderableSliverChildBuilderDelegate(
-              _buildQueueItem,
-              childCount: _queue.length,
-            ),
-            onReorder: _onReorder,
-          )
-        ],
+      return ReorderableSliverList(
+        delegate: ReorderableSliverChildBuilderDelegate(
+          _buildQueueItem,
+          semanticIndexOffset: _history.length,
+          childCount: _queue.length,
+        ),
+        onReorder: _onReorder,
       );
     } else {
-      return ListView.builder(
-        itemBuilder: _buildQueueItem,
-        itemCount: _queue.length,
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          _buildQueueItem,
+          semanticIndexOffset: _history.length,
+          childCount: _queue.length,
+        ),
       );
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      controller: ScrollController(
+        initialScrollOffset: CARD_HEIGHT * _history.length,
+      ),
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            _buildHistoryItem,
+            childCount: _history.length,
+          ),
+        ),
+        _buildQueueList(),
+        OffsetFillSliver(offset: CARD_HEIGHT),
+      ],
+    );
   }
 }
