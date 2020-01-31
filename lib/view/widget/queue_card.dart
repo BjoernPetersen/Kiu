@@ -4,6 +4,7 @@ import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/view/widget/confirmation_dialog.dart';
 import 'package:kiu/view/widget/song_tile.dart';
 
 class QueueCard extends StatelessWidget {
@@ -23,11 +24,22 @@ class QueueCard extends StatelessWidget {
     }
   }
 
-  Widget _createTrailing() {
+  Future<void> _confirmDeletion(BuildContext context) async {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => ConfirmationDialog(
+        title: Text("Remove this song?"),
+        content: SongTile(songEntry.song),
+      ),
+    );
+    if (result == true) _delete();
+  }
+
+  Widget _createTrailing(BuildContext context) {
     if (connectionManager.hasPermission(Permission.SKIP)) {
       return IconButton(
         icon: Icon(Icons.delete),
-        onPressed: _delete,
+        onPressed: () => _confirmDeletion(context),
       );
     } else {
       return null;
@@ -39,7 +51,7 @@ class QueueCard extends StatelessWidget {
         child: SongTile(
           songEntry.song,
           username: songEntry.userName,
-          trailing: _createTrailing(),
+          trailing: _createTrailing(context),
         ),
       );
 }
