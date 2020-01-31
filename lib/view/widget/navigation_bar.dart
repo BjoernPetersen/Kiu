@@ -72,23 +72,25 @@ extension on BottomCategory {
   }
 
   goTo(BuildContext context) {
+    final nav = Navigator.of(context);
     switch (this) {
       case BottomCategory.queue:
-        _routeTo(context, (_) => QueuePage());
+        nav.pushReplacement(UnanimatedRoute((_) => QueuePage()));
         break;
       case BottomCategory.suggestions:
-        _routeTo(context, (_) => SuggestionsPage());
+        while (nav.canPop()) {
+          nav.pop();
+        }
+        nav.push(UnanimatedRoute((_) => SuggestionsPage()));
         break;
       case BottomCategory.search:
-        _routeTo(context, (_) => SearchPage());
+        while (nav.canPop()) {
+          nav.pop();
+        }
+        nav.push(UnanimatedRoute((_) => SearchPage()));
         break;
       default:
         print('Page not implemented: $this');
     }
-  }
-
-  _routeTo(BuildContext context, Widget Function(BuildContext) builder) {
-    final nav = Navigator.of(context);
-    nav.pushReplacement(UnanimatedRoute(builder));
   }
 }

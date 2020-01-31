@@ -80,6 +80,7 @@ class _SearchPageState extends State<SearchPage> {
           initialIndex: _indexOf(providers, Preference.provider_id.getString()),
           child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               title: TextField(
                 controller: query,
                 maxLines: 1,
@@ -122,6 +123,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
         loaderBuilder: (context) => Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             title: Text('Kiu'),
             actions: <Widget>[createOverflowItems(context)],
           ),

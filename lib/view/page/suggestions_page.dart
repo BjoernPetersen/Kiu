@@ -35,6 +35,7 @@ class SuggestionsPage extends StatelessWidget {
               _indexOf(suggesters, Preference.suggester_id.getString()),
           child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               title: Text('Kiu'),
               actions: <Widget>[createOverflowItems(context)],
               bottom: TabBar(
@@ -66,6 +67,7 @@ class SuggestionsPage extends StatelessWidget {
         ),
         loaderBuilder: (context) => Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             title: Text('Kiu'),
             actions: <Widget>[createOverflowItems(context)],
           ),
