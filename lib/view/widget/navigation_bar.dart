@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kiu/view/page/queue_page.dart';
 import 'package:kiu/view/page/search_page.dart';
 import 'package:kiu/view/page/suggestions_page.dart';
 import 'package:kiu/view/routing/unanimated_route.dart';
@@ -73,20 +72,16 @@ extension on BottomCategory {
 
   goTo(BuildContext context) {
     final nav = Navigator.of(context);
+    while (nav.canPop()) {
+      nav.pop();
+    }
     switch (this) {
       case BottomCategory.queue:
-        nav.pushReplacement(UnanimatedRoute((_) => QueuePage()));
         break;
       case BottomCategory.suggestions:
-        while (nav.canPop()) {
-          nav.pop();
-        }
         nav.push(UnanimatedRoute((_) => SuggestionsPage()));
         break;
       case BottomCategory.search:
-        while (nav.canPop()) {
-          nav.pop();
-        }
         nav.push(UnanimatedRoute((_) => SearchPage()));
         break;
       default:
