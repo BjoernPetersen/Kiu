@@ -26,9 +26,11 @@ abstract class BotService {
   Future<List<SongEntry>> getQueueHistory();
 
   @PUT("/player/queue/order")
-  Future<List<SongEntry>> moveEntry(@Query("index") int index,
-      @Query("songId") String songId,
-      @Query("providerId") String providerId,);
+  Future<List<SongEntry>> moveEntry(
+    @Query("index") int index,
+    @Query("songId") String songId,
+    @Query("providerId") String providerId,
+  );
 
   @GET("/suggester")
   Future<List<NamedPlugin>> getSuggesters();
@@ -47,19 +49,28 @@ abstract class BotService {
   Future<List<NamedPlugin>> getProviders();
 
   @GET("/provider/{id}")
-  Future<List<Song>> search(@Path("id") String providerId,
-      @Query("query") String query);
+  Future<List<Song>> search(
+      @Path("id") String providerId, @Query("query") String query);
 
   @PUT("/player/queue")
-  Future<List<SongEntry>> enqueue(@Query("songId") String songId,
-      @Query("providerId") String providerId);
+  Future<List<SongEntry>> enqueue(
+      @Query("songId") String songId, @Query("providerId") String providerId);
 
   @DELETE("/player/queue")
-  Future<List<SongEntry>> dequeue(@Query("songId") String songId,
-      @Query("providerId") String providerId);
+  Future<List<SongEntry>> dequeue(
+      @Query("songId") String songId, @Query("providerId") String providerId);
 
   @PUT("/player")
   Future<PlayerState> changePlayerState(@Body() PlayerStateChange change);
+
+  @GET("/volume")
+  Future<Volume> getVolume();
+
+  @PUT("/volume")
+  Future<Volume> setVolume(@Query("value") int volume);
+
+  @GET("/version")
+  Future<BotInfo> getVersion();
 }
 
 String get baseUrl {

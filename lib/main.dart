@@ -10,6 +10,7 @@ import 'package:kiu/data/sharing_data.dart';
 import 'package:kiu/view/page/bot_page.dart';
 import 'package:kiu/view/page/login_page.dart';
 import 'package:kiu/view/page/queue_page.dart';
+import 'package:kiu/view/page/state_page.dart';
 import 'package:kiu/view/page/suggestions_page.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
@@ -82,6 +83,7 @@ class _KiuState extends State<Kiu> {
         "/login": (_) => LoginPage(),
         "/queue": (_) => QueuePage(),
         "/suggestions": (_) => SuggestionsPage(),
+        "/state": (_) => StatePage(),
       },
     );
   }

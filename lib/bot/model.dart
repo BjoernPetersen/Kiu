@@ -120,6 +120,9 @@ class Volume {
 
   Volume({this.volume, this.isSupported});
 
+  Volume.unsupported() : this(volume: 100, isSupported: false);
+  Volume.supported(int value) : this(volume: value, isSupported: true);
+
   factory Volume.fromJson(Map<String, dynamic> json) => _$VolumeFromJson(json);
 }
 

@@ -10,6 +10,7 @@ class StateManagerImpl implements StateManager {
   final _PeriodicChecker<PlayerState> _playerState;
   final _PeriodicChecker<List<SongEntry>> _queueState;
   final _PeriodicChecker<List<SongEntry>> _queueHistoryState;
+  final _PeriodicChecker<Volume> _volumeState;
 
   StateManagerImpl(ConnectionManager connectionManager)
       : _playerState = _PeriodicChecker(
@@ -23,16 +24,23 @@ class StateManagerImpl implements StateManager {
         _queueHistoryState = _PeriodicChecker(
           connectionManager,
           (service) => service.getQueueHistory(),
+        ),
+        _volumeState = _PeriodicChecker(
+          connectionManager,
+          (service) => service.getVolume(),
         );
 
   @override
-  State<PlayerState> get player => _playerState;
+  BotState<PlayerState> get player => _playerState;
 
   @override
-  State<List<SongEntry>> get queueState => _queueState;
+  BotState<List<SongEntry>> get queueState => _queueState;
 
   @override
-  State<List<SongEntry>> get queueHistoryState => _queueHistoryState;
+  BotState<List<SongEntry>> get queueHistoryState => _queueHistoryState;
+
+  @override
+  BotState<Volume> get volumeState => _volumeState;
 
   @override
   Stream<PlayerState> get playerState => player.stream;
@@ -75,7 +83,7 @@ class StateManagerImpl implements StateManager {
   }
 }
 
-class _PeriodicChecker<T> implements State<T> {
+class _PeriodicChecker<T> implements BotState<T> {
   final Future<T> Function(BotService) call;
   final ConnectionManager connectionManager;
   final _state = StreamController<T>.broadcast();

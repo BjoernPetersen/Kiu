@@ -1,11 +1,13 @@
 import 'package:kiu/bot/model.dart';
 
 abstract class StateManager {
-  State<PlayerState> get player;
+  BotState<PlayerState> get player;
 
-  State<List<SongEntry>> get queueState;
+  BotState<List<SongEntry>> get queueState;
 
-  State<List<SongEntry>> get queueHistoryState;
+  BotState<List<SongEntry>> get queueHistoryState;
+
+  BotState<Volume> get volumeState;
 
   @deprecated
   Stream<PlayerState> get playerState;
@@ -38,7 +40,7 @@ abstract class StateManager {
   void close();
 }
 
-abstract class State<T> {
+abstract class BotState<T> {
   Stream<T> get stream;
 
   T get lastValue;
