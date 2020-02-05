@@ -5,7 +5,7 @@ import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/page/overflow.dart';
-import 'package:kiu/view/widget/bot_aware_body.dart';
+import 'package:kiu/view/widget/basic_awareness_body.dart';
 import 'package:kiu/view/widget/loader.dart';
 
 class LoginPage extends StatefulWidget {
@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
         body: _isLoading
             ? Loader(text: "Please wait")
-            : BotAwareBody(child: _createBody(context)),
+            : BasicAwarenessBody(child: _createBody(context)),
       );
 
   Widget _createBody(BuildContext context) {
