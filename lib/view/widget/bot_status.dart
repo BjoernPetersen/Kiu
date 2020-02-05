@@ -3,6 +3,7 @@ import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/widget/loading_delegate.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BotStatus extends StatelessWidget {
   @override
@@ -77,11 +78,14 @@ Widget _buildLink(BuildContext context, String value) {
         style:
             TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
       ),
-      onTap: () {
-        // TODO
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text("Sorry, URL opening is not supported yet."),
-        ));
+      onTap: () async {
+        if (await canLaunch(value)) {
+          await launch(value);
+        } else {
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text("URL can't be opened."),
+          ));
+        }
       });
 }
 
