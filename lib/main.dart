@@ -20,7 +20,6 @@ Future<void> main() async {
 }
 
 class Kiu extends StatefulWidget {
-  // This widget is the root of your application.
   @override
   _KiuState createState() => _KiuState();
 }
