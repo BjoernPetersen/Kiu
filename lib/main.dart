@@ -88,7 +88,8 @@ class _KiuState extends State<Kiu> {
 }
 
 String _initialRoute() {
-  if (Preference.username.getString() == null) {
+  final username = Preference.username.getString();
+  if (username == null || username.isEmpty) {
     return "/login";
   } else {
     return "/queue";
