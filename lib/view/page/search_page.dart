@@ -65,7 +65,11 @@ class _SearchPageState extends State<SearchPage> {
 
   void _onClearTap() {
     if (query.text.isEmpty) {
-      Navigator.pushReplacement(context, UnanimatedRoute((_) => QueuePage()));
+      final nav = Navigator.of(context);
+      while (nav.canPop()) {
+        nav.pop();
+      }
+      nav.pushReplacement(UnanimatedRoute((_) => QueuePage()));
     } else {
       query.clear();
     }
