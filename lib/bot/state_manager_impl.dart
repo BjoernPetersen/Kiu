@@ -7,69 +7,79 @@ import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/state_manager.dart';
 
 class StateManagerImpl implements StateManager {
-  final _PeriodicChecker<PlayerState> _stateChecker;
-  final _PeriodicChecker<List<SongEntry>> _queueChecker;
-  final _PeriodicChecker<List<SongEntry>> _queueHistoryChecker;
+  final _PeriodicChecker<PlayerState> _playerState;
+  final _PeriodicChecker<List<SongEntry>> _queueState;
+  final _PeriodicChecker<List<SongEntry>> _queueHistoryState;
 
   StateManagerImpl(ConnectionManager connectionManager)
-      : _stateChecker = _PeriodicChecker(
+      : _playerState = _PeriodicChecker(
           connectionManager,
           (service) => service.getPlayerState(),
         ),
-        _queueChecker = _PeriodicChecker(
+        _queueState = _PeriodicChecker(
           connectionManager,
           (service) => service.getQueue(),
         ),
-        _queueHistoryChecker = _PeriodicChecker(
+        _queueHistoryState = _PeriodicChecker(
           connectionManager,
           (service) => service.getQueueHistory(),
         );
 
   @override
-  Stream<PlayerState> get playerState => _stateChecker.stream;
+  State<PlayerState> get player => _playerState;
 
   @override
-  PlayerState get lastPlayerState => _stateChecker.lastValue;
+  State<List<SongEntry>> get queueState => _queueState;
 
   @override
-  Stream<List<SongEntry>> get queue => _queueChecker.stream;
+  State<List<SongEntry>> get queueHistoryState => _queueHistoryState;
 
   @override
-  List<SongEntry> get lastQueue => _queueChecker.lastValue;
+  Stream<PlayerState> get playerState => player.stream;
 
   @override
-  Stream<List<SongEntry>> get queueHistory => _queueHistoryChecker.stream;
+  PlayerState get lastPlayerState => player.lastValue;
 
   @override
-  List<SongEntry> get lastQueueHistory => _queueHistoryChecker.lastValue;
+  Stream<List<SongEntry>> get queue => queueState.stream;
+
+  @override
+  List<SongEntry> get lastQueue => queueState.lastValue;
+
+  @override
+  Stream<List<SongEntry>> get queueHistory => queueHistoryState.stream;
+
+  @override
+  List<SongEntry> get lastQueueHistory => queueHistoryState.lastValue;
 
   @override
   void updateState(PlayerState state) {
-    _stateChecker.update(state);
+    player.update(state);
   }
 
   @override
   void updateQueue(List<SongEntry> queue) {
-    _queueChecker.update(queue);
+    queueState.update(queue);
   }
 
   @override
   void updateQueueHistory(List<SongEntry> history) {
-    _queueChecker.update(history);
+    queueState.update(history);
   }
 
   @override
   void close() {
-    _stateChecker.close();
-    _queueChecker.close();
-    _queueHistoryChecker.close();
+    _playerState.close();
+    _queueState.close();
+    _queueHistoryState.close();
   }
 }
 
-class _PeriodicChecker<T> {
+class _PeriodicChecker<T> implements State<T> {
   final Future<T> Function(BotService) call;
   final ConnectionManager connectionManager;
   final _state = StreamController<T>.broadcast();
+  @override
   T lastValue;
   Timer _timer;
   Future<void> _job;
@@ -119,8 +129,10 @@ class _PeriodicChecker<T> {
     }
   }
 
+  @override
   Stream<T> get stream => _state.stream;
 
+  @override
   void update(T value) {
     _state.add(value);
     lastValue = value;
