@@ -1,0 +1,3 @@
+- Simple bot info page with volume control
+- Check for Wi-Fi connection to remind you about enabling it
+- Cosmetic improvements
