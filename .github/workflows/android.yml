@@ -10,6 +10,8 @@ jobs:
         run: git clone https://github.com/flutter/flutter.git ~/flutter --branch master
       - name: Add Flutter to PATH
         run: echo "::add-path::~/flutter/bin"
+      - name: Run flutter doctor
+        run: flutter doctor
       - name: Check out repo
         uses: actions/checkout@v1
       - name: Get dependencies
