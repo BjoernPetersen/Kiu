@@ -95,13 +95,12 @@ class _SearchPageState extends State<SearchPage> {
               ),
               actions: <Widget>[createOverflowItems(context)],
               bottom: TabBar(
+                isScrollable: true,
                 tabs: providers
                     .map((providers) => Tab(
                           child: Text(
                             providers.name,
                             maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 11),
                           ),
                         ))
                     .toList(growable: false),

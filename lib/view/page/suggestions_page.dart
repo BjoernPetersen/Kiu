@@ -39,13 +39,12 @@ class SuggestionsPage extends StatelessWidget {
               title: Text('Kiu'),
               actions: <Widget>[createOverflowItems(context)],
               bottom: TabBar(
+                isScrollable: true,
                 tabs: suggesters
                     .map((suggester) => Tab(
                           child: Text(
                             suggester.name,
                             maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 11),
                           ),
                         ))
                     .toList(growable: false),
