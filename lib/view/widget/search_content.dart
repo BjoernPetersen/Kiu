@@ -34,7 +34,14 @@ class _SearchContentState extends State<SearchContent> {
     query.addListener(_onQueryChange);
   }
 
+  @override
+  void dispose() {
+    query.removeListener(_onQueryChange);
+    super.dispose();
+  }
+
   _onQueryChange() {
+    if (!mounted) return;
     final query = this.query.text.trim();
     if (query == previousQuery) return;
     previousQuery = query;
