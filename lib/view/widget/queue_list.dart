@@ -7,6 +7,7 @@ import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/widget/empty_state.dart';
 import 'package:kiu/view/widget/offset_fill_sliver.dart';
 import 'package:kiu/view/widget/queue_card.dart';
 import 'package:kiu/view/widget/song_tile.dart';
@@ -116,7 +117,13 @@ class _QueueListState extends State<QueueList> {
   }
 
   Widget _buildQueueList() {
-    if (connectionManager.hasPermission(Permission.MOVE)) {
+    if (_queue.isEmpty) {
+      return SliverFillViewport(
+        delegate: SliverChildBuilderDelegate(
+            (context, index) => EmptyState(text: "The queue is empty"),
+            childCount: 1),
+      );
+    } else if (connectionManager.hasPermission(Permission.MOVE)) {
       return ReorderableSliverList(
         delegate: ReorderableSliverChildBuilderDelegate(
           _buildQueueItem,
@@ -136,6 +143,20 @@ class _QueueListState extends State<QueueList> {
     }
   }
 
+  List<Widget> _createSlivers() {
+    final List<Widget> result = [
+      SliverList(
+        delegate: SliverChildBuilderDelegate(
+          _buildHistoryItem,
+          childCount: _history.length,
+        ),
+      ),
+      _buildQueueList(),
+    ];
+    if (_queue.isNotEmpty) result.add(OffsetFillSliver(offset: CARD_HEIGHT));
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -143,16 +164,7 @@ class _QueueListState extends State<QueueList> {
         keepScrollOffset: false,
         initialScrollOffset: CARD_HEIGHT * _history.length,
       ),
-      slivers: <Widget>[
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            _buildHistoryItem,
-            childCount: _history.length,
-          ),
-        ),
-        _buildQueueList(),
-        OffsetFillSliver(offset: CARD_HEIGHT),
-      ],
+      slivers: _createSlivers(),
     );
   }
 }
