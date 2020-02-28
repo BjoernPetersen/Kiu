@@ -1,0 +1,89 @@
+page:
+  bot: Bot-Erkennung
+  favorites: Favoriten
+  login: Anmeldung
+  queue: Warteschlange
+  search: Suche
+  state: Bot-Status
+  stateOf(String botIp): Bot an Adresse $botIp
+  suggestion: Vorschläge
+
+common:
+  submit: Abschicken
+  pleaseWait: Bitte warten
+  errorBlank: Darf nicht leer sein
+
+share:
+  failure: Konnte geteilten Song nicht hinzufügen
+
+overflow:
+  refreshToken: Token aktualisieren
+  chooseBot: Bot wechseln
+  logout: Ausloggen
+
+requirement:
+  bot:
+    description: Kiu muss die IP-Adresse des Bot-Servers kennen
+    button: Bot auswählen
+  wifi:
+    description: Kiu funktioniert nur mit einer lokalen Netzwerkverbindung
+    button: WLAN aktivieren
+
+login:
+  name: Dein Name
+  password: Ein Passwort
+  errorNoBot: Bitte wähle einen Bot aus
+  errorIo: IO-Fehler. Bitte versuche es erneut oder wähle einen anderen Bot aus
+  input:
+    wrong: Falsche Zugangsdaten
+    conflict: Nutzername bereits vergeben
+    blank: ${_parent._parent.common.errorBlank}
+
+botState:
+  showInfo: Informationen über den Bot anzeigen
+  empty: Keine Informationen verfügbar
+
+discovery:
+  empty: Keine Bots gefunden
+  refresh: Aktualisieren
+  card:
+    title(String ip): Bot an Adresse $ip
+    subtitle: Tippe, um diesen Bot zu nutzen
+  manual:
+    hint: Gib eine Bot-IP ein (z.B. 192.168.178.42)
+    usingIp(String ip): 'Nutze IP: $ip'
+    button: Manuell eingeben
+
+search:
+  hint: Suche
+  empty: Keine Ergebnisse
+  noQuery: Bitte gib eine Suchanfrage ein
+
+suggestions:
+  remove:
+    tooltip: Vorschlag entfernen
+
+state:
+  apiVersion: 'API-Version:'
+  urlError: URL konnte nicht geöffnet werden.
+  volume: Lautstärke
+  implementation:
+    root: 'Implementation:'
+    name: 'Name:'
+    version: 'Version:'
+    info: 'Info:'
+
+queue:
+  empty: Die Warteschlange ist leer
+  tapToEnqueue: Zum Hinzufügen tippen
+  remove:
+    tooltip: Aus Warteschlange entfernen
+    confirm: Diesen Song entfernen?
+
+player:
+  noData: Keine Daten
+  stopped: Player ist gestoppt
+
+dialog:
+  ok: OK
+  cancel: Abbrechen

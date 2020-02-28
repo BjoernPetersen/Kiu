@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/state_manager.dart';
@@ -78,6 +79,14 @@ class _KiuState extends State<Kiu> {
           "/suggestions": (_) => SuggestionsPage(),
           "/state": (_) => StatePage(),
         },
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en'),
+          const Locale('de'),
+        ],
       ),
     );
   }

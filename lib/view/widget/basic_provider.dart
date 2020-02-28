@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kiu/view/resources/messages.i18n.dart';
-import 'package:provider/provider.dart';
+import 'package:kiu/view/widget/messages_provider.dart';
 
 class BasicProvider extends StatelessWidget {
   final Widget child;
@@ -8,8 +7,5 @@ class BasicProvider extends StatelessWidget {
   const BasicProvider({Key key, @required this.child}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Provider(
-        create: (_) => Messages(),
-        child: child,
-      );
+  Widget build(BuildContext context) => MessagesProvider(child: child);
 }

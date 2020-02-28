@@ -19,6 +19,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   get_it: ^3.0.0
   intl: ^0.16.0
   json_annotation: ^3.0.0

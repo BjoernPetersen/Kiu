@@ -1,5 +1,5 @@
 page:
-  bot: Bot detection
+  bot: Bot discovery
   favorites: Favorites
   login: Sign in
   queue: Queue
@@ -64,7 +64,7 @@ suggestions:
     tooltip: Remove suggestion
 
 state:
-  apiVersion: 'API Version:'
+  apiVersion: 'API version:'
   urlError: URL can't be opened.
   volume: Volume
   implementation:
