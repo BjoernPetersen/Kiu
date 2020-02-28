@@ -5,11 +5,20 @@ import 'package:kiu/data/preferences.dart';
 
 class BasicAwarenessBody extends StatefulWidget {
   final Widget child;
+  final Set<Requirement> require;
 
-  const BasicAwarenessBody({Key key, @required this.child}) : super(key: key);
+  const BasicAwarenessBody({
+    Key key,
+    @required this.child,
+    this.require,
+  }) : super(key: key);
 
   @override
   _BasicAwarenessBodyState createState() => _BasicAwarenessBodyState();
+
+  bool requires(Requirement requirement) {
+    return require?.contains(requirement) ?? true;
+  }
 }
 
 class _BasicAwarenessBodyState extends State<BasicAwarenessBody> {
@@ -24,7 +33,8 @@ class _BasicAwarenessBodyState extends State<BasicAwarenessBody> {
 
   List<Widget> _buildChildren(BuildContext context) {
     final result = <Widget>[];
-    if (Preference.bot_ip.getString() == null) {
+    if (widget.requires(Requirement.bot_ip) &&
+        Preference.bot_ip.getString() == null) {
       result.add(
         MaterialBanner(
           leading: Icon(
@@ -40,7 +50,7 @@ class _BasicAwarenessBodyState extends State<BasicAwarenessBody> {
           ],
         ),
       );
-    } else if (!_isConnected) {
+    } else if (widget.requires(Requirement.wifi) && !_isConnected) {
       result.add(MaterialBanner(
         leading: Icon(
           Icons.signal_wifi_off,
@@ -68,3 +78,5 @@ class _BasicAwarenessBodyState extends State<BasicAwarenessBody> {
     );
   }
 }
+
+enum Requirement { bot_ip, wifi }

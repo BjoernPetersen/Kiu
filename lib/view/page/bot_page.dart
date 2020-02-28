@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kiu/view/widget/basic_awareness_body.dart';
 import 'package:kiu/view/widget/discovery/discovery_content.dart';
 import 'package:kiu/view/widget/discovery/discovery_controller.dart';
 import 'package:kiu/view/widget/discovery/discovery_refresh_button.dart';
@@ -32,7 +33,10 @@ class _BotPageState extends State<BotPage> {
         create: (_) => controller,
         child: Scaffold(
           appBar: _createAppBar(),
-          body: DiscoveryContent(),
+          body: BasicAwarenessBody(
+            child: DiscoveryContent(),
+            require: {Requirement.wifi},
+          ),
         ),
       );
 
