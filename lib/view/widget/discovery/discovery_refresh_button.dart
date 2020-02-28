@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/discovery/discovery_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +17,6 @@ class DiscoveryRefreshButton extends StatelessWidget {
           size: size,
         ),
         onPressed: Provider.of<DiscoveryController>(context).refresh,
-        tooltip: 'Refresh bots',
+        tooltip: context.messages.discovery.refresh,
       );
 }

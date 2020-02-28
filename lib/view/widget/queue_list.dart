@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/empty_state.dart';
 import 'package:kiu/view/widget/offset_fill_sliver.dart';
 import 'package:kiu/view/widget/queue_card.dart';
@@ -93,7 +93,7 @@ class _QueueListState extends State<QueueList> {
       child: Card(
         child: SongTile(
           entry.song,
-          tooltip: "Tap to enqueue",
+          tooltip: context.messages.queue.tapToEnqueue,
           enabled: true,
           onPressed: () => _enqueue(entry.song),
         ),
@@ -120,7 +120,7 @@ class _QueueListState extends State<QueueList> {
     if (_queue.isEmpty) {
       return SliverFillViewport(
         delegate: SliverChildBuilderDelegate(
-            (context, index) => EmptyState(text: "The queue is empty"),
+            (context, index) => EmptyState(text: context.messages.queue.empty),
             childCount: 1),
       );
     } else if (connectionManager.hasPermission(Permission.MOVE)) {

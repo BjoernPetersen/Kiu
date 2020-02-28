@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/basic_awareness_body.dart';
 import 'package:kiu/view/widget/discovery/discovery_content.dart';
 import 'package:kiu/view/widget/discovery/discovery_controller.dart';
@@ -32,7 +32,7 @@ class _BotPageState extends State<BotPage> {
   Widget build(BuildContext context) => Provider(
         create: (_) => controller,
         child: Scaffold(
-          appBar: _createAppBar(),
+          appBar: _createAppBar(context),
           body: BasicAwarenessBody(
             child: DiscoveryContent(),
             require: {Requirement.wifi},
@@ -40,8 +40,8 @@ class _BotPageState extends State<BotPage> {
         ),
       );
 
-  AppBar _createAppBar() => AppBar(
-        title: Text('Bot detection'),
+  AppBar _createAppBar(BuildContext context) => AppBar(
+        title: Text(context.messages.page.bot),
         actions: <Widget>[
           ManualDiscoveryButton(),
           DiscoveryRefreshButton(),

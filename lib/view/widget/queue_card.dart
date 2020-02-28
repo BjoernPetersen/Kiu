@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/confirmation_dialog.dart';
 import 'package:kiu/view/widget/song_tile.dart';
 
@@ -28,7 +28,7 @@ class QueueCard extends StatelessWidget {
     final result = await showDialog(
       context: context,
       builder: (context) => ConfirmationDialog(
-        title: Text("Remove this song?"),
+        title: Text(context.messages.queue.remove.confirm),
         content: SongTile(songEntry.song),
       ),
     );
@@ -39,7 +39,7 @@ class QueueCard extends StatelessWidget {
     if (connectionManager.hasPermission(Permission.SKIP)) {
       return IconButton(
         icon: Icon(Icons.delete),
-        tooltip: "Remove from queue",
+        tooltip: context.messages.queue.remove.tooltip,
         onPressed: () => _confirmDeletion(context),
       );
     } else {

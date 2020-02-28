@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/page/queue_page.dart';
 import 'package:kiu/view/page/search_page.dart';
 import 'package:kiu/view/page/suggestions_page.dart';
+import 'package:kiu/view/resources/messages.i18n.dart';
 import 'package:kiu/view/routing/unanimated_route.dart';
 
 class NavigationBar extends StatelessWidget {
@@ -20,7 +21,7 @@ class NavigationBar extends StatelessWidget {
             .map((category) => BottomNavigationBarItem(
                   icon: category.icon,
                   activeIcon: category.activeIcon,
-                  title: Text(category.text),
+                  title: Text(category.text(context.messages.page)),
                 ))
             .toList(growable: false),
         onTap: (index) {
@@ -36,16 +37,16 @@ class NavigationBar extends StatelessWidget {
 enum BottomCategory { queue, suggestions, search, favorites }
 
 extension on BottomCategory {
-  String get text {
+  String text(PageMessages messages) {
     switch (this) {
       case BottomCategory.queue:
-        return 'Queue';
+        return messages.queue;
       case BottomCategory.suggestions:
-        return 'Suggestion';
+        return messages.suggestion;
       case BottomCategory.search:
-        return 'Search';
+        return messages.search;
       case BottomCategory.favorites:
-        return 'Favorites';
+        return messages.favorites;
     }
   }
 

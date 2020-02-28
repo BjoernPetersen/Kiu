@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/common.dart';
+import 'package:kiu/view/page/overflow.dart';
 import 'package:kiu/view/page/queue_page.dart';
 import 'package:kiu/view/routing/unanimated_route.dart';
 import 'package:kiu/view/widget/embedded_player.dart';
@@ -13,8 +14,6 @@ import 'package:kiu/view/widget/loading_delegate.dart';
 import 'package:kiu/view/widget/navigation_bar.dart';
 import 'package:kiu/view/widget/save_tab.dart';
 import 'package:kiu/view/widget/search_content.dart';
-
-import 'overflow.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -54,6 +53,7 @@ class _SearchPageState extends State<SearchPage> {
       if (mounted) {
         Navigator.pushNamed(context, "/selectBot");
       }
+      return [];
     }
   }
 
@@ -90,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
                 maxLines: 1,
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: 'Search',
+                  hintText: context.messages.search.hint,
                   suffix: IconButton(
                     icon: Icon(Icons.clear),
                     onPressed: _onClearTap,

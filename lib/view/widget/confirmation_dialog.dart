@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:kiu/view/common.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final Widget title;
@@ -10,8 +10,8 @@ class ConfirmationDialog extends StatelessWidget {
     Key key,
     @required this.title,
     this.content,
-    this.confirmText = "OK",
-    this.cancelText = "Cancel",
+    this.confirmText,
+    this.cancelText,
   }) : super(key: key);
 
   @override
@@ -20,12 +20,11 @@ class ConfirmationDialog extends StatelessWidget {
         content: content,
         actions: <Widget>[
           FlatButton(
-            child: Text(cancelText),
-            onPressed:() => Navigator.of(context).pop(false),
+            child: Text(cancelText ?? context.messages.dialog.cancel),
+            onPressed: () => Navigator.of(context).pop(false),
           ),
-
           FlatButton(
-            child: Text(confirmText),
+            child: Text(confirmText ?? context.messages.dialog.ok),
             onPressed: () => Navigator.of(context).pop(true),
           ),
         ],

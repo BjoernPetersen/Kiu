@@ -1,17 +1,20 @@
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/common.dart';
+import 'package:kiu/view/resources/messages.i18n.dart';
 
-Widget createOverflowItems(BuildContext context,
-        {List<Choice> hidden = const []}) =>
+Widget createOverflowItems(
+  BuildContext context, {
+  List<Choice> hidden = const [],
+}) =>
     PopupMenuButton<Choice>(
       itemBuilder: (_) => Choice.values
           .where((it) => !hidden.contains(it))
           .map(
             (it) => PopupMenuItem<Choice>(
               value: it,
-              child: Text(it.text),
+              child: Text(it.text(context.messages.overflow)),
             ),
           )
           .toList(growable: false),
@@ -43,14 +46,15 @@ enum Choice {
 }
 
 extension on Choice {
-  String get text {
+  // ignore: missing_return
+  String text(OverflowMessages messages) {
     switch (this) {
       case Choice.refresh_token:
-        return 'Refresh token';
+        return messages.refreshToken;
       case Choice.choose_bot:
-        return 'Switch bot';
+        return messages.chooseBot;
       case Choice.logout:
-        return 'Log out';
+        return messages.logout;
     }
   }
 }

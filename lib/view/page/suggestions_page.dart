@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/page/overflow.dart';
 import 'package:kiu/view/widget/embedded_player.dart';
 import 'package:kiu/view/widget/loader.dart';
@@ -36,7 +36,7 @@ class SuggestionsPage extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: false,
-              title: Text('Kiu'),
+              title: Text(context.messages.page.suggestion),
               actions: <Widget>[createOverflowItems(context)],
               bottom: TabBar(
                 isScrollable: true,
@@ -67,7 +67,7 @@ class SuggestionsPage extends StatelessWidget {
         loaderBuilder: (context) => Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
-            title: Text('Kiu'),
+            title: Text(context.messages.page.suggestion),
             actions: <Widget>[createOverflowItems(context)],
           ),
           body: EmbeddedPlayer(child: Loader()),

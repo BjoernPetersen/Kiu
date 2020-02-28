@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/page/overflow.dart';
 import 'package:kiu/view/page/state_page.dart';
 import 'package:kiu/view/widget/basic_awareness_body.dart';
@@ -11,7 +11,7 @@ class QueuePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Kiu'),
+          title: Text(context.messages.page.queue),
           actions: <Widget>[
             createStateAction(context),
             createOverflowItems(context),

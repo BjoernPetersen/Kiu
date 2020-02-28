@@ -1,7 +1,7 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:flutter/material.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/common.dart';
 
 class BasicAwarenessBody extends StatefulWidget {
   final Widget child;
@@ -33,6 +33,7 @@ class _BasicAwarenessBodyState extends State<BasicAwarenessBody> {
 
   List<Widget> _buildChildren(BuildContext context) {
     final result = <Widget>[];
+    final msg = context.messages.requirement;
     if (widget.requires(Requirement.bot_ip) &&
         Preference.bot_ip.getString() == null) {
       result.add(
@@ -41,10 +42,10 @@ class _BasicAwarenessBodyState extends State<BasicAwarenessBody> {
             Icons.warning,
             color: Colors.red,
           ),
-          content: Text("Kiu needs to know the IP address of the bot server"),
+          content: Text(msg.bot.description),
           actions: <Widget>[
             FlatButton(
-              child: Text("Select a bot"),
+              child: Text(msg.bot.button),
               onPressed: () => Navigator.of(context).pushNamed("/selectBot"),
             ),
           ],
@@ -56,10 +57,10 @@ class _BasicAwarenessBodyState extends State<BasicAwarenessBody> {
           Icons.signal_wifi_off,
           color: Colors.red,
         ),
-        content: Text("Kiu only works when connected to a local network"),
+        content: Text(msg.wifi.description),
         actions: <Widget>[
           FlatButton(
-            child: Text("Turn on Wi-Fi"),
+            child: Text(msg.wifi.button),
             onPressed: AppSettings.openWIFISettings,
           )
         ],

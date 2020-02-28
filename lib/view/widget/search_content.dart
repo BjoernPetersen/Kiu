@@ -1,9 +1,9 @@
 import 'package:async/async.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/empty_state.dart';
 import 'package:kiu/view/widget/loader.dart';
 import 'package:kiu/view/widget/result_list.dart';
@@ -76,15 +76,13 @@ class _SearchContentState extends State<SearchContent> {
   @override
   Widget build(BuildContext context) {
     if (operation == null) {
-      return Center(child: Text("Please enter a search query"));
+      return Center(child: Text(context.messages.search.noQuery));
     }
     if (results == null) {
       return Loader();
     }
     if (results.isEmpty) {
-      return EmptyState(
-        text: "No results",
-      );
+      return EmptyState(text: context.messages.search.empty);
     }
     return ResultList(results: results);
   }

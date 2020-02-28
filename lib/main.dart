@@ -1,17 +1,18 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:kiu/data/sharing_data.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/page/bot_page.dart';
 import 'package:kiu/view/page/login_page.dart';
 import 'package:kiu/view/page/queue_page.dart';
 import 'package:kiu/view/page/state_page.dart';
 import 'package:kiu/view/page/suggestions_page.dart';
+import 'package:kiu/view/widget/basic_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 Future<void> main() async {
@@ -38,7 +39,7 @@ class _KiuState extends State<Kiu> {
       final queue = await bot.enqueue(parsed.songId, parsed.providerId);
       service<StateManager>().updateQueue(queue);
     } catch (err) {
-      await Fluttertoast.showToast(msg: "Could not enqueue shared song");
+      await Fluttertoast.showToast(msg: context.messages.share.failure);
     }
   }
 
@@ -62,20 +63,22 @@ class _KiuState extends State<Kiu> {
     if (!_isHandlingShares) {
       _handleShares();
     }
-    return MaterialApp(
-      title: 'Kiu',
-      theme: ThemeData(
-        primaryColor: Color(0xFFBBC0CA),
-        highlightColor: Color(0xFFB0B5C1),
+    return BasicProvider(
+      child: MaterialApp(
+        title: 'Kiu',
+        theme: ThemeData(
+          primaryColor: Color(0xFFBBC0CA),
+          highlightColor: Color(0xFFB0B5C1),
+        ),
+        initialRoute: _initialRoute(),
+        routes: {
+          "/selectBot": (_) => BotPage(),
+          "/login": (_) => LoginPage(),
+          "/queue": (_) => QueuePage(),
+          "/suggestions": (_) => SuggestionsPage(),
+          "/state": (_) => StatePage(),
+        },
       ),
-      initialRoute: _initialRoute(),
-      routes: {
-        "/selectBot": (_) => BotPage(),
-        "/login": (_) => LoginPage(),
-        "/queue": (_) => QueuePage(),
-        "/suggestions": (_) => SuggestionsPage(),
-        "/state": (_) => StatePage(),
-      },
     );
   }
 }

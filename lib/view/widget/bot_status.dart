@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/loading_delegate.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,7 +29,10 @@ class BotStatus extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildItem("API version:", Text(info.apiVersion)),
+              _buildItem(
+                context.messages.state.apiVersion,
+                Text(info.apiVersion),
+              ),
               Divider(),
               _ImplementationInfoView(info: info.implementation),
             ],
@@ -47,11 +50,12 @@ class _ImplementationInfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final msg = context.messages.state.implementation;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          "Implementation:",
+          msg.root,
           textScaleFactor: 1.2,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -60,9 +64,9 @@ class _ImplementationInfoView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildItem("Name:", Text(info.name)),
-              _buildItem("Version:", Text(info.version)),
-              _buildItem("Info:", _buildLink(context, info.projectInfo)),
+              _buildItem(msg.name, Text(info.name)),
+              _buildItem(msg.version, Text(info.version)),
+              _buildItem(msg.info, _buildLink(context, info.projectInfo)),
             ],
           ),
         ),
@@ -83,7 +87,7 @@ Widget _buildLink(BuildContext context, String value) {
           await launch(value);
         } else {
           Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text("URL can't be opened."),
+            content: Text(context.messages.state.urlError),
           ));
         }
       });

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/result_list.dart';
 
 class SuggestionList extends StatefulWidget {
@@ -45,7 +45,7 @@ class _SuggestionListState extends State<SuggestionList> {
         results: suggestions,
         trailingBuilder: (_, song) {
           return IconButton(
-            tooltip: "Remove suggestion",
+            tooltip: context.messages.suggestions.remove.tooltip,
             icon: Icon(Icons.thumb_down),
             onPressed: () => _delete(manager, song),
           );

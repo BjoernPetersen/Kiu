@@ -1,0 +1,89 @@
+page:
+  bot: Bot detection
+  favorites: Favorites
+  login: Sign in
+  queue: Queue
+  search: Search
+  state: Bot status
+  stateOf(String botIp): Bot at $botIp
+  suggestion: Suggestions
+
+common:
+  submit: Submit
+  pleaseWait: Please wait
+  errorBlank: Can't be blank
+
+share:
+  failure: Could not enqueue shared song
+
+overflow:
+  refreshToken: Refresh token
+  chooseBot: Switch bot
+  logout: Log out
+
+requirement:
+  bot:
+    description: Kiu needs to know the IP address of the bot server
+    button: Select a bot
+  wifi:
+    description: Kiu only works when connected to a local network
+    button: Turn on Wi-Fi
+
+login:
+  name: Your name
+  password: A password
+  errorNoBot: Please select a bot
+  errorIo: IO error. Please try again or choose different bot
+  input:
+    wrong: Wrong credentials
+    conflict: Username taken
+    blank: ${_parent._parent.common.errorBlank}
+
+botState:
+  showInfo: Show bot info
+  empty: Nothing to show
+
+discovery:
+  empty: No bots found
+  refresh: Refresh bots
+  card:
+    title(String ip): Bot at IP $ip
+    subtitle: Tap to use this bot
+  manual:
+    hint: Enter bot IP (e.g. 192.168.178.42)
+    usingIp(String ip): 'Using IP: $ip'
+    button: Enter manually
+
+search:
+  hint: Search
+  empty: No results
+  noQuery: Please enter a search query
+
+suggestions:
+  remove:
+    tooltip: Remove suggestion
+
+state:
+  apiVersion: 'API Version:'
+  urlError: URL can't be opened.
+  volume: Volume
+  implementation:
+    root: 'Implementation:'
+    name: 'Name:'
+    version: 'Version:'
+    info: 'Info:'
+
+queue:
+  empty: The queue is empty
+  tapToEnqueue: Tap to enqueue
+  remove:
+    tooltip: Remove from queue
+    confirm: Remove this song?
+
+player:
+  noData: No data
+  stopped: Player is stopped
+
+dialog:
+  ok: OK
+  cancel: Cancel

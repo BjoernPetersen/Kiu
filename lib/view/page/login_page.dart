@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/page/overflow.dart';
+import 'package:kiu/view/resources/messages.i18n.dart';
 import 'package:kiu/view/widget/basic_awareness_body.dart';
 import 'package:kiu/view/widget/loader.dart';
 
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text("Sign in"),
+          title: Text(context.messages.page.login),
           actions: <Widget>[
             createOverflowItems(context, hidden: [
               Choice.logout,
@@ -67,10 +68,10 @@ class _LoginPageState extends State<LoginPage> {
             : FloatingActionButton(
                 child: Icon(Icons.navigate_next),
                 onPressed: () => _performSignIn(context),
-                tooltip: 'Continue',
+                tooltip: context.messages.common.submit,
               ),
         body: _isLoading
-            ? Loader(text: "Please wait")
+            ? Loader(text: context.messages.common.pleaseWait)
             : BasicAwarenessBody(child: _createBody(context)),
       );
 
@@ -96,8 +97,8 @@ class _LoginPageState extends State<LoginPage> {
       TextField(
         controller: _name,
         decoration: InputDecoration(
-          hintText: "Your name",
-          errorText: _nameError.text,
+          hintText: context.messages.login.name,
+          errorText: _nameError.text(context.messages.login.input),
         ),
       ),
     ];
@@ -108,8 +109,8 @@ class _LoginPageState extends State<LoginPage> {
         autofocus: true,
         controller: _password,
         decoration: InputDecoration(
-          hintText: "A password",
-          errorText: _passError.text,
+          hintText: context.messages.login.password,
+          errorText: _passError.text(context.messages.login.input),
         ),
       ));
     }
@@ -139,11 +140,10 @@ class _LoginPageState extends State<LoginPage> {
         service<ConnectionManager>().reset();
         navigator.pushReplacementNamed('/queue');
       } on MissingBotException {
-        Fluttertoast.showToast(msg: 'Please select a bot');
+        Fluttertoast.showToast(msg: context.messages.login.errorNoBot);
         navigator.pushNamed("/selectBot");
       } on IOException {
-        Fluttertoast.showToast(
-            msg: "IO error. Please try again or choose different bot");
+        Fluttertoast.showToast(msg: context.messages.login.errorIo);
       } on ConflictException {
         setState(() {
           if (_requiresPassword) {
@@ -175,16 +175,17 @@ class _LoginPageState extends State<LoginPage> {
 enum InputError { none, blank, wrong, conflict }
 
 extension on InputError {
-  String get text {
+  // ignore: missing_return
+  String text(InputLoginMessages messages) {
     switch (this) {
       case InputError.none:
         return null;
       case InputError.blank:
-        return "Can't be blank";
+        return messages.blank;
       case InputError.wrong:
-        return "Wrong credentials";
+        return messages.wrong;
       case InputError.conflict:
-        return "Username taken";
+        return messages.conflict;
     }
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:kiu/view/common.dart';
 
 class BotCard extends StatelessWidget {
   final String ip;
@@ -11,11 +11,14 @@ class BotCard extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Card(
-        child: ListTile(
-          title: Text("Bot at IP $ip"),
-          subtitle: Text("Tap to use this bot"),
-          onTap: onTap,
-        ),
-      );
+  Widget build(BuildContext context) {
+    final msg = context.messages.discovery.card;
+    return Card(
+      child: ListTile(
+        title: Text(msg.title(ip)),
+        subtitle: Text(msg.subtitle),
+        onTap: onTap,
+      ),
+    );
+  }
 }

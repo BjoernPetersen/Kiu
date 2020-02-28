@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:kiu/bot/connection_manager.dart';
-import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
+import 'package:kiu/view/common.dart';
+import 'package:kiu/view/resources/messages.i18n.dart';
 import 'package:kiu/view/widget/basic_awareness_body.dart';
 import 'package:kiu/view/widget/bot_status.dart';
 import 'package:kiu/view/widget/empty_state.dart';
@@ -11,26 +10,27 @@ class StatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final botIp = Preference.bot_ip.getString();
-    final manager = service<ConnectionManager>();
     return Scaffold(
       appBar: AppBar(
-        title: Text(_getTitleText(botIp)),
+        title: Text(_getTitleText(context.messages.page, botIp)),
       ),
       body: BasicAwarenessBody(
-        child: botIp == null ? _buildEmpty() : _buildBody(context),
+        child: botIp == null ? _buildEmpty(context) : _buildBody(context),
       ),
     );
   }
 
-  String _getTitleText(String botIp) {
+  String _getTitleText(PageMessages messages, String botIp) {
     if (botIp == null) {
-      return "Bot status";
+      return messages.state;
     } else {
-      return "Bot at $botIp";
+      return messages.stateOf(botIp);
     }
   }
 
-  Widget _buildEmpty() => EmptyState(text: "Nothing to show");
+  Widget _buildEmpty(BuildContext context) => EmptyState(
+        text: context.messages.botState.empty,
+      );
 
   Widget _buildBody(BuildContext context) {
     return Row(
@@ -46,7 +46,7 @@ class StatePage extends StatelessWidget {
 Widget createStateAction(BuildContext context) {
   return IconButton(
     icon: Icon(Icons.info),
-    tooltip: "Show bot info",
+    tooltip: context.messages.botState.showInfo,
     onPressed: () => Navigator.of(context).pushNamed("/state"),
   );
 }

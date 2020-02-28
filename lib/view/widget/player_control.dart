@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:expandable/expandable.dart';
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/song_tile.dart';
 
 class PlayerControl extends StatefulWidget {
@@ -44,7 +44,7 @@ class _PlayerControlState extends State<PlayerControl> {
     if (state == null) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Center(child: Text('No data')),
+        child: Center(child: Text(context.messages.player.noData)),
       );
     }
     final type = state.state;
@@ -54,7 +54,12 @@ class _PlayerControlState extends State<PlayerControl> {
         return _createControl(_songInfo(state.songEntry), state);
       case PlayerStateType.stop:
       case PlayerStateType.error:
-        return _createControl(Center(child: Text('Player is stopped')), state);
+        return _createControl(
+          Center(
+            child: Text(context.messages.player.stopped),
+          ),
+          state,
+        );
     }
   }
 

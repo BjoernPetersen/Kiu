@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kiu/data/urls.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/discovery/discovery_controller.dart';
 import 'package:kiu/view/widget/input_dialog.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,7 @@ class ManualDiscoveryButton extends StatelessWidget {
     final result = await showDialog(
       context: context,
       child: InputDialog(
-        hint: 'Enter bot IP (e.g. 192.168.178.42)',
+        hint: context.messages.discovery.manual.hint,
       ),
     );
     if (result != null) {
@@ -21,7 +20,7 @@ class ManualDiscoveryButton extends StatelessWidget {
         sanitizedIp,
       );
       Fluttertoast.showToast(
-        msg: "Using IP: $sanitizedIp",
+        msg: context.messages.discovery.manual.usingIp(sanitizedIp),
         toastLength: Toast.LENGTH_SHORT,
       );
     }
@@ -31,7 +30,7 @@ class ManualDiscoveryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.keyboard),
-      tooltip: 'Enter manually',
+      tooltip: context.messages.discovery.manual.button,
       onPressed: () => _enterManually(context),
     );
   }

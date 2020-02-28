@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/discovery/bot_card.dart';
 import 'package:kiu/view/widget/discovery/discovery_controller.dart';
 import 'package:kiu/view/widget/discovery/discovery_refresh_button.dart';
@@ -51,7 +51,7 @@ class DiscoveryContent extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
-            "No bots found.",
+            context.messages.discovery.empty,
             textScaleFactor: 1.5,
           ),
           Row(

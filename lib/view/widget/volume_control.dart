@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/view/common.dart';
 
 class VolumeControl extends StatefulWidget {
   @override
@@ -45,7 +45,7 @@ class _VolumeControlState extends State<VolumeControl> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: Text("Volume"),
+                child: Text(context.messages.state.volume),
               ),
               Expanded(
                 child: RotatedBox(
