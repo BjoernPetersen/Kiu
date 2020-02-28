@@ -14,7 +14,7 @@ description: Android client for MusicBot
 version: 2.5.0+31
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
