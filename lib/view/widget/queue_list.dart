@@ -93,6 +93,7 @@ class _QueueListState extends State<QueueList> {
       child: Card(
         child: SongTile(
           entry.song,
+          username: entry.userName,
           tooltip: context.messages.queue.tapToEnqueue,
           enabled: true,
           onPressed: () => _enqueue(entry.song),
