@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:kiu/bot/discovery_service.dart';
@@ -6,7 +7,13 @@ import 'package:udp/udp.dart';
 
 class DiscoveryServiceImpl implements DiscoveryService {
   @override
-  Future<Iterable<String>> findBots() async {
+  Stream<String> findBots() {
+    final controller = StreamController<String>();
+    _detect(controller);
+    return controller.stream;
+  }
+
+  Future<void> _detect(StreamController<String> controller) async {
     final lock = MulticastLock();
     await lock.acquire();
     try {
@@ -18,14 +25,24 @@ class DiscoveryServiceImpl implements DiscoveryService {
       final receiver = await UDP.bind(endpoint);
 
       final found = <String>{};
-      await receiver.listen(
-        (it) => found.add(it.address.host),
-        timeout: Duration(seconds: 3),
+      final listen = receiver.listen(
+        (it) {
+          final host = it.address.host;
+          if (found.add(host)) {
+            controller.add(host);
+          }
+        },
+        timeout: Duration(seconds: 5),
       );
 
+      await Future.any([
+        controller.done,
+        listen,
+      ]);
+
       receiver.close();
-      return found;
     } finally {
+      await controller.close();
       await lock.release();
     }
   }
