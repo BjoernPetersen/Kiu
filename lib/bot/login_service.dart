@@ -1,7 +1,11 @@
-abstract class LoginService {
-  Future<String> login(String username, [String password]);
+import 'package:kiu/bot/model.dart';
 
-  Future<String> register(String username);
+abstract class LoginService {
+  Future<Tokens> login(String username, [String password]);
+
+  Future<Tokens> refresh();
+
+  Future<Tokens> register(String username);
 }
 
 abstract class LoginException implements Exception {}

@@ -3,6 +3,16 @@ import 'package:json_annotation/json_annotation.dart';
 part 'model.g.dart';
 
 @JsonSerializable()
+class Tokens {
+  final String accessToken;
+  final String refreshToken;
+
+  Tokens({this.accessToken, this.refreshToken});
+
+  factory Tokens.fromJson(Map<String, dynamic> json) => _$TokensFromJson(json);
+}
+
+@JsonSerializable()
 class ImplementationInfo {
   final String name;
   final String version;
@@ -17,9 +27,10 @@ class ImplementationInfo {
 @JsonSerializable()
 class BotInfo {
   final String apiVersion;
+  final String botName;
   final ImplementationInfo implementation;
 
-  BotInfo({this.apiVersion, this.implementation});
+  BotInfo({this.apiVersion, this.botName, this.implementation});
 
   factory BotInfo.fromJson(Map<String, dynamic> json) =>
       _$BotInfoFromJson(json);
@@ -121,6 +132,7 @@ class Volume {
   Volume({this.volume, this.isSupported});
 
   Volume.unsupported() : this(volume: 100, isSupported: false);
+
   Volume.supported(int value) : this(volume: value, isSupported: true);
 
   factory Volume.fromJson(Map<String, dynamic> json) => _$VolumeFromJson(json);

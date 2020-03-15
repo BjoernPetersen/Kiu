@@ -31,7 +31,7 @@ Widget createOverflowItems(
             break;
           case Choice.logout:
             Preference.token.remove();
-            Preference.password.remove();
+            Preference.refresh_token.remove();
             navigator.pushReplacementNamed("/login");
             break;
         }

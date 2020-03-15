@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum Preference {
   install_id,
   username,
-  password,
+  refresh_token,
   token,
   bot_ip,
   suggester_id,
@@ -19,8 +19,8 @@ extension PreferenceAccess on Preference {
         return "install_id";
       case Preference.username:
         return "username";
-      case Preference.password:
-        return "password";
+      case Preference.refresh_token:
+        return "rrefresh_token";
       case Preference.token:
         return "token";
       case Preference.bot_ip:

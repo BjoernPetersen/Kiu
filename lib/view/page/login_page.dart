@@ -135,8 +135,8 @@ class _LoginPageState extends State<LoginPage> {
         final password = _requiresPassword ? _password.value.text : null;
         final token = await login.login(name, password);
         Preference.username.setString(name);
-        Preference.password.setString(password);
-        Preference.token.setString(token);
+        Preference.token.setString(token.accessToken);
+        Preference.refresh_token.setString(token.refreshToken);
         service<ConnectionManager>().reset();
         navigator.pushReplacementNamed('/queue');
       } on MissingBotException {

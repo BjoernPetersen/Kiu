@@ -11,10 +11,13 @@ abstract class BotService {
       _BotService(dio, baseUrl: baseUrl);
 
   @GET("/token")
-  Future<String> login(@Header("Authorization") String basic);
+  Future<Tokens> login(@Header("Authorization") String basic);
+
+  @GET("/token")
+  Future<Tokens> refresh(@Header("Authorization") String bearer);
 
   @POST("/user")
-  Future<String> register(@Body() RegisterCredentials credentials);
+  Future<Tokens> register(@Body() RegisterCredentials credentials);
 
   @GET("/player")
   Future<PlayerState> getPlayerState();

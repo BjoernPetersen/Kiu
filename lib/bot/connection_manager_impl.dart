@@ -66,11 +66,12 @@ class ConnectionManagerImpl implements ConnectionManager {
   }
 
   Future<Token> _refreshToken() async {
-    final value = await service<LoginService>().login(
-      Preference.username.getString(),
-      Preference.password.getString(),
-    );
-    final token = Token.fromValue(value);
+    final value = await service<LoginService>().refresh();
+    final refreshToken = value.refreshToken;
+    if (refreshToken != null) {
+      Preference.refresh_token.setString(refreshToken);
+    }
+    final token = Token.fromValue(value.accessToken);
     _token.value = token;
     return token;
   }

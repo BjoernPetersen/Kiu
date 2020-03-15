@@ -37,7 +37,7 @@ class LoginServiceImpl implements LoginService {
   }
 
   @override
-  Future<String> login(String username, [String password]) async {
+  Future<Tokens> login(String username, [String password]) async {
     final instanceId = Preference.install_id.getString();
     final passwords = password == null ? [instanceId] : [password, instanceId];
     final service = _createService();
@@ -63,7 +63,25 @@ class LoginServiceImpl implements LoginService {
   }
 
   @override
-  Future<String> register(String username) async {
+  Future<Tokens> refresh() async {
+    final token = Preference.refresh_token.getString();
+    if (token == null) throw WrongCredentialsException();
+    final service = _createService();
+    try {
+      return await service.refresh("Bearer $token");
+    } on DioError catch (e) {
+      checkIo(e);
+      switch (e.response.statusCode) {
+        case 401:
+          throw WrongCredentialsException();
+        default:
+          throw IOException();
+      }
+    }
+  }
+
+  @override
+  Future<Tokens> register(String username) async {
     final credentials = RegisterCredentials(
       name: username,
       userId: Preference.install_id.getString(),
