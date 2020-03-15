@@ -19,6 +19,9 @@ abstract class BotService {
   @POST("/user")
   Future<Tokens> register(@Body() RegisterCredentials credentials);
 
+  @PUT("/user")
+  Future<Tokens> changePassword(@Body() PasswordChange passwordChange);
+
   @GET("/player")
   Future<PlayerState> getPlayerState();
 

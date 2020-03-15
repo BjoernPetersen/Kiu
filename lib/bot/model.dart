@@ -50,6 +50,15 @@ class RegisterCredentials {
 }
 
 @JsonSerializable()
+class PasswordChange {
+  final String newPassword;
+
+  PasswordChange({this.newPassword});
+
+  Map<String, dynamic> toJson() => _$PasswordChangeToJson(this);
+}
+
+@JsonSerializable()
 class NamedPlugin {
   final String id;
   final String name;

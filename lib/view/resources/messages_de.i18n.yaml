@@ -10,6 +10,7 @@ page:
 
 common:
   submit: Abschicken
+  retry: Erneut versuchen
   pleaseWait: Bitte warten
   errorBlank: Darf nicht leer sein
 
@@ -21,6 +22,7 @@ share:
 overflow:
   refreshToken: Token aktualisieren
   chooseBot: Bot wechseln
+  setPassword: Passwort ändern
   logout: Ausloggen
 
 requirement:
@@ -36,6 +38,8 @@ login:
   password: Ein Passwort
   errorNoBot: Bitte wähle einen Bot aus
   errorIo: IO-Fehler. Bitte versuche es erneut oder wähle einen anderen Bot aus
+  errorPasswordShort: Passwort ist zu kurz
+  errorPasswordChange: Passwort konnte nicht geändert werden
   input:
     wrong: Falsche Zugangsdaten
     conflict: Nutzername bereits vergeben

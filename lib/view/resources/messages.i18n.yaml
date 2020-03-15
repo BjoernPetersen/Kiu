@@ -10,6 +10,7 @@ page:
 
 common:
   submit: Submit
+  retry: Retry
   pleaseWait: Please wait
   errorBlank: Can't be blank
 
@@ -21,6 +22,7 @@ share:
 overflow:
   refreshToken: Refresh token
   chooseBot: Switch bot
+  setPassword: Change password
   logout: Log out
 
 requirement:
@@ -36,6 +38,8 @@ login:
   password: A password
   errorNoBot: Please select a bot
   errorIo: IO error. Please try again or choose different bot
+  errorPasswordShort: Password is not long enough
+  errorPasswordChange: Could not change password
   input:
     wrong: Wrong credentials
     conflict: Username taken
