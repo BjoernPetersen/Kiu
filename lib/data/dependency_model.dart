@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import 'package:kiu/bot/auth/credential_manager.dart';
+import 'package:kiu/bot/auth/credential_manager_impl.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/connection_manager_impl.dart';
 import 'package:kiu/bot/discovery_service.dart';
@@ -20,6 +22,7 @@ class DependencyModel {
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     service.registerSingleton<SharedPreferences>(prefs);
+    service.registerSingleton<CredentialManager>(CredentialManagerImpl());
     service.registerSingleton<LoginService>(LoginServiceImpl());
     service.registerSingleton<DiscoveryService>(DiscoveryServiceImpl());
     service.registerSingleton<ConnectionManager>(ConnectionManagerImpl());
