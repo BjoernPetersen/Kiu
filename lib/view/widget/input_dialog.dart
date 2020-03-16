@@ -2,19 +2,19 @@ import 'package:kiu/view/common.dart';
 
 class InputDialog extends StatefulWidget {
   final String hint;
+  final bool obscureText;
 
-  InputDialog({this.hint});
+  InputDialog({this.hint, this.obscureText});
 
   @override
-  State<StatefulWidget> createState() => new _InputDialogState(hint: hint);
+  State<StatefulWidget> createState() => new _InputDialogState();
 }
 
 class _InputDialogState extends State<InputDialog> {
   final TextEditingController _controller = TextEditingController();
-  final String hint;
   bool _isBlankError = false;
 
-  _InputDialogState({this.hint});
+  _InputDialogState();
 
   @override
   void initState() {
@@ -41,9 +41,10 @@ class _InputDialogState extends State<InputDialog> {
             TextField(
               autocorrect: false,
               autofocus: true,
+              obscureText: widget.obscureText,
               controller: _controller,
               decoration: InputDecoration(
-                hintText: hint,
+                hintText: widget.hint,
                 errorText: _isBlankError ? msg.common.errorBlank : null,
               ),
             ),

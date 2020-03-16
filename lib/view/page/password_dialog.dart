@@ -12,7 +12,10 @@ import 'package:progress_dialog/progress_dialog.dart';
 Future<void> askPassword(BuildContext context) async {
   final String result = await showDialog(
     context: context,
-    builder: (_) => InputDialog(hint: context.messages.login.password),
+    builder: (_) => InputDialog(
+      hint: context.messages.login.password,
+      obscureText: true,
+    ),
   );
   _tryChange(context, result);
 }
