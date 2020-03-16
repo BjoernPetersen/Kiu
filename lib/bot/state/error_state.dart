@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:kiu/bot/state/state_manager.dart';
+import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/data/action_error.dart';
 
 class ErrorState implements BotState<ActionError> {

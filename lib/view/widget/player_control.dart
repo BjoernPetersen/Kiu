@@ -4,7 +4,7 @@ import 'package:expandable/expandable.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
-import 'package:kiu/bot/state/state_manager.dart';
+import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/song_tile.dart';
@@ -21,9 +21,9 @@ class _PlayerControlState extends State<PlayerControl> {
   @override
   void initState() {
     super.initState();
-    final manager = service<StateManager>();
-    sub = manager.playerState.listen(_onStateChange);
-    _state = manager.lastPlayerState;
+    final manager = service<LiveState>();
+    sub = manager.player.stream.listen(_onStateChange);
+    _state = manager.player.lastValue;
   }
 
   @override

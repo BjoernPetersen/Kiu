@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:kiu/bot/bot.dart';
-import 'package:kiu/bot/state/state_manager.dart';
+import 'package:kiu/bot/state/live_state.dart';
 
 class BotConnection {
   final _errors = _EventCache(retainDuration: Duration(seconds: 10));

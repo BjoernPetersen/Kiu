@@ -4,15 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
-import 'package:kiu/bot/state/state_manager.dart';
+import 'package:kiu/bot/state/live_state.dart';
 
-class StateManagerImpl implements StateManager {
+class LiveStateImpl implements LiveState {
   final _PeriodicChecker<PlayerState> _playerState;
   final _PeriodicChecker<List<SongEntry>> _queueState;
   final _PeriodicChecker<List<SongEntry>> _queueHistoryState;
   final _PeriodicChecker<Volume> _volumeState;
 
-  StateManagerImpl(ConnectionManager connectionManager)
+  LiveStateImpl(ConnectionManager connectionManager)
       : _playerState = _PeriodicChecker(
           connectionManager,
           (service) => service.getPlayerState(),
@@ -41,46 +41,6 @@ class StateManagerImpl implements StateManager {
 
   @override
   BotState<Volume> get volumeState => _volumeState;
-
-  @override
-  Stream<PlayerState> get playerState => player.stream;
-
-  @override
-  PlayerState get lastPlayerState => player.lastValue;
-
-  @override
-  Stream<List<SongEntry>> get queue => queueState.stream;
-
-  @override
-  List<SongEntry> get lastQueue => queueState.lastValue;
-
-  @override
-  Stream<List<SongEntry>> get queueHistory => queueHistoryState.stream;
-
-  @override
-  List<SongEntry> get lastQueueHistory => queueHistoryState.lastValue;
-
-  @override
-  void updateState(PlayerState state) {
-    player.update(state);
-  }
-
-  @override
-  void updateQueue(List<SongEntry> queue) {
-    queueState.update(queue);
-  }
-
-  @override
-  void updateQueueHistory(List<SongEntry> history) {
-    queueState.update(history);
-  }
-
-  @override
-  void close() {
-    _playerState.close();
-    _queueState.close();
-    _queueHistoryState.close();
-  }
 }
 
 class _PeriodicChecker<T> implements BotState<T> {

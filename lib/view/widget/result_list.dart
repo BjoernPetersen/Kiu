@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
-import 'package:kiu/bot/state/state_manager.dart';
+import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/widget/song_tile.dart';
 
@@ -31,12 +31,12 @@ class _ResultListState extends State<ResultList> {
   @override
   initState() {
     super.initState();
-    final manager = service<StateManager>();
-    final lastQueue = manager.lastQueue;
+    final manager = service<LiveState>();
+    final lastQueue = manager.queueState.lastValue;
     if (lastQueue != null) {
       queue = lastQueue.map((it) => it.song).toSet();
     }
-    queueSubscription = manager.queue.listen((queue) {
+    queueSubscription = manager.queueState.stream.listen((queue) {
       setState(() {
         this.queue = queue.map((it) => it.song).toSet();
       });
@@ -56,7 +56,7 @@ class _ResultListState extends State<ResultList> {
     final bot = await service<ConnectionManager>().getService();
     try {
       final queue = await bot.enqueue(song.id, song.provider.id);
-      service<StateManager>().updateQueue(queue);
+      service<LiveState>().queueState.update(queue);
     } catch (e) {
       print(e);
     }

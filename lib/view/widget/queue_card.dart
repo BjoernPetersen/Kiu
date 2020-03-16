@@ -1,7 +1,7 @@
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
-import 'package:kiu/bot/state/state_manager.dart';
+import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/confirmation_dialog.dart';
@@ -18,7 +18,7 @@ class QueueCard extends StatelessWidget {
     try {
       final bot = await connectionManager.getService();
       final queue = await bot.dequeue(song.id, song.provider.id);
-      service<StateManager>().updateQueue(queue);
+      service<LiveState>().queueState.update(queue);
     } catch (e) {
       print(e);
     }

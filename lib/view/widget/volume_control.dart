@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
-import 'package:kiu/bot/state/state_manager.dart';
+import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
 
@@ -19,7 +19,7 @@ class _VolumeControlState extends State<VolumeControl> {
   @override
   void initState() {
     super.initState();
-    final state = service<StateManager>().volumeState;
+    final state = service<LiveState>().volumeState;
     this._volume = state.lastValue ?? Volume.unsupported();
     this._sub = state.stream.listen((value) {
       setState(() {
@@ -89,7 +89,7 @@ class _VolumeControlState extends State<VolumeControl> {
     final bot = await manager.getService();
     try {
       bot.setVolume(volume);
-      service<StateManager>().volumeState.update(Volume.supported(volume));
+      service<LiveState>().volumeState.update(Volume.supported(volume));
     } catch (err) {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Could not set volume: $err"),

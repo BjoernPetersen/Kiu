@@ -7,8 +7,8 @@ import 'package:kiu/bot/login_service.dart';
 import 'package:kiu/bot/login_service_impl.dart';
 import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/bot/state/error_state.dart';
-import 'package:kiu/bot/state/state_manager.dart';
-import 'package:kiu/bot/state/state_manager_impl.dart';
+import 'package:kiu/bot/state/live_state.dart';
+import 'package:kiu/bot/state/live_state_impl.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -23,8 +23,8 @@ class DependencyModel {
     service.registerSingleton<LoginService>(LoginServiceImpl());
     service.registerSingleton<DiscoveryService>(DiscoveryServiceImpl());
     service.registerSingleton<ConnectionManager>(ConnectionManagerImpl());
-    service.registerSingleton<StateManager>(
-      StateManagerImpl(service<ConnectionManager>()),
+    service.registerSingleton<LiveState>(
+      LiveStateImpl(service<ConnectionManager>()),
     );
     service.registerSingleton(ErrorState());
     service.registerSingleton(BotConnection());

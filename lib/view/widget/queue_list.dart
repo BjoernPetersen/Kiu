@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
-import 'package:kiu/bot/state/state_manager.dart';
+import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/common.dart';
@@ -33,11 +33,11 @@ class _QueueListState extends State<QueueList> {
     super.initState();
     _tokenListener = () => this.setState(() {});
     connectionManager.addTokenListener(_tokenListener);
-    final manager = service<StateManager>();
-    _history = manager.lastQueueHistory ?? [];
-    _historySubscription = manager.queueHistory.listen(_onHistoryChange);
-    _queue = manager.lastQueue ?? [];
-    _queueSubscription = manager.queue.listen(_onQueueChange);
+    final manager = service<LiveState>();
+    _history = manager.queueHistoryState.lastValue ?? [];
+    _historySubscription = manager.queueHistoryState.stream.listen(_onHistoryChange);
+    _queue = manager.queueState.lastValue ?? [];
+    _queueSubscription = manager.queueState.stream.listen(_onQueueChange);
   }
 
   @override
@@ -80,7 +80,7 @@ class _QueueListState extends State<QueueList> {
     final bot = await service<ConnectionManager>().getService();
     try {
       final queue = await bot.enqueue(song.id, song.provider.id);
-      service<StateManager>().updateQueue(queue);
+      service<LiveState>().queueState.update(queue);
     } catch (e) {
       print(e);
     }
@@ -110,11 +110,11 @@ class _QueueListState extends State<QueueList> {
     final tempQueue = _queue.toList();
     tempQueue.removeAt(oldIndex);
     tempQueue.insert(newIndex, entry);
-    service<StateManager>().updateQueue(tempQueue);
+    service<LiveState>().queueState.update(tempQueue);
 
     final bot = await connectionManager.getService();
     final newQueue = await bot.moveEntry(newIndex, song.id, song.provider.id);
-    service<StateManager>().updateQueue(newQueue);
+    service<LiveState>().queueState.update(newQueue);
   }
 
   Widget _buildQueueList() {
