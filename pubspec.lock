@@ -91,14 +91,14 @@ packages:
       name: build_runner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.7.4"
+    version: "1.8.0"
   build_runner_core:
     dependency: transitive
     description:
       name: build_runner_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.4.0"
+    version: "4.5.2"
   built_collection:
     dependency: transitive
     description:
@@ -154,14 +154,14 @@ packages:
       name: connectivity
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.8+1"
+    version: "0.4.8+2"
   connectivity_macos:
     dependency: transitive
     description:
       name: connectivity_macos
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0+1"
+    version: "0.1.0+2"
   connectivity_platform_interface:
     dependency: transitive
     description:
@@ -316,7 +316,7 @@ packages:
     source: hosted
     version: "3.1.3"
   i18n:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: i18n
       url: "https://pub.dartlang.org"
@@ -545,16 +545,16 @@ packages:
       name: receive_sharing_intent
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.2"
+    version: "1.3.3"
   reorderables:
     dependency: "direct main"
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "56578adc64d9a924ba82b129c2dac788ceddd016"
+      resolved-ref: "7eb2b7f257fd907cf1e79239d644ddfb767416af"
       url: "git://github.com/hanshengchiu/reorderables.git"
     source: git
-    version: "0.2.12"
+    version: "0.3.2"
   retrofit:
     dependency: "direct main"
     description:
@@ -568,7 +568,7 @@ packages:
       name: retrofit_generator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.1+4"
+    version: "1.3.1+8"
   rxdart:
     dependency: transitive
     description:
@@ -582,7 +582,7 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.6+2"
+    version: "0.5.6+3"
   shared_preferences_macos:
     dependency: transitive
     description:
@@ -650,7 +650,14 @@ packages:
       name: sqflite
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.1"
+    version: "1.3.0"
+  sqflite_common:
+    dependency: transitive
+    description:
+      name: sqflite_common
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0+1"
   stack_trace:
     dependency: transitive
     description:
@@ -776,7 +783,7 @@ packages:
       name: watcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.7+13"
+    version: "0.9.7+14"
   web_socket_channel:
     dependency: transitive
     description:

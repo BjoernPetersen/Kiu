@@ -52,9 +52,6 @@ botState:
 discovery:
   empty: No bots found
   refresh: Refresh bots
-  card:
-    title(String ip): Bot at IP $ip
-    subtitle: Tap to use this bot
   manual:
     hint: Enter bot IP (e.g. 192.168.178.42)
     usingIp(String ip): 'Using IP: $ip'

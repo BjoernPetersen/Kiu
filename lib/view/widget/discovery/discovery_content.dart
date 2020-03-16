@@ -31,9 +31,9 @@ class DiscoveryContent extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate(
         controller.found
-            .map((e) => BotCard(
-                  ip: e,
-                  onTap: () => controller.setIp(Navigator.of(context), e),
+            .map((bot) => BotCard(
+                  bot: bot,
+                  onTap: () => controller.setIp(Navigator.of(context), bot.ip),
                 ))
             .toList(growable: false),
       ),

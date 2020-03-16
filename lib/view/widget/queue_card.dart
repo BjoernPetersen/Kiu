@@ -1,7 +1,7 @@
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
-import 'package:kiu/bot/state_manager.dart';
+import 'package:kiu/bot/state/state_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/confirmation_dialog.dart';

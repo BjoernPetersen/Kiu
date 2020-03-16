@@ -52,9 +52,6 @@ botState:
 discovery:
   empty: Keine Bots gefunden
   refresh: Aktualisieren
-  card:
-    title(String ip): Bot an Adresse $ip
-    subtitle: Tippe, um diesen Bot zu nutzen
   manual:
     hint: Gib eine Bot-IP ein (z.B. 192.168.178.42)
     usingIp(String ip): 'Nutze IP: $ip'

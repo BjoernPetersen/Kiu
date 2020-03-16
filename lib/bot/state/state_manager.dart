@@ -40,10 +40,12 @@ abstract class StateManager {
   void close();
 }
 
-abstract class BotState<T> {
+abstract class ReadOnlyBotState<T> {
   Stream<T> get stream;
 
   T get lastValue;
+}
 
+abstract class BotState<T> extends ReadOnlyBotState<T> {
   void update(T value);
 }

@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
-import 'package:kiu/bot/state_manager.dart';
+import 'package:kiu/bot/state/state_manager.dart';
 
 class StateManagerImpl implements StateManager {
   final _PeriodicChecker<PlayerState> _playerState;

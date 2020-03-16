@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:kiu/bot/bot.dart';
 import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/discovery_service.dart';
 import 'package:kiu/data/dependency_model.dart';
@@ -9,12 +10,12 @@ import 'package:kiu/data/preferences.dart';
 class DiscoveryController {
   Function onUpdate = () => {};
   bool _isLoading = false;
-  List<String> _found = [];
+  List<Bot> _found = [];
   StreamSubscription _sub;
 
   bool get isLoading => _isLoading;
 
-  List<String> get found => _found;
+  List<Bot> get found => _found;
 
   void refresh() {
     _sub?.cancel();
