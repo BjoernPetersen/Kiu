@@ -36,7 +36,7 @@ extension PreferenceAccess on Preference {
 
   String getString() => _prefs().getString(key);
 
-  void remove() => _prefs().remove(key);
+  Future<bool> remove() => _prefs().remove(key);
 
   Future<bool> setString(String value) => _prefs().setString(key, value);
 }

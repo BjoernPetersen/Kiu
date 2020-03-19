@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/common.dart';
@@ -52,8 +53,11 @@ class Kiu extends StatelessWidget {
 }
 
 String _initialRoute() {
+  final bot = service<BotConnection>().bot.lastValue;
   final username = Preference.username.getString();
-  if (username == null || username.isEmpty) {
+  if (bot == null) {
+    return "/selectBot";
+  } else if (username == null || username.isEmpty) {
     return "/login";
   } else {
     return "/queue";

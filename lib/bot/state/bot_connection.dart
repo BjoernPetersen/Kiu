@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:kiu/bot/bot.dart';
 import 'package:kiu/bot/state/live_state.dart';
+import 'package:kiu/data/preferences.dart';
 
 class BotConnection {
   final _errors = _EventCache(retainDuration: Duration(seconds: 10));
@@ -22,6 +23,10 @@ class BotConnection {
     _bot.update(bot);
     _errors.onChange = (_) => _updateState();
     _successes.onChange = (_) => _updateState();
+    _bot.stream.listen((event) {
+      _saveBot(event);
+      _updateState();
+    });
     _updateState();
   }
 
@@ -116,6 +121,18 @@ class _ManualState<T> implements BotState<T> {
 }
 
 Bot _loadBot() {
-  // TODO load bot
-  return null;
+  final ip = Preference.bot_ip.getString();
+  if (ip == null) {
+    return null;
+  } else {
+    return Bot(ip: ip);
+  }
+}
+
+Future<void> _saveBot(Bot bot) async {
+  if (bot == null) {
+    await Preference.bot_ip.remove();
+  } else {
+    await Preference.bot_ip.setString(bot.ip);
+  }
 }
