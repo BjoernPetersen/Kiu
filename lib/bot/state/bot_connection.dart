@@ -13,8 +13,16 @@ class BotConnection {
 
   ReadOnlyBotState<BotConnectionState> get state => _state;
 
-  BotConnection() {
+  factory BotConnection.load() {
+    final bot = _loadBot();
+    return BotConnection._(bot);
+  }
+
+  BotConnection._(Bot bot) {
+    _bot.update(bot);
     _errors.onChange = (_) => _updateState();
+    _successes.onChange = (_) => _updateState();
+    _updateState();
   }
 
   reportSuccess() {
@@ -105,4 +113,9 @@ class _ManualState<T> implements BotState<T> {
   void close() {
     _state.close();
   }
+}
+
+Bot _loadBot() {
+  // TODO load bot
+  return null;
 }

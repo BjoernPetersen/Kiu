@@ -30,7 +30,7 @@ class DependencyModel {
       LiveStateImpl(service<ConnectionManager>()),
     );
     service.registerSingleton(ErrorState());
-    service.registerSingleton(BotConnection());
+    service.registerSingleton(BotConnection.load());
     final instanceId = Preference.install_id.getString();
     if (instanceId == null) {
       final uuid = Uuid(options: {'grng': UuidUtil.cryptoRNG});

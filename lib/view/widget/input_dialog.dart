@@ -4,7 +4,7 @@ class InputDialog extends StatefulWidget {
   final String hint;
   final bool obscureText;
 
-  InputDialog({this.hint, this.obscureText});
+  InputDialog({this.hint, this.obscureText = false});
 
   @override
   State<StatefulWidget> createState() => new _InputDialogState();

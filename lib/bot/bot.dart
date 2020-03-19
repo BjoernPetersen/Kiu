@@ -7,13 +7,24 @@ import 'package:kiu/bot/model.dart';
 
 class Bot {
   final String ip;
-  final BotInfo version;
+  Future<BotInfo> _version;
+
+  Future<BotInfo> get version {
+    if (_version == null) {
+      _version = _loadVersion();
+    }
+    return _version;
+  }
+
+  Future<BotInfo> _loadVersion() async {
+    return await createService().getVersion();
+  }
 
   String get _baseUrl {
     return "http://$ip:42945";
   }
 
-  Bot({this.version, @required this.ip});
+  Bot({@required this.ip});
 
   BotService createService([String authorization]) {
     final options = BaseOptions(

@@ -59,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
           actions: <Widget>[
             createOverflowItems(context, hidden: [
               Choice.logout,
+              Choice.set_password,
               Choice.refresh_token,
             ]),
           ],

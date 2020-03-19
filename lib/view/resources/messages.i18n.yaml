@@ -14,6 +14,10 @@ common:
   pleaseWait: Please wait
   errorBlank: Can't be blank
 
+bot:
+  loadingName: Retrieving info...
+  errorInfo: Could not get bot info
+
 share:
   failure: Could not enqueue shared song
   success: Song was added to queue

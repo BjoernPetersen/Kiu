@@ -13,6 +13,11 @@ common:
   retry: Erneut versuchen
   pleaseWait: Bitte warten
   errorBlank: Darf nicht leer sein
+  errorBotInfo: Konnte keine Informationen über den Bot abrufen
+
+bot:
+  loadingName: Lade Bot-Informationen...
+  errorInfo: Bot-Informationen konnten nicht geladen werden
 
 share:
   failure: Konnte geteilten Song nicht hinzufügen

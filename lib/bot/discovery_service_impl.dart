@@ -30,7 +30,7 @@ class DiscoveryServiceImpl implements DiscoveryService {
         (it) {
           final host = it.address.host;
           if (found.add(host)) {
-            _addInfo(controller, host);
+            controller.add(Bot(ip: host));
           }
         },
         timeout: Duration(seconds: 5),
@@ -45,20 +45,6 @@ class DiscoveryServiceImpl implements DiscoveryService {
     } finally {
       await controller.close();
       await lock.release();
-    }
-  }
-
-  Future<void> _addInfo(StreamController<Bot> controller, String host) async {
-    final infolessBot = Bot(ip: host);
-    final service = infolessBot.createService();
-
-    try {
-      final info = await service.getVersion();
-      final bot = Bot(ip: host, version: info);
-      controller.add(bot);
-    } catch (DioError) {
-      // TODO log error
-      return;
     }
   }
 }
