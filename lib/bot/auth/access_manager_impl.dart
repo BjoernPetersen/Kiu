@@ -63,7 +63,7 @@ class AccessManagerImpl implements AccessManager {
         final code = e.response.statusCode;
         if (code < 500 && code >= 400) {
           if (code == 404) {
-            return _register(bot);
+            return _register(bot, Preference.username.getString());
           }
 
           throw InvalidRefreshTokenException();
@@ -73,8 +73,60 @@ class AccessManagerImpl implements AccessManager {
     }
   }
 
-  Future<_Token> _register(Bot bot) async {
-    final username = Preference.username.getString();
+  Future<LoginResult> login(String username, [String password]) async {
+    final actualPassword =
+        password == null ? Preference.install_id.getString() : password;
+    final bot = _bot;
+    if (bot == null) {
+      return LoginResult.missingBot;
+    }
+    final service = bot.createService();
+    try {
+      final tokens = await service.login(basicAuth(username, actualPassword));
+      _processTokens(bot, tokens);
+      Preference.username.setString(username);
+      return LoginResult.success;
+    } on DioError catch (e) {
+      switch (e.type) {
+        case DioErrorType.CONNECT_TIMEOUT:
+        case DioErrorType.SEND_TIMEOUT:
+        case DioErrorType.RECEIVE_TIMEOUT:
+        case DioErrorType.DEFAULT:
+          return LoginResult.ioError;
+        case DioErrorType.RESPONSE:
+          switch (e.response.statusCode) {
+            case 404:
+              return await _tryLoginRegister(bot, username);
+            case 401:
+              if (password == null) {
+                return LoginResult.missingPassword;
+              }
+              return LoginResult.wrongCredentials;
+          }
+          return LoginResult.wrongCredentials;
+        default:
+          return LoginResult.ioError;
+      }
+    }
+  }
+
+  Future<LoginResult> _tryLoginRegister(Bot bot, String username) async {
+    try {
+      await _register(bot, username);
+      Preference.username.setString(username);
+      return LoginResult.success;
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.RESPONSE) {
+        final code = e.response.statusCode;
+        if (code == 409) {
+          return LoginResult.conflict;
+        }
+      }
+      return LoginResult.ioError;
+    }
+  }
+
+  Future<_Token> _register(Bot bot, String username) async {
     if (username == null) {
       throw MissingRefreshTokenException();
     }

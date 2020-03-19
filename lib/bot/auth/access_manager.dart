@@ -8,6 +8,8 @@ abstract class AccessManager implements PermissionOwner {
 
   Future<BotService> createService();
 
+  Future<LoginResult> login(String username, [String password]);
+
   reset();
 }
 
@@ -22,3 +24,12 @@ class MissingBotException extends RefreshTokenException {}
 class InvalidRefreshTokenException extends RefreshTokenException {}
 
 class MissingRefreshTokenException extends RefreshTokenException {}
+
+enum LoginResult {
+  success,
+  ioError,
+  missingBot,
+  wrongCredentials,
+  missingPassword,
+  conflict,
+}

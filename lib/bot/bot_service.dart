@@ -79,6 +79,7 @@ abstract class BotService {
   Future<BotInfo> getVersion();
 }
 
+@Deprecated("For removal")
 String get baseUrl {
   final ip = Preference.bot_ip.getString();
   return ip == null ? null : "http://${Preference.bot_ip.getString()}:42945";
