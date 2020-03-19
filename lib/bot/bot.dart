@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/model.dart';
+import 'package:kiu/bot/state/reporting_wrapper.dart';
 
 class Bot {
   final String ip;
@@ -31,7 +32,8 @@ class Bot {
       headers: _createHeaders(authorization),
       connectTimeout: 4000,
     );
-    return BotService(Dio(options), _baseUrl);
+    final botService = BotService(Dio(options), _baseUrl);
+    return ReportingWrapper(botService);
   }
 
   _createHeaders(String authorization) {
