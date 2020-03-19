@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:kiu/bot/connection_manager.dart';
-import 'package:kiu/bot/login_service.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
@@ -32,27 +31,21 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<List<NamedPlugin>> _loadProviders(BuildContext context) async {
-    final connectionManager = service<ConnectionManager>();
+    final access = service<AccessManager>();
     try {
-      final bot = await connectionManager.getService();
+      final bot = await access.createService();
       return await bot.getProviders();
     } on DioError catch (e) {
-      switch (e.type) {
-        case DioErrorType.CONNECT_TIMEOUT:
-        case DioErrorType.SEND_TIMEOUT:
-        case DioErrorType.RECEIVE_TIMEOUT:
-          connectionManager.reset();
-          return [];
-        default:
-          return [];
-      }
-    } on IOException {
-      connectionManager.reset();
+      // TODO handle
       return [];
-    } on StateError {
+    } on MissingBotException {
       if (mounted) {
         Navigator.pushNamed(context, "/selectBot");
       }
+      return [];
+    } on RefreshTokenException {
+      // TODO handle
+      access.reset();
       return [];
     }
   }

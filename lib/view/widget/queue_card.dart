@@ -1,4 +1,4 @@
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state/live_state.dart';
@@ -9,14 +9,14 @@ import 'package:kiu/view/widget/song_tile.dart';
 
 class QueueCard extends StatelessWidget {
   final SongEntry songEntry;
-  final ConnectionManager connectionManager;
+  final AccessManager accessManager;
 
-  QueueCard(this.songEntry) : connectionManager = service<ConnectionManager>();
+  QueueCard(this.songEntry) : accessManager = service<AccessManager>();
 
   Future<void> _delete() async {
     final song = songEntry.song;
     try {
-      final bot = await connectionManager.getService();
+      final bot = await accessManager.createService();
       final queue = await bot.dequeue(song.id, song.provider.id);
       service<LiveState>().queueState.update(queue);
     } catch (e) {
@@ -36,7 +36,7 @@ class QueueCard extends StatelessWidget {
   }
 
   Widget _createTrailing(BuildContext context) {
-    if (connectionManager.hasPermission(Permission.SKIP)) {
+    if (accessManager.hasPermission(Permission.SKIP)) {
       return IconButton(
         icon: Icon(Icons.delete),
         tooltip: context.messages.queue.remove.tooltip,

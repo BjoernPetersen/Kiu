@@ -1,4 +1,6 @@
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
+import 'package:kiu/bot/auth/credential_manager.dart';
+import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/common.dart';
@@ -24,19 +26,24 @@ Widget createOverflowItems(
           final navigator = Navigator.of(context);
           switch (choice) {
             case Choice.refresh_token:
-              service<ConnectionManager>()
+              service<AccessManager>()
                 ..reset()
-                ..getService();
+                ..createService();
               break;
             case Choice.choose_bot:
+              // TODO pop everything?
               navigator.pushNamed("/selectBot");
               break;
             case Choice.set_password:
               askPassword(context);
               break;
             case Choice.logout:
-              Preference.token.remove();
-              Preference.refresh_token.remove();
+              Preference.username.remove();
+              service<AccessManager>().reset();
+              final bot = service<BotConnection>().bot.lastValue;
+              if (bot != null) {
+                service<CredentialManager>().removeRefreshToken(bot);
+              }
               navigator.pushReplacementNamed("/login");
               break;
           }

@@ -1,6 +1,5 @@
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:kiu/bot/connection_manager.dart';
-import 'package:kiu/bot/login_service.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/common.dart';
@@ -131,44 +130,48 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       final navigator = Navigator.of(context);
-      final login = service<LoginService>();
-      try {
-        final password = _requiresPassword ? _password.value.text : null;
-        final token = await login.login(name, password);
-        Preference.username.setString(name);
-        Preference.token.setString(token.accessToken);
-        Preference.refresh_token.setString(token.refreshToken);
-        service<ConnectionManager>().reset();
-        navigator.pushReplacementNamed('/queue');
-      } on MissingBotException {
-        Fluttertoast.showToast(msg: context.messages.login.errorNoBot);
-        navigator.pushNamed("/selectBot");
-      } on IOException {
-        Fluttertoast.showToast(msg: context.messages.login.errorIo);
-      } on ConflictException {
-        setState(() {
-          if (_requiresPassword) {
-            _passError = InputError.wrong;
-          } else {
-            _nameError = InputError.conflict;
-          }
-        });
-      } on WrongCredentialsException {
-        setState(() {
-          _passError = InputError.wrong;
-        });
-      } on MissingPasswordException {
-        if (!_requiresPassword) {
+      final login = service<AccessManager>();
+
+      final password = _requiresPassword ? _password.value.text : null;
+      final result = await login.login(name, password);
+      switch (result) {
+        case LoginResult.success:
+          navigator.pushReplacementNamed('/queue');
+          break;
+        case LoginResult.missingBot:
+          Fluttertoast.showToast(msg: context.messages.login.errorNoBot);
+          navigator.pushNamed("/selectBot");
+          break;
+        case LoginResult.ioError:
+          Fluttertoast.showToast(msg: context.messages.login.errorIo);
+          break;
+        case LoginResult.conflict:
           setState(() {
-            _requiresPassword = true;
-            _passError = InputError.blank;
+            if (_requiresPassword) {
+              _passError = InputError.wrong;
+            } else {
+              _nameError = InputError.conflict;
+            }
           });
-        }
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
+          break;
+        case LoginResult.wrongCredentials:
+          setState(() {
+            _passError = InputError.wrong;
+          });
+          break;
+        case LoginResult.missingPassword:
+          if (!_requiresPassword) {
+            setState(() {
+              _requiresPassword = true;
+              _passError = InputError.blank;
+            });
+          }
+          break;
       }
+
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 }

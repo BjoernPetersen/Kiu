@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:kiu/bot/connection_manager.dart';
-import 'package:kiu/bot/login_service.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
+import 'package:kiu/bot/auth/credential_manager.dart';
 import 'package:kiu/bot/model.dart';
+import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/data/dependency_model.dart';
-import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/input_dialog.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -23,15 +23,19 @@ Future<void> askPassword(BuildContext context) async {
 Future<void> _tryChange(BuildContext context, String password) async {
   final progress = ProgressDialog(context, isDismissible: false);
   final shown = progress.show();
-  final connectionManager = service<ConnectionManager>();
+  final accessManager = service<AccessManager>();
   try {
-    final bot = await connectionManager.getService();
-    final tokens = await bot.changePassword(
+    final bot = service<BotConnection>().bot.lastValue;
+    if (bot == null) {
+      return;
+    }
+    final botService = await accessManager.createService();
+    final tokens = await botService.changePassword(
       PasswordChange(newPassword: password),
     );
-    Preference.refresh_token.setString(tokens.refreshToken);
-    connectionManager.reset();
-    Preference.token.setString(tokens.accessToken);
+    service<CredentialManager>().setRefreshToken(bot, tokens.accessToken);
+    accessManager.reset();
+    // TODO update access token in manager
   } on DioError catch (e) {
     if (e.type == DioErrorType.RESPONSE && e.response.statusCode == 400) {
       Fluttertoast.showToast(msg: context.messages.login.errorPasswordShort);
@@ -39,7 +43,7 @@ Future<void> _tryChange(BuildContext context, String password) async {
     } else {
       _showError(context, password);
     }
-  } on LoginException {
+  } on RefreshTokenException {
     _showError(context, password);
   } finally {
     await shown;

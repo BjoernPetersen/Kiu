@@ -1,5 +1,5 @@
-import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
+import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/loading_delegate.dart';
@@ -15,8 +15,9 @@ class BotStatus extends StatelessWidget {
   }
 
   Future<BotInfo> _loadVersion() async {
-    final bot = await service<ConnectionManager>().getService();
-    return await bot.getVersion();
+    final bot = service<BotConnection>().bot.lastValue;
+    // TODO the return type is assumed to be non-null
+    return await bot?.version;
   }
 
   Widget _buildInfo(BuildContext context, BotInfo info) {

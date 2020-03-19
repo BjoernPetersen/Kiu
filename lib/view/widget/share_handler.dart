@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/sharing_data.dart';
@@ -30,7 +30,7 @@ class _ShareHandlerState extends State<ShareHandler> {
       return true;
     }
     try {
-      final bot = await service<ConnectionManager>().getService();
+      final bot = await service<AccessManager>().createService();
       final queue = await bot.enqueue(parsed.songId, parsed.providerId);
       service<LiveState>().queueState.update(queue);
       Fluttertoast.showToast(msg: context.messages.share.success);

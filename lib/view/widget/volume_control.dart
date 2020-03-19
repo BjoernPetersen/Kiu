@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state/live_state.dart';
@@ -67,8 +67,8 @@ class _VolumeControlState extends State<VolumeControl> {
     }
   }
 
-  bool _canChange([ConnectionManager connectionManager]) {
-    final manager = connectionManager ?? service<ConnectionManager>();
+  bool _canChange([AccessManager connectionManager]) {
+    final manager = connectionManager ?? service<AccessManager>();
     return manager.hasPermission(Permission.CHANGE_VOLUME);
   }
 
@@ -84,9 +84,9 @@ class _VolumeControlState extends State<VolumeControl> {
   }
 
   Future<void> _setVolume(int volume) async {
-    final manager = service<ConnectionManager>();
+    final manager = service<AccessManager>();
     if (!_canChange(manager)) return;
-    final bot = await manager.getService();
+    final bot = await manager.createService();
     try {
       bot.setVolume(volume);
       service<LiveState>().volumeState.update(Volume.supported(volume));

@@ -1,4 +1,4 @@
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
@@ -14,9 +14,9 @@ import 'package:kiu/view/widget/suggestions_content.dart';
 class SuggestionsPage extends StatelessWidget {
   Future<List<NamedPlugin>> _loadSuggesters(BuildContext context) async {
     try {
-      final bot = await service<ConnectionManager>().getService();
+      final bot = await service<AccessManager>().createService();
       return await bot.getSuggesters();
-    } on StateError {
+    } on MissingBotException {
       Navigator.of(context).pushNamed("/selectBot");
       return [];
     } catch (e) {

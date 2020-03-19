@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state/live_state.dart';
@@ -23,7 +23,7 @@ class QueueList extends StatefulWidget {
 class _QueueListState extends State<QueueList> {
   List<SongEntry> _history = [];
   List<SongEntry> _queue = [];
-  final ConnectionManager connectionManager = service<ConnectionManager>();
+  final AccessManager accessManager = service<AccessManager>();
   Function _tokenListener;
   StreamSubscription _historySubscription;
   StreamSubscription _queueSubscription;
@@ -32,17 +32,18 @@ class _QueueListState extends State<QueueList> {
   void initState() {
     super.initState();
     _tokenListener = () => this.setState(() {});
-    connectionManager.addTokenListener(_tokenListener);
+    accessManager.addListener(_tokenListener);
     final manager = service<LiveState>();
     _history = manager.queueHistoryState.lastValue ?? [];
-    _historySubscription = manager.queueHistoryState.stream.listen(_onHistoryChange);
+    _historySubscription =
+        manager.queueHistoryState.stream.listen(_onHistoryChange);
     _queue = manager.queueState.lastValue ?? [];
     _queueSubscription = manager.queueState.stream.listen(_onQueueChange);
   }
 
   @override
   void dispose() {
-    connectionManager.removeTokenListener(_tokenListener);
+    accessManager.removeListener(_tokenListener);
     _historySubscription.cancel();
     _queueSubscription.cancel();
     super.dispose();
@@ -77,7 +78,7 @@ class _QueueListState extends State<QueueList> {
         userName: Preference.username.getString(),
       ));
     });
-    final bot = await service<ConnectionManager>().getService();
+    final bot = await service<AccessManager>().createService();
     try {
       final queue = await bot.enqueue(song.id, song.provider.id);
       service<LiveState>().queueState.update(queue);
@@ -112,7 +113,7 @@ class _QueueListState extends State<QueueList> {
     tempQueue.insert(newIndex, entry);
     service<LiveState>().queueState.update(tempQueue);
 
-    final bot = await connectionManager.getService();
+    final bot = await accessManager.createService();
     final newQueue = await bot.moveEntry(newIndex, song.id, song.provider.id);
     service<LiveState>().queueState.update(newQueue);
   }
@@ -124,7 +125,7 @@ class _QueueListState extends State<QueueList> {
             (context, index) => EmptyState(text: context.messages.queue.empty),
             childCount: 1),
       );
-    } else if (connectionManager.hasPermission(Permission.MOVE)) {
+    } else if (accessManager.hasPermission(Permission.MOVE)) {
       return ReorderableSliverList(
         delegate: ReorderableSliverChildBuilderDelegate(
           _buildQueueItem,

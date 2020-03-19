@@ -1,4 +1,4 @@
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/data/dependency_model.dart';
@@ -26,8 +26,8 @@ class _SuggestionListState extends State<SuggestionList> {
 
   _SuggestionListState(this.suggester, this.suggestions);
 
-  Future<void> _delete(ConnectionManager manager, Song song) async {
-    final bot = await manager.getService();
+  Future<void> _delete(AccessManager manager, Song song) async {
+    final bot = await manager.createService();
     await bot.removeSuggestion(
         suggesterId: suggester.id,
         providerId: song.provider.id,
@@ -39,7 +39,7 @@ class _SuggestionListState extends State<SuggestionList> {
 
   @override
   Widget build(BuildContext context) {
-    final manager = service<ConnectionManager>();
+    final manager = service<AccessManager>();
     if (manager.hasPermission(Permission.DISLIKE)) {
       return ResultList(
         results: suggestions,

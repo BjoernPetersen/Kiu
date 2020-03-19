@@ -16,10 +16,12 @@ class AccessManagerImpl implements AccessManager {
   Bot _bot;
 
   AccessManagerImpl() {
-    service<BotConnection>().bot.stream.listen((bot) {
+    final botState = service<BotConnection>().bot;
+    botState.stream.listen((bot) {
       _bot = bot;
       _token.value = null;
     });
+    _bot = botState.lastValue;
   }
 
   @override

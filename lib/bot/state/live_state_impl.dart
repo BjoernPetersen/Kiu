@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/bot_service.dart';
-import 'package:kiu/bot/connection_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/state/live_state.dart';
 
@@ -12,21 +12,21 @@ class LiveStateImpl implements LiveState {
   final _PeriodicChecker<List<SongEntry>> _queueHistoryState;
   final _PeriodicChecker<Volume> _volumeState;
 
-  LiveStateImpl(ConnectionManager connectionManager)
+  LiveStateImpl(AccessManager accessManager)
       : _playerState = _PeriodicChecker(
-          connectionManager,
+          accessManager,
           (service) => service.getPlayerState(),
         ),
         _queueState = _PeriodicChecker(
-          connectionManager,
+          accessManager,
           (service) => service.getQueue(),
         ),
         _queueHistoryState = _PeriodicChecker(
-          connectionManager,
+          accessManager,
           (service) => service.getQueueHistory(),
         ),
         _volumeState = _PeriodicChecker(
-          connectionManager,
+          accessManager,
           (service) => service.getVolume(),
         );
 
@@ -45,14 +45,14 @@ class LiveStateImpl implements LiveState {
 
 class _PeriodicChecker<T> implements BotState<T> {
   final Future<T> Function(BotService) call;
-  final ConnectionManager connectionManager;
+  final AccessManager accessManager;
   final _state = StreamController<T>.broadcast();
   @override
   T lastValue;
   Timer _timer;
   Future<void> _job;
 
-  _PeriodicChecker(this.connectionManager, this.call) {
+  _PeriodicChecker(this.accessManager, this.call) {
     _state.onListen = _onListenerChange;
     _state.onCancel = _onListenerChange;
   }
@@ -82,13 +82,18 @@ class _PeriodicChecker<T> implements BotState<T> {
 
   Future<void> check() async {
     try {
-      final service = await connectionManager.getService();
+      final service = await accessManager.createService();
+      if (service == null) {
+        return;
+      }
       final result = await call(service)
           .timeout(Duration(seconds: 5), onTimeout: () => null);
       update(result);
+    } on RefreshTokenException {
+      // TODO handle
     } on DioError catch (e) {
       if (e.type != DioErrorType.RESPONSE || e.response.statusCode == 401) {
-        connectionManager.reset();
+        accessManager.reset();
       }
     } catch (err) {
       print("Unknown error: $err");

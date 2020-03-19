@@ -80,4 +80,7 @@ class _BasicAwarenessBodyState extends State<BasicAwarenessBody> {
   }
 }
 
-enum Requirement { bot_ip, wifi }
+enum Requirement {
+  bot_ip,
+  wifi,
+}

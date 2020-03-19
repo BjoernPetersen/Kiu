@@ -24,7 +24,7 @@ class _ErrorAwareState extends State<ErrorAware> {
 
     final errorState = service<ErrorState>();
     _initError = errorState.lastValue;
-    errorState.stream.listen((event) {
+    _sub = errorState.stream.listen((event) {
       if (event != null && this.mounted) {
         Scaffold.of(context).showSnackBar(event.toSnackBar(context));
       }

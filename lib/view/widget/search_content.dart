@@ -1,6 +1,6 @@
 import 'package:async/async.dart';
 import 'package:dio/dio.dart';
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
@@ -64,9 +64,9 @@ class _SearchContentState extends State<SearchContent> {
 
   Future<List<Song>> _search(String query) async {
     await Future.delayed(Duration(seconds: 3));
-    final connectionManager = service<ConnectionManager>();
+    final connectionManager = service<AccessManager>();
     try {
-      final bot = await connectionManager.getService();
+      final bot = await connectionManager.createService();
       return await bot.search(providerId, query);
     } on DioError catch (e) {
       return null;

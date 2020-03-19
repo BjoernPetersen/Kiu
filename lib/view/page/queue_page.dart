@@ -3,6 +3,7 @@ import 'package:kiu/view/page/overflow.dart';
 import 'package:kiu/view/page/state_page.dart';
 import 'package:kiu/view/widget/basic_awareness_body.dart';
 import 'package:kiu/view/widget/embedded_player.dart';
+import 'package:kiu/view/widget/error_aware.dart';
 import 'package:kiu/view/widget/navigation_bar.dart';
 import 'package:kiu/view/widget/queue_list.dart';
 
@@ -17,7 +18,13 @@ class QueuePage extends StatelessWidget {
             createOverflowItems(context),
           ],
         ),
-        body: EmbeddedPlayer(child: BasicAwarenessBody(child: QueueList())),
+        body: ErrorAware(
+          child: EmbeddedPlayer(
+            child: BasicAwarenessBody(
+              child: QueueList(),
+            ),
+          ),
+        ),
         bottomNavigationBar: NavigationBar(BottomCategory.queue));
   }
 }

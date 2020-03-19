@@ -5,7 +5,6 @@ enum Preference {
   install_id,
   username,
   refresh_token,
-  token,
   bot_ip,
   suggester_id,
   provider_id,
@@ -21,8 +20,6 @@ extension PreferenceAccess on Preference {
         return "username";
       case Preference.refresh_token:
         return "rrefresh_token";
-      case Preference.token:
-        return "token";
       case Preference.bot_ip:
         return "bot_ip";
       case Preference.suggester_id:

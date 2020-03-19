@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:expandable/expandable.dart';
-import 'package:kiu/bot/connection_manager.dart';
+import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
 import 'package:kiu/bot/state/live_state.dart';
@@ -71,14 +71,14 @@ class _PlayerControlState extends State<PlayerControl> {
   }
 
   Future<void> _changeState(PlayerStateChangeAction action) async {
-    final bot = await service<ConnectionManager>().getService();
+    final bot = await service<AccessManager>().createService();
     await bot.changePlayerState(PlayerStateChange(action));
   }
 
   Widget _createControls(PlayerStateType type) {
     List<Widget> children = [];
-    final cm = service<ConnectionManager>();
-    if (cm.hasPermission(Permission.PAUSE)) {
+    final am = service<AccessManager>();
+    if (am.hasPermission(Permission.PAUSE)) {
       IconData icon;
       PlayerStateChangeAction action;
       if (type == PlayerStateType.play) {
@@ -94,7 +94,7 @@ class _PlayerControlState extends State<PlayerControl> {
       ));
     }
 
-    if (cm.hasPermission(Permission.SKIP)) {
+    if (am.hasPermission(Permission.SKIP)) {
       children.add(IconButton(
         icon: Icon(Icons.skip_next),
         onPressed: () => _changeState(PlayerStateChangeAction.skip),
