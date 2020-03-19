@@ -1,9 +1,9 @@
-import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/model.dart';
+import 'package:kiu/bot/state/bot_connection.dart';
+import 'package:kiu/data/dependency_model.dart';
 
+@Deprecated("Use Bot.albumArtUrl instead")
 String albumArtLink(Song song) {
-  final _baseUrl = baseUrl;
-  final path = song.albumArtPath;
-  if (_baseUrl == null || path == null) return null;
-  return "$_baseUrl$path";
+  final bot = service<BotConnection>().bot.lastValue;
+  return bot?.albumArtUrl(song);
 }

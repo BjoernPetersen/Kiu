@@ -25,6 +25,13 @@ class Bot {
     return "http://$ip:42945";
   }
 
+  String albumArtUrl(Song song) {
+    final baseUrl = _baseUrl;
+    final path = song.albumArtPath;
+    if (baseUrl == null || path == null) return null;
+    return "$baseUrl$path";
+  }
+
   Bot({@required this.ip});
 
   BotService createService([String authorization]) {

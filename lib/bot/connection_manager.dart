@@ -1,6 +1,7 @@
 import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/permission.dart';
 
+@Deprecated("For removal")
 abstract class ConnectionManager implements PermissionHolder {
   addTokenListener(Function() listener);
 
@@ -13,6 +14,7 @@ abstract class ConnectionManager implements PermissionHolder {
   Future<BotService> getService();
 }
 
+@Deprecated("For removal")
 abstract class PermissionHolder {
   bool hasPermission(Permission permission);
 }
