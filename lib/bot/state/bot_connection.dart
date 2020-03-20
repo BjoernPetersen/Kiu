@@ -4,9 +4,16 @@ import 'package:kiu/bot/bot.dart';
 import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/data/preferences.dart';
 
+const ERROR_RETENTION = const Duration(seconds: 10);
+const SUCCESS_RETENTION = const Duration(seconds: 10);
+
+const ALIVE_SUCCESS_MIN = 5;
+const ALIVE_ERROR_MAX = 0;
+const QUESTIONABLE_ERROR_MAX = 5;
+
 class BotConnection {
-  final _errors = _EventCache(retainDuration: Duration(seconds: 10));
-  final _successes = _EventCache(retainDuration: Duration(seconds: 10));
+  final _errors = _EventCache(retainDuration: ERROR_RETENTION);
+  final _successes = _EventCache(retainDuration: SUCCESS_RETENTION);
   final BotState<Bot> _bot = _ManualState();
   final BotState<BotConnectionState> _state = _ManualState();
 
@@ -51,9 +58,9 @@ class BotConnection {
     }
     final errors = _errors.count;
     final successes = _successes.count;
-    if (errors == 0 && successes > 0) {
+    if (errors <= ALIVE_ERROR_MAX && successes > ALIVE_SUCCESS_MIN) {
       return BotConnectionState.alive;
-    } else if (errors < 5) {
+    } else if (errors < QUESTIONABLE_ERROR_MAX) {
       return BotConnectionState.questionable;
     } else {
       return BotConnectionState.dead;
@@ -91,6 +98,12 @@ class _EventCache {
   Future<void> _cleanup(DateTime time) async {
     await Future.delayed(_retainDuration);
     _events.remove(time);
+    onChange(_events.length);
+  }
+
+  @override
+  String toString() {
+    return _events.toString();
   }
 }
 

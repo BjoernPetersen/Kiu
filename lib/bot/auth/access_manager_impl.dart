@@ -65,8 +65,10 @@ class AccessManagerImpl implements AccessManager {
         final code = e.response.statusCode;
         if (code < 500 && code >= 400) {
           if (code == 404) {
-            return _register(bot, Preference.username.getString());
+            return await _register(bot, Preference.username.getString());
           }
+
+          // TODO 401 on invalid guest refresh token
 
           throw InvalidRefreshTokenException();
         }
