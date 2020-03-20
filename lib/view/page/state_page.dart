@@ -2,10 +2,9 @@ import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/resources/messages.i18n.dart';
 import 'package:kiu/view/widget/basic_awareness_body.dart';
+import 'package:kiu/view/widget/bot_state/bot_status.dart';
 import 'package:kiu/view/widget/empty_state.dart';
 import 'package:kiu/view/widget/volume_control.dart';
-
-import 'file:///E:/JMusic/Kiu/lib/view/widget/bot_state/bot_status.dart';
 
 class StatePage extends StatelessWidget {
   @override
