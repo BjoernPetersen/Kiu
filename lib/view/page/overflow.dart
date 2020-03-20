@@ -1,3 +1,4 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/auth/credential_manager.dart';
 import 'package:kiu/bot/state/bot_connection.dart';
@@ -26,9 +27,7 @@ Widget createOverflowItems(
           final navigator = Navigator.of(context);
           switch (choice) {
             case Choice.refresh_token:
-              service<AccessManager>()
-                ..reset()
-                ..createService();
+              _refreshToken(context);
               break;
             case Choice.choose_bot:
               // TODO pop everything?
@@ -50,6 +49,21 @@ Widget createOverflowItems(
         },
       ),
     );
+
+Future<void> _refreshToken(BuildContext context) async {
+  final am = service<AccessManager>()..reset();
+  try {
+    await am.createService();
+  } on MissingBotException {
+    // TODO pop everything?
+    Fluttertoast.showToast(msg: context.messages.refresh.errorNoBot);
+    await Navigator.of(context).pushReplacementNamed("/selectBot");
+  } on RefreshTokenException {
+    // TODO pop everything?
+    Fluttertoast.showToast(msg: context.messages.refresh.errorLoginAgain);
+    await Navigator.of(context).pushReplacementNamed("/login");
+  }
+}
 
 enum Choice {
   refresh_token,

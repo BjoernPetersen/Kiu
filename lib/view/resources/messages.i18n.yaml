@@ -23,6 +23,10 @@ share:
   success: Song was added to queue
   parseError: Could not process shared song
 
+refresh:
+  errorNoBot: Please select a bot
+  errorLoginAgain: Please log in again
+
 overflow:
   refreshToken: Refresh token
   chooseBot: Switch bot
@@ -40,7 +44,7 @@ requirement:
 login:
   name: Your name
   password: A password
-  errorNoBot: Please select a bot
+  errorNoBot: ${_parent.refresh.errorNoBot}
   errorIo: IO error. Please try again or choose different bot
   errorPasswordShort: Password is not long enough
   errorPasswordChange: Could not change password

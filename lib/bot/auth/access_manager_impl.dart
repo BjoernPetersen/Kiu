@@ -68,8 +68,6 @@ class AccessManagerImpl implements AccessManager {
             return await _register(bot, Preference.username.getString());
           }
 
-          // TODO 401 on invalid guest refresh token
-
           throw InvalidRefreshTokenException();
         }
       }

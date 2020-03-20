@@ -24,6 +24,10 @@ share:
   success: Song wurde der Warteschlange hinzugefügt
   parseError: Konnte geteilten Song nicht verarbeiten
 
+refresh:
+  errorNoBot: Bitte wähle einen Bot aus
+  errorLoginAgain: Bitte melde dich erneut an
+
 overflow:
   refreshToken: Token aktualisieren
   chooseBot: Bot wechseln
@@ -41,7 +45,7 @@ requirement:
 login:
   name: Dein Name
   password: Ein Passwort
-  errorNoBot: Bitte wähle einen Bot aus
+  errorNoBot: ${_parent.refresh.errorNoBot}
   errorIo: IO-Fehler. Bitte versuche es erneut oder wähle einen anderen Bot aus
   errorPasswordShort: Passwort ist zu kurz
   errorPasswordChange: Passwort konnte nicht geändert werden
