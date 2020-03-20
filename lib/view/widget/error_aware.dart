@@ -16,14 +16,12 @@ class ErrorAware extends StatefulWidget {
 
 class _ErrorAwareState extends State<ErrorAware> {
   StreamSubscription<ActionError> _sub;
-  ActionError _initError;
 
   @override
   void initState() {
     super.initState();
 
     final errorState = service<ErrorState>();
-    _initError = errorState.lastValue;
     _sub = errorState.stream.listen((event) {
       if (event != null && this.mounted) {
         Scaffold.of(context).showSnackBar(event.toSnackBar(context));
