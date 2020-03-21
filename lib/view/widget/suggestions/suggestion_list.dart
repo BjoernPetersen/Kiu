@@ -42,8 +42,8 @@ class _SuggestionListState extends State<SuggestionList> {
     } on DioError {
       service<ErrorState>().update(ActionError(
         errorText: (messages) => messages.suggestions.remove.error,
-        action: (ctx, s) => SnackBarAction(
-          label: ctx.messages.common.retry,
+        action: (ctx, messages) => SnackBarAction(
+          label: messages.common.retry,
           onPressed: () => _delete(manager, suggester, song),
         ),
       ));

@@ -1,8 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/permission.dart';
+import 'package:kiu/bot/state/error_state.dart';
 import 'package:kiu/bot/state/live_state.dart';
+import 'package:kiu/bot/state/login_error_state.dart';
+import 'package:kiu/data/action_error.dart';
 import 'package:kiu/data/dependency_model.dart';
+import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/confirmation_dialog.dart';
 import 'package:kiu/view/widget/song_tile.dart';
@@ -19,8 +24,16 @@ class QueueCard extends StatelessWidget {
       final bot = await accessManager.createService();
       final queue = await bot.dequeue(song.id, song.provider.id);
       service<LiveState>().queueState.update(queue);
-    } catch (e) {
-      print(e);
+    } on RefreshTokenException catch (e) {
+      service<LoginErrorState>().update(e);
+    } on DioError {
+      service<ErrorState>().update(ActionError(
+        errorText: (msg) => msg.queue.remove.error,
+        action: (context, messages) => SnackBarAction(
+          label: messages.common.retry,
+          onPressed: () => _delete(),
+        ),
+      ));
     }
   }
 
@@ -36,8 +49,8 @@ class QueueCard extends StatelessWidget {
   }
 
   Widget _createTrailing(BuildContext context) {
-    //FIXME: delete own songs
-    if (accessManager.hasPermission(Permission.SKIP)) {
+    if (accessManager.hasPermission(Permission.SKIP) ||
+        Preference.username.getString() == songEntry.userName) {
       return IconButton(
         icon: Icon(Icons.delete),
         tooltip: context.messages.queue.remove.tooltip,

@@ -9,7 +9,7 @@ import 'package:kiu/data/preferences.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/empty_state.dart';
 import 'package:kiu/view/widget/offset_fill_sliver.dart';
-import 'package:kiu/view/widget/queue_card.dart';
+import 'package:kiu/view/widget/queue/queue_card.dart';
 import 'package:kiu/view/widget/song_tile.dart';
 import 'package:reorderables/reorderables.dart';
 

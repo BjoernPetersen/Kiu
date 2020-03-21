@@ -94,6 +94,7 @@ queue:
   empty: The queue is empty
   tapToEnqueue: Tap to enqueue
   remove:
+    error: Could not remove song from queue
     tooltip: Remove from queue
     confirm: Remove this song?
 
