@@ -17,7 +17,9 @@ Future<void> askPassword(BuildContext context) async {
       obscureText: true,
     ),
   );
-  _tryChange(context, result);
+  if (result != null) {
+    _tryChange(context, result);
+  }
 }
 
 Future<void> _tryChange(BuildContext context, String password) async {
