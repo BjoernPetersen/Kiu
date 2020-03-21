@@ -33,7 +33,7 @@ Widget createOverflowItems(
               while (navigator.canPop()) {
                 navigator.pop();
               }
-              navigator.pushNamed("/selectBot");
+              navigator.pushReplacementNamed("/selectBot");
               break;
             case Choice.set_password:
               askPassword(context);
@@ -44,6 +44,9 @@ Widget createOverflowItems(
               final bot = service<BotConnection>().bot.lastValue;
               if (bot != null) {
                 service<CredentialManager>().removeRefreshToken(bot);
+              }
+              while (navigator.canPop()) {
+                navigator.pop();
               }
               navigator.pushReplacementNamed("/login");
               break;
