@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kiu/view/widget/loader.dart';
 
+@Deprecated("Use FutureBuilder instead")
 class LoadingDelegate<T> extends StatefulWidget {
   final Future<T> Function() action;
   final Widget Function(BuildContext context, T item) itemBuilder;

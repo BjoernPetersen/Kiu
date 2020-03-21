@@ -1,4 +1,6 @@
-import 'package:kiu/data/preferences.dart';
+import 'package:kiu/bot/bot.dart';
+import 'package:kiu/bot/state/bot_connection.dart';
+import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/resources/messages.i18n.dart';
 import 'package:kiu/view/widget/basic_awareness_body.dart';
@@ -9,22 +11,34 @@ import 'package:kiu/view/widget/volume_control.dart';
 class StatusPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final botIp = Preference.bot_ip.getString();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_getTitleText(context.messages.page, botIp)),
-      ),
-      body: BasicAwarenessBody(
-        child: botIp == null ? _buildEmpty(context) : _buildBody(context),
+    final bot = service<BotConnection>().bot.lastValue;
+    return Provider(
+      create: (_) => bot,
+      child: Scaffold(
+        appBar: AppBar(
+          title: _getTitleText(context.messages.page, bot),
+        ),
+        body: BasicAwarenessBody(
+          child: bot == null ? _buildEmpty(context) : _buildBody(context),
+        ),
       ),
     );
   }
 
-  String _getTitleText(PageMessages messages, String botIp) {
-    if (botIp == null) {
-      return messages.state;
+  Widget _getTitleText(PageMessages messages, Bot bot) {
+    if (bot == null) {
+      return Text(messages.state);
     } else {
-      return messages.stateOf(botIp);
+      return FutureBuilder(
+        future: bot.version,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text(snapshot.data.botName);
+          } else {
+            return Text(messages.stateOfIp(bot.ip));
+          }
+        },
+      );
     }
   }
 

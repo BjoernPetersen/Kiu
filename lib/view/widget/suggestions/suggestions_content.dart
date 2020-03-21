@@ -37,18 +37,19 @@ class _SuggestionsContentState extends State<SuggestionsContent> {
       child: FutureBuilder(
         future: _suggestions,
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return RetryContent(
-              text: context.messages.suggestions.errorNoResult,
-              refresh: () => setState(() {
-                _suggestions = _loadSuggestions();
-              }),
-            );
-          } else if (snapshot.hasData) {
-            return SuggestionList(snapshot.data);
-          } else {
-            return Loader();
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return RetryContent(
+                text: context.messages.suggestions.errorNoResult,
+                refresh: () => setState(() {
+                  _suggestions = _loadSuggestions();
+                }),
+              );
+            } else if (snapshot.hasData) {
+              return SuggestionList(snapshot.data);
+            }
           }
+          return Loader();
         },
       ),
     );

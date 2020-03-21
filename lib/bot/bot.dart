@@ -12,9 +12,16 @@ class Bot {
 
   Future<BotInfo> get version {
     if (_version == null) {
-      _version = _loadVersion();
+      final version = _loadVersion().catchError((e) async {
+        print(e);
+        _version = null;
+        throw e;
+      });
+      _version = version;
+      return version;
+    } else {
+      return _version;
     }
-    return _version;
   }
 
   Future<BotInfo> _loadVersion() async {

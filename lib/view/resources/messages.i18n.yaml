@@ -5,7 +5,7 @@ page:
   queue: Queue
   search: Search
   state: Bot status
-  stateOf(String botIp): Bot at $botIp
+  stateOfIp(String botIp): Bot at $botIp
   suggestion: Suggestions
 
 common:
@@ -84,6 +84,7 @@ state:
   apiVersion: 'API version:'
   urlError: URL can't be opened.
   volume: Volume
+  errorNoInfo: Could not load info
   implementation:
     root: 'Implementation:'
     name: 'Name:'

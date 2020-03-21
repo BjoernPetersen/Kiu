@@ -1,23 +1,34 @@
+import 'package:kiu/bot/bot.dart';
 import 'package:kiu/bot/model.dart';
-import 'package:kiu/bot/state/bot_connection.dart';
-import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
-import 'package:kiu/view/widget/loading_delegate.dart';
+import 'package:kiu/view/widget/loader.dart';
+import 'package:kiu/view/widget/retry_content.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class BotStatus extends StatelessWidget {
+class BotStatus extends StatefulWidget {
+  @override
+  _BotStatusState createState() => _BotStatusState();
+}
+
+class _BotStatusState extends State<BotStatus> {
   @override
   Widget build(BuildContext context) {
-    return LoadingDelegate(
-      action: _loadVersion,
-      itemBuilder: _buildInfo,
+    return FutureBuilder(
+      future: Provider.of<Bot>(context).version,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return RetryContent(
+              text: context.messages.state.errorNoInfo,
+              refresh: () => setState(() {}),
+            );
+          } else if (snapshot.hasData) {
+            return _buildInfo(context, snapshot.data);
+          }
+        }
+        return Loader();
+      },
     );
-  }
-
-  Future<BotInfo> _loadVersion() async {
-    final bot = service<BotConnection>().bot.lastValue;
-    // TODO the return type is assumed to be non-null
-    return await bot?.version;
   }
 
   Widget _buildInfo(BuildContext context, BotInfo info) {
