@@ -15,34 +15,32 @@ class SearchContent extends StatefulWidget {
   const SearchContent(this.providerId, this.query) : super();
 
   @override
-  State<StatefulWidget> createState() => _SearchContentState(providerId, query);
+  State<StatefulWidget> createState() => _SearchContentState();
 }
 
 class _SearchContentState extends State<SearchContent> {
-  final String providerId;
-  final TextEditingController query;
   String previousQuery;
   CancelableOperation operation;
   List<Song> results;
 
-  _SearchContentState(this.providerId, this.query);
+  _SearchContentState();
 
   @override
   void initState() {
     super.initState();
     _onQueryChange();
-    query.addListener(_onQueryChange);
+    widget.query.addListener(_onQueryChange);
   }
 
   @override
   void dispose() {
-    query.removeListener(_onQueryChange);
+    widget.query.removeListener(_onQueryChange);
     super.dispose();
   }
 
   _onQueryChange() {
     if (!mounted) return;
-    final query = this.query.text.trim();
+    final query = widget.query.text.trim();
     if (query == previousQuery) return;
     previousQuery = query;
     operation?.cancel();
@@ -67,7 +65,7 @@ class _SearchContentState extends State<SearchContent> {
     final connectionManager = service<AccessManager>();
     try {
       final bot = await connectionManager.createService();
-      return await bot.search(providerId, query);
+      return await bot.search(widget.providerId, query);
     } on DioError catch (e) {
       return null;
     }
