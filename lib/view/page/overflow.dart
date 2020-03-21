@@ -30,7 +30,9 @@ Widget createOverflowItems(
               _refreshToken(context);
               break;
             case Choice.choose_bot:
-              // TODO pop everything?
+              while (navigator.canPop()) {
+                navigator.pop();
+              }
               navigator.pushNamed("/selectBot");
               break;
             case Choice.set_password:
