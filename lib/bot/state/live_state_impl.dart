@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/model.dart';
+import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/bot/state/login_error_state.dart';
 import 'package:kiu/data/dependency_model.dart';
@@ -42,7 +43,12 @@ class LiveStateImpl extends LiveState {
           accessManager,
           (service) => service.getSuggesters(),
           Duration(seconds: 10),
-        );
+        ) {
+    final botConnection = service<BotConnection>();
+    botConnection.bot.stream.listen((event) {
+      reset();
+    });
+  }
 
   @override
   BotState<PlayerState> get player => _playerState;
