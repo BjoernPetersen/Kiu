@@ -1,0 +1,5 @@
+- Indicator for bot connectivity
+- Improved search suggestions pages
+- Full support for new bot version
+- Improved full user support
+
