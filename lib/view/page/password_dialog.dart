@@ -33,7 +33,7 @@ Future<void> _tryChange(BuildContext context, String password) async {
     final tokens = await botService.changePassword(
       PasswordChange(newPassword: password),
     );
-    service<CredentialManager>().setRefreshToken(bot, tokens.accessToken);
+    service<CredentialManager>().setRefreshToken(bot, tokens.refreshToken);
     accessManager.reset();
     // TODO update access token in manager
   } on DioError catch (e) {
