@@ -16,7 +16,7 @@ import 'package:kiu/view/widget/loader.dart';
 import 'package:kiu/view/widget/login_error_aware.dart';
 import 'package:kiu/view/widget/navigation_bar.dart';
 import 'package:kiu/view/widget/save_tab.dart';
-import 'file:///E:/JMusic/Kiu/lib/view/widget/search/search_content.dart';
+import 'package:kiu/view/widget/search/search_content.dart';
 
 class SearchPage extends StatefulWidget {
   @override

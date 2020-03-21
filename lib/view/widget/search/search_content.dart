@@ -1,12 +1,12 @@
-import 'package:async/async.dart';
-import 'package:dio/dio.dart';
 import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/model.dart';
+import 'package:kiu/bot/state/login_error_state.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
 import 'package:kiu/view/widget/empty_state.dart';
 import 'package:kiu/view/widget/loader.dart';
 import 'package:kiu/view/widget/result_list.dart';
+import 'package:kiu/view/widget/retry_content.dart';
 
 class SearchContent extends StatefulWidget {
   final String providerId;
@@ -19,16 +19,16 @@ class SearchContent extends StatefulWidget {
 }
 
 class _SearchContentState extends State<SearchContent> {
-  String previousQuery;
-  CancelableOperation operation;
-  List<Song> results;
+  String lastQuery;
+  Future<List<Song>> search;
 
   _SearchContentState();
 
   @override
   void initState() {
     super.initState();
-    _onQueryChange();
+    _updateQuery();
+    search = _search(lastQuery);
     widget.query.addListener(_onQueryChange);
   }
 
@@ -38,50 +38,63 @@ class _SearchContentState extends State<SearchContent> {
     super.dispose();
   }
 
-  _onQueryChange() {
-    if (!mounted) return;
+  bool _updateQuery() {
     final query = widget.query.text.trim();
-    if (query == previousQuery) return;
-    previousQuery = query;
-    operation?.cancel();
-    setState(() {
-      results = null;
-    });
-    if (query.isEmpty) {
-      operation = null;
-    } else {
-      operation = CancelableOperation.fromFuture(_search(query)).then((it) {
-        if (it != null && mounted) {
-          setState(() {
-            results = it;
-          });
-        }
+    if (query == lastQuery) return false;
+    lastQuery = query;
+    return true;
+  }
+
+  _onQueryChange() {
+    if (_updateQuery()) {
+      setState(() {
+        search = _search(lastQuery);
       });
     }
   }
 
   Future<List<Song>> _search(String query) async {
-    await Future.delayed(Duration(seconds: 3));
-    final connectionManager = service<AccessManager>();
-    try {
-      final bot = await connectionManager.createService();
-      return await bot.search(widget.providerId, query);
-    } on DioError catch (e) {
+    if (query.isEmpty) {
       return null;
     }
+
+    final accessManager = service<AccessManager>();
+    final bot = await accessManager.createService();
+    return await bot.search(widget.providerId, query);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (operation == null) {
-      return Center(child: Text(context.messages.search.noQuery));
-    }
-    if (results == null) {
-      return Loader();
-    }
-    if (results.isEmpty) {
-      return EmptyState(text: context.messages.search.empty);
-    }
-    return ResultList(results: results);
+    return FutureBuilder(
+      future: search,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (lastQuery.isEmpty) {
+            return Center(child: Text(context.messages.search.noQuery));
+          } else if (snapshot.hasError) {
+            final error = snapshot.error;
+            if (error is RefreshTokenException) {
+              service<LoginErrorState>().update(error);
+            }
+            return RetryContent(
+              text: context.messages.search.errorNoResult,
+              refresh: () {
+                setState(() {
+                  search = _search(lastQuery);
+                });
+              },
+            );
+          } else if (snapshot.hasData) {
+            final data = snapshot.data;
+            if (data.isEmpty) {
+              return EmptyState(text: context.messages.search.empty);
+            } else {
+              return ResultList(results: data);
+            }
+          }
+        }
+        return Loader();
+      },
+    );
   }
 }
