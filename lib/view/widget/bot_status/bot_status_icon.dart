@@ -4,12 +4,12 @@ import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
 
-class BotStateIcon extends StatefulWidget {
+class BotStatusIcon extends StatefulWidget {
   @override
-  _BotStateIconState createState() => _BotStateIconState();
+  _BotStatusIconState createState() => _BotStatusIconState();
 }
 
-class _BotStateIconState extends State<BotStateIcon> {
+class _BotStatusIconState extends State<BotStatusIcon> {
   BotConnectionState _state;
   StreamSubscription<BotConnectionState> _sub;
 

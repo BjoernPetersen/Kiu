@@ -68,10 +68,16 @@ discovery:
 search:
   hint: Search
   empty: No results
+  errorNoResult: Failed to retrieve results
   noQuery: Please enter a search query
+  errorNoProviders: No provider found
 
 suggestions:
+  errorNoSuggesters: No suggester found
+  errorNoResult: Failed to retrieve suggestions
+  empty: No suggestions
   remove:
+    error: Could not remove suggestion
     tooltip: Remove suggestion
 
 state:

@@ -36,6 +36,7 @@ class QueueCard extends StatelessWidget {
   }
 
   Widget _createTrailing(BuildContext context) {
+    //FIXME: delete own songs
     if (accessManager.hasPermission(Permission.SKIP)) {
       return IconButton(
         icon: Icon(Icons.delete),

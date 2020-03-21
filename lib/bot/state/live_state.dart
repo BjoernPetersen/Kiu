@@ -8,6 +8,19 @@ abstract class LiveState {
   BotState<List<SongEntry>> get queueHistoryState;
 
   BotState<Volume> get volumeState;
+
+  BotState<List<NamedPlugin>> get provider;
+
+  BotState<List<NamedPlugin>> get suggester;
+
+  void reset() {
+    player.update(null);
+    queueState.update(null);
+    queueHistoryState.update(null);
+    volumeState.update(null);
+    provider.update(null);
+    suggester.update(null);
+  }
 }
 
 abstract class ReadOnlyBotState<T> {

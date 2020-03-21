@@ -10,8 +10,10 @@ import 'package:kiu/view/common.dart';
 
 class LoginErrorAware extends StatefulWidget {
   final Widget child;
+  final bool ignoreMissingToken;
 
-  const LoginErrorAware({Key key, this.child}) : super(key: key);
+  const LoginErrorAware({Key key, this.child, this.ignoreMissingToken = false})
+      : super(key: key);
 
   @override
   _LoginErrorAwareState createState() => _LoginErrorAwareState();
@@ -32,20 +34,32 @@ class _LoginErrorAwareState extends State<LoginErrorAware> {
     });
   }
 
+  popEverything(NavigatorState nav) {
+    while (nav.canPop()) {
+      nav.pop();
+    }
+  }
+
   Future<void> _moveToLogin(RefreshTokenException error) async {
     service<AccessManager>().reset();
     if (error is MissingBotException) {
-      // TODO pop everything?
       Fluttertoast.showToast(msg: context.messages.refresh.errorNoBot);
-      await Navigator.of(context).pushReplacementNamed("/selectBot");
+      final nav = Navigator.of(context);
+      popEverything(nav);
+      await nav.pushReplacementNamed("/selectBot");
     } else {
+      if (error is MissingRefreshTokenException && widget.ignoreMissingToken) {
+        return;
+      }
       final bot = service<BotConnection>().bot.lastValue;
       if (bot != null) {
         service<CredentialManager>().removeRefreshToken(bot);
       }
-      // TODO pop everything?
+
       Fluttertoast.showToast(msg: context.messages.refresh.errorLoginAgain);
-      await Navigator.of(context).pushReplacementNamed("/login");
+      final nav = Navigator.of(context);
+      popEverything(nav);
+      await nav.pushReplacementNamed("/login");
     }
   }
 

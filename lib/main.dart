@@ -8,7 +8,7 @@ import 'package:kiu/view/common.dart';
 import 'package:kiu/view/page/bot_page.dart';
 import 'package:kiu/view/page/login_page.dart';
 import 'package:kiu/view/page/queue_page.dart';
-import 'package:kiu/view/page/state_page.dart';
+import 'package:kiu/view/page/status_page.dart';
 import 'package:kiu/view/page/suggestions_page.dart';
 import 'package:kiu/view/widget/basic_provider.dart';
 import 'package:kiu/view/widget/share_handler.dart';
@@ -36,7 +36,7 @@ class Kiu extends StatelessWidget {
             "/login": (_) => LoginPage(),
             "/queue": (_) => QueuePage(),
             "/suggestions": (_) => SuggestionsPage(),
-            "/state": (_) => StatePage(),
+            "/state": (_) => StatusPage(),
           },
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,

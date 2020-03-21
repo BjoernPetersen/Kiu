@@ -8,11 +8,13 @@ import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/bot/state/login_error_state.dart';
 import 'package:kiu/data/dependency_model.dart';
 
-class LiveStateImpl implements LiveState {
+class LiveStateImpl extends LiveState {
   final _PeriodicChecker<PlayerState> _playerState;
   final _PeriodicChecker<List<SongEntry>> _queueState;
   final _PeriodicChecker<List<SongEntry>> _queueHistoryState;
   final _PeriodicChecker<Volume> _volumeState;
+  final _PeriodicChecker<List<NamedPlugin>> _providerState;
+  final _PeriodicChecker<List<NamedPlugin>> _suggesterState;
 
   LiveStateImpl(AccessManager accessManager)
       : _playerState = _PeriodicChecker(
@@ -30,6 +32,16 @@ class LiveStateImpl implements LiveState {
         _volumeState = _PeriodicChecker(
           accessManager,
           (service) => service.getVolume(),
+        ),
+        _providerState = _PeriodicChecker(
+          accessManager,
+          (service) => service.getProviders(),
+          Duration(seconds: 10),
+        ),
+        _suggesterState = _PeriodicChecker(
+          accessManager,
+          (service) => service.getSuggesters(),
+          Duration(seconds: 10),
         );
 
   @override
@@ -43,6 +55,12 @@ class LiveStateImpl implements LiveState {
 
   @override
   BotState<Volume> get volumeState => _volumeState;
+
+  @override
+  BotState<List<NamedPlugin>> get provider => _providerState;
+
+  @override
+  BotState<List<NamedPlugin>> get suggester => _suggesterState;
 }
 
 class _PeriodicChecker<T> implements BotState<T> {
@@ -51,16 +69,22 @@ class _PeriodicChecker<T> implements BotState<T> {
   final _state = StreamController<T>.broadcast();
   @override
   T lastValue;
+  final Duration _interval;
   Timer _timer;
   Future<void> _job;
 
-  _PeriodicChecker(this.accessManager, this.call) {
+  _PeriodicChecker(
+    this.accessManager,
+    this.call, [
+    this._interval = const Duration(seconds: 1),
+  ]) {
     _state.onListen = _onListenerChange;
     _state.onCancel = _onListenerChange;
   }
 
   _start() {
-    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+    _job = check();
+    _timer = Timer.periodic(_interval, (_) {
       if (_job == null) {
         _job = check();
       }

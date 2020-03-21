@@ -71,7 +71,7 @@ class AccessManagerImpl implements AccessManager {
           throw InvalidRefreshTokenException();
         }
       }
-      return null;
+      throw e;
     }
   }
 

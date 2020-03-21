@@ -75,7 +75,7 @@ class ReportingWrapper implements BotService {
   }
 
   @override
-  Future<Function> removeSuggestion({
+  Future<void> removeSuggestion({
     @Path("suggesterId") String suggesterId,
     @Query("providerId") String providerId,
     @Query("songId") String songId,
