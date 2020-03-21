@@ -9,6 +9,7 @@ import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/bot/state/error_state.dart';
 import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/bot/state/live_state_impl.dart';
+import 'package:kiu/bot/state/login_error_state.dart';
 import 'package:kiu/data/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -27,6 +28,8 @@ class DependencyModel {
       await Preference.install_id.setString(uuid.v4());
     }
 
+    service.registerSingleton(LoginErrorState());
+    service.registerSingleton(ErrorState());
     service.registerSingleton(BotConnection.load());
     service.registerSingleton<CredentialManager>(CredentialManagerImpl());
     service.registerSingleton<AccessManager>(AccessManagerImpl());
@@ -34,6 +37,5 @@ class DependencyModel {
     service.registerSingleton<LiveState>(
       LiveStateImpl(service<AccessManager>()),
     );
-    service.registerSingleton(ErrorState());
   }
 }

@@ -5,6 +5,8 @@ import 'package:kiu/bot/auth/access_manager.dart';
 import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/state/live_state.dart';
+import 'package:kiu/bot/state/login_error_state.dart';
+import 'package:kiu/data/dependency_model.dart';
 
 class LiveStateImpl implements LiveState {
   final _PeriodicChecker<PlayerState> _playerState;
@@ -89,8 +91,8 @@ class _PeriodicChecker<T> implements BotState<T> {
       final result = await call(service)
           .timeout(Duration(seconds: 5), onTimeout: () => null);
       update(result);
-    } on RefreshTokenException {
-      // TODO handle
+    } on RefreshTokenException catch (e) {
+      service<LoginErrorState>().update(e);
     } on DioError catch (e) {
       if (e.type != DioErrorType.RESPONSE || e.response.statusCode == 401) {
         accessManager.reset();
