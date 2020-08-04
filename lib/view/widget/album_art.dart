@@ -19,6 +19,7 @@ class AlbumArt extends StatelessWidget {
     } else {
       return CachedNetworkImage(
         imageUrl: albumUrl,
+        httpHeaders: {"Accept": "image/*"},
         placeholder: (ctx, url) => Stack(
           alignment: AlignmentDirectional.center,
           children: <Widget>[
