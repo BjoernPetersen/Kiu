@@ -24,7 +24,7 @@ class _ShareHandlerState extends State<ShareHandler> {
 
   Future<bool> _handleShare(String share) async {
     if (share == null) return false;
-    final parsed = extractSharingData(share);
+    final parsed = await extractSharingData(share);
     if (parsed == null) {
       Fluttertoast.showToast(msg: context.messages.share.parseError);
       return true;

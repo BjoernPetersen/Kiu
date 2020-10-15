@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 class SharingData {
   final String providerId;
   final String songId;
@@ -32,7 +34,35 @@ SharingData _extractSpotify(Uri uri) {
   return SharingData(providerId: SPOTIFY_ID, songId: uri.pathSegments[1]);
 }
 
-SharingData extractSharingData(String url) {
+Future<SharingData> _extractLinktoSpotify(Uri uri) async {
+  final resolvedUri = await _followLinkTo(uri);
+  if (resolvedUri== null) {
+    print("Could not resolve linkto.spotify.com");
+    return null;
+  }
+  return _extractSpotify(resolvedUri);
+}
+
+Future<Uri> _followLinkTo(Uri uri) async {
+  Dio dio = Dio(BaseOptions(followRedirects: false));
+  Uri currentUri = uri;
+  for (int i = 0; currentUri != null && i<2; ++i) {
+    final response = await dio.getUri(currentUri);
+    if (response.statusCode != 307) {
+      print("Didn't get 307 for URI: $currentUri");
+      return null;
+    }
+    final location = response.headers.value('Location');
+    if (location == null) {
+      print("Got no location header for redirect");
+      return null;
+    }
+    currentUri = Uri.tryParse(location);
+  }
+  return currentUri;
+}
+
+Future<SharingData> extractSharingData(String url) async {
   final trimmed = url.trim().split(RegExp(r"\s", multiLine: true)).last;
   if (trimmed.isEmpty) return null;
   final uri = Uri.tryParse(trimmed);
@@ -44,6 +74,8 @@ SharingData extractSharingData(String url) {
         return _extractYoutubeLong(uri);
       case "open.spotify.com":
         return _extractSpotify(uri);
+      case "linkto.spotify.com":
+        return await _extractLinktoSpotify(uri);
     }
   }
   return null;
