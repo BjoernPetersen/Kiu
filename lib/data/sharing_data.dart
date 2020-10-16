@@ -36,18 +36,39 @@ SharingData _extractSpotify(Uri uri) {
 
 Future<SharingData> _extractLinktoSpotify(Uri uri) async {
   final resolvedUri = await _followLinkTo(uri);
-  if (resolvedUri== null) {
-    print("Could not resolve linkto.spotify.com");
+  if (resolvedUri == null) {
+    print("Could not resolve link.tospotify.com");
     return null;
   }
+  print("Extracted URI: $resolvedUri");
   return _extractSpotify(resolvedUri);
 }
 
+const _userAgent =
+    "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:81.0) Gecko/20100101 Firefox/81.0";
+
 Future<Uri> _followLinkTo(Uri uri) async {
-  Dio dio = Dio(BaseOptions(followRedirects: false));
+  Dio dio = Dio(
+    BaseOptions(
+      followRedirects: false,
+      headers: {"User-Agent": _userAgent},
+    ),
+  );
   Uri currentUri = uri;
-  for (int i = 0; currentUri != null && i<2; ++i) {
-    final response = await dio.getUri(currentUri);
+  while (currentUri != null &&
+      currentUri.host.toLowerCase() != "open.spotify.com") {
+    Response response;
+    try {
+      response = await dio.getUri(currentUri);
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.RESPONSE) {
+        print("Got error with response (${e.response.statusCode})");
+        response = e.response;
+      } else {
+        print("Didn't get 'error' response for 307");
+        return null;
+      }
+    }
     if (response.statusCode != 307) {
       print("Didn't get 307 for URI: $currentUri");
       return null;
@@ -64,7 +85,11 @@ Future<Uri> _followLinkTo(Uri uri) async {
 
 Future<SharingData> extractSharingData(String url) async {
   final trimmed = url.trim().split(RegExp(r"\s", multiLine: true)).last;
-  if (trimmed.isEmpty) return null;
+  if (trimmed.isEmpty) {
+    print("No URL found (empty)");
+    return null;
+  }
+  print("Trying to parse: $trimmed");
   final uri = Uri.tryParse(trimmed);
   if (uri != null) {
     switch (uri.host.toLowerCase()) {
@@ -74,9 +99,10 @@ Future<SharingData> extractSharingData(String url) async {
         return _extractYoutubeLong(uri);
       case "open.spotify.com":
         return _extractSpotify(uri);
-      case "linkto.spotify.com":
+      case "link.tospotify.com":
         return await _extractLinktoSpotify(uri);
     }
   }
+  print("Could not match host: $uri");
   return null;
 }
