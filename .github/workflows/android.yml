@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install flutter
-        run: git clone https://github.com/flutter/flutter.git ~/flutter --branch beta
+        run: git clone https://github.com/flutter/flutter.git ~/flutter --branch 1.22.2
       - name: Add Flutter to PATH
         run: echo "::add-path::~/flutter/bin"
       - name: Run flutter doctor
