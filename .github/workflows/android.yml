@@ -48,5 +48,5 @@ jobs:
       - name: Run fastlane
         env:
           SUPPLY_AAB: app-release.aab
-        working_directory: ./android
+        working-directory: ./android
         run: bundle exec fastlane supply
