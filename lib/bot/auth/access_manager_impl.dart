@@ -12,8 +12,8 @@ import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/data/preferences.dart';
 
 class AccessManagerImpl implements AccessManager {
-  final ValueNotifier<_Token> _token = ValueNotifier(null);
-  Bot _bot;
+  final ValueNotifier<_Token?> _token = ValueNotifier(null);
+  Bot? _bot;
 
   AccessManagerImpl() {
     final botState = service<BotConnection>().bot;
@@ -61,8 +61,8 @@ class AccessManagerImpl implements AccessManager {
       final tokens = await loginService.refresh(bearerAuth(refreshToken));
       return _processTokens(bot, tokens);
     } on DioError catch (e) {
-      if (e.type == DioErrorType.RESPONSE) {
-        final code = e.response.statusCode;
+      if (e.type == DioErrorType.response) {
+        final code = e.response!.statusCode!;
         if (code < 500 && code >= 400) {
           if (code == 404) {
             return await _register(bot, Preference.username.getString());
@@ -75,9 +75,9 @@ class AccessManagerImpl implements AccessManager {
     }
   }
 
-  Future<LoginResult> login(String username, [String password]) async {
+  Future<LoginResult> login(String username, [String? password]) async {
     final actualPassword =
-        password == null ? Preference.install_id.getString() : password;
+        password == null ? Preference.install_id.getString()! : password;
     final bot = _bot;
     if (bot == null) {
       return LoginResult.missingBot;
@@ -90,13 +90,13 @@ class AccessManagerImpl implements AccessManager {
       return LoginResult.success;
     } on DioError catch (e) {
       switch (e.type) {
-        case DioErrorType.CONNECT_TIMEOUT:
-        case DioErrorType.SEND_TIMEOUT:
-        case DioErrorType.RECEIVE_TIMEOUT:
-        case DioErrorType.DEFAULT:
+        case DioErrorType.connectTimeout:
+        case DioErrorType.sendTimeout:
+        case DioErrorType.receiveTimeout:
+        case DioErrorType.other:
           return LoginResult.ioError;
-        case DioErrorType.RESPONSE:
-          switch (e.response.statusCode) {
+        case DioErrorType.response:
+          switch (e.response!.statusCode!) {
             case 404:
               return await _tryLoginRegister(bot, username);
             case 401:
@@ -118,8 +118,8 @@ class AccessManagerImpl implements AccessManager {
       Preference.username.setString(username);
       return LoginResult.success;
     } on DioError catch (e) {
-      if (e.type == DioErrorType.RESPONSE) {
-        final code = e.response.statusCode;
+      if (e.type == DioErrorType.response) {
+        final code = e.response!.statusCode!;
         if (code == 409) {
           return LoginResult.conflict;
         }
@@ -128,7 +128,7 @@ class AccessManagerImpl implements AccessManager {
     }
   }
 
-  Future<_Token> _register(Bot bot, String username) async {
+  Future<_Token> _register(Bot bot, String? username) async {
     if (username == null) {
       throw MissingRefreshTokenException();
     }
@@ -136,7 +136,8 @@ class AccessManagerImpl implements AccessManager {
     final service = bot.createService();
     final credentials = RegisterCredentials(
       name: username,
-      userId: Preference.install_id.getString(),
+      // TODO: check correctness
+      userId: Preference.install_id.getString()!,
     );
     final tokens = await service.register(credentials);
     return _processTokens(bot, tokens);
@@ -149,7 +150,6 @@ class AccessManagerImpl implements AccessManager {
       throw MissingBotException();
     }
     final token = await _retrieveToken(bot);
-    if (token == null) return null;
     return bot.createService(bearerAuth(token.value));
   }
 
@@ -173,10 +173,10 @@ class _Token implements PermissionOwner {
   factory _Token.fromJwt(String jwt) {
     final parsed = JWT.parse(jwt);
     final expiration =
-        DateTime.fromMillisecondsSinceEpoch(parsed.expiresAt * 1000);
+        DateTime.fromMillisecondsSinceEpoch(parsed.expiresAt! * 1000);
     final List<dynamic> permissions = parsed.getClaim("permissions");
     final parsedPermissions =
-        permissions.map(parsePermission).where((it) => it != null).toSet();
+        permissions.map(parsePermission).whereType<Permission>().toSet();
     return _Token(jwt, expiration, parsedPermissions);
   }
 

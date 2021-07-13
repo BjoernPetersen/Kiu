@@ -10,7 +10,7 @@ import 'package:kiu/view/widget/input_dialog.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 Future<void> askPassword(BuildContext context) async {
-  final String result = await showDialog(
+  final String? result = await showDialog(
     context: context,
     builder: (_) => InputDialog(
       hint: context.messages.login.password,
@@ -35,11 +35,11 @@ Future<void> _tryChange(BuildContext context, String password) async {
     final tokens = await botService.changePassword(
       PasswordChange(newPassword: password),
     );
-    service<CredentialManager>().setRefreshToken(bot, tokens.refreshToken);
+    service<CredentialManager>().setRefreshToken(bot, tokens.refreshToken!);
     accessManager.reset();
     // TODO update access token in manager
   } on DioError catch (e) {
-    if (e.type == DioErrorType.RESPONSE && e.response.statusCode == 400) {
+    if (e.type == DioErrorType.response && e.response!.statusCode == 400) {
       Fluttertoast.showToast(msg: context.messages.login.errorPasswordShort);
       askPassword(context);
     } else {
@@ -54,7 +54,7 @@ Future<void> _tryChange(BuildContext context, String password) async {
 }
 
 _showError(BuildContext context, String password) {
-  Scaffold.of(context).showSnackBar(SnackBar(
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(context.messages.login.errorPasswordChange),
     action: SnackBarAction(
       label: context.messages.common.retry,

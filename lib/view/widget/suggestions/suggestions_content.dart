@@ -16,7 +16,7 @@ class SuggestionsContent extends StatefulWidget {
 }
 
 class _SuggestionsContentState extends State<SuggestionsContent> {
-  Future<List<Song>> _suggestions;
+  late Future<List<Song>?> _suggestions;
 
   @override
   initState() {
@@ -24,7 +24,7 @@ class _SuggestionsContentState extends State<SuggestionsContent> {
     _suggestions = _loadSuggestions();
   }
 
-  Future<List<Song>> _loadSuggestions() async {
+  Future<List<Song>?> _loadSuggestions() async {
     final bot = await service<AccessManager>().createService();
     return await bot.getSuggestions(widget.suggester.id);
   }
@@ -34,7 +34,7 @@ class _SuggestionsContentState extends State<SuggestionsContent> {
     return Provider(
       create: (_) => widget.suggester,
       lazy: false,
-      child: FutureBuilder(
+      child: FutureBuilder<List<Song>?>(
         future: _suggestions,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -46,7 +46,7 @@ class _SuggestionsContentState extends State<SuggestionsContent> {
                 }),
               );
             } else if (snapshot.hasData) {
-              return SuggestionList(snapshot.data);
+              return SuggestionList(snapshot.data!);
             }
           }
           return Loader();

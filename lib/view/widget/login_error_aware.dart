@@ -12,15 +12,17 @@ class LoginErrorAware extends StatefulWidget {
   final Widget child;
   final bool ignoreMissingToken;
 
-  const LoginErrorAware({Key key, this.child, this.ignoreMissingToken = false})
-      : super(key: key);
+  const LoginErrorAware({
+    required this.child,
+    this.ignoreMissingToken = false,
+  }) : super();
 
   @override
   _LoginErrorAwareState createState() => _LoginErrorAwareState();
 }
 
 class _LoginErrorAwareState extends State<LoginErrorAware> {
-  StreamSubscription<RefreshTokenException> _sub;
+  late StreamSubscription<RefreshTokenException?> _sub;
 
   @override
   void initState() {

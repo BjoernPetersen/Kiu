@@ -48,7 +48,7 @@ class QueueCard extends StatelessWidget {
     if (result == true) _delete();
   }
 
-  Widget _createTrailing(BuildContext context) {
+  Widget? _createTrailing(BuildContext context) {
     if (accessManager.hasPermission(Permission.SKIP) ||
         Preference.username.getString() == songEntry.userName) {
       return IconButton(

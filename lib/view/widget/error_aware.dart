@@ -8,14 +8,14 @@ import 'package:kiu/view/common.dart';
 class ErrorAware extends StatefulWidget {
   final Widget child;
 
-  const ErrorAware({Key key, this.child}) : super(key: key);
+  const ErrorAware({required this.child}) : super();
 
   @override
   _ErrorAwareState createState() => _ErrorAwareState();
 }
 
 class _ErrorAwareState extends State<ErrorAware> {
-  StreamSubscription<ActionError> _sub;
+  late StreamSubscription<ActionError?> _sub;
 
   @override
   void initState() {
@@ -24,7 +24,7 @@ class _ErrorAwareState extends State<ErrorAware> {
     final errorState = service<ErrorState>();
     _sub = errorState.stream.listen((event) {
       if (event != null && this.mounted) {
-        Scaffold.of(context).showSnackBar(event.toSnackBar(context));
+        ScaffoldMessenger.of(context).showSnackBar(event.toSnackBar(context));
       }
     });
   }

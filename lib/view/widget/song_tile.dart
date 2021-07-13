@@ -5,11 +5,11 @@ import 'package:kiu/view/widget/duration_text.dart';
 
 class SongTile extends StatelessWidget {
   final Song song;
-  final String username;
-  final Widget trailing;
-  final void Function() onPressed;
+  final String? username;
+  final Widget? trailing;
+  final void Function()? onPressed;
   final bool enabled;
-  final String tooltip;
+  final String? tooltip;
 
   const SongTile(
     this.song, {
@@ -47,6 +47,7 @@ class SongTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tooltip = this.tooltip;
     if (tooltip == null) {
       return _buildTile(context);
     } else {
@@ -62,6 +63,7 @@ class SongTile extends StatelessWidget {
       DurationText(song.duration),
     ];
 
+    final username = this.username;
     if (username != null) {
       children.add(SizedBox(
         height: 10,
@@ -90,6 +92,7 @@ class SongTile extends StatelessWidget {
 
   Widget _createTrailing(BuildContext context) {
     final children = <Widget>[_createRightInfo(context)];
+    final trailing = this.trailing;
     if (trailing != null) {
       children.add(trailing);
     }

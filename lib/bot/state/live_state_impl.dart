@@ -72,12 +72,12 @@ class LiveStateImpl extends LiveState {
 class _PeriodicChecker<T> implements BotState<T> {
   final Future<T> Function(BotService) call;
   final AccessManager accessManager;
-  final _state = StreamController<T>.broadcast();
+  final _state = StreamController<T?>.broadcast();
   @override
-  T lastValue;
+  T? lastValue;
   final Duration _interval;
-  Timer _timer;
-  Future<void> _job;
+  Timer? _timer;
+  Future<void>? _job;
 
   _PeriodicChecker(
     this.accessManager,
@@ -98,7 +98,7 @@ class _PeriodicChecker<T> implements BotState<T> {
   }
 
   _stop() {
-    _timer.cancel();
+    _timer?.cancel();
     _timer = null;
     _job = null;
   }
@@ -118,15 +118,17 @@ class _PeriodicChecker<T> implements BotState<T> {
       if (service == null) {
         return;
       }
-      final result = await call(service)
-          .timeout(Duration(seconds: 5), onTimeout: () => null);
+      final result =
+          await call(service).timeout(Duration(seconds: 5), onTimeout: null);
       update(result);
     } on RefreshTokenException catch (e) {
       service<LoginErrorState>().update(e);
     } on DioError catch (e) {
-      if (e.type != DioErrorType.RESPONSE || e.response.statusCode == 401) {
+      if (e.type != DioErrorType.response || e.response!.statusCode! == 401) {
         accessManager.reset();
       }
+    } on TimeoutException {
+      update(null);
     } catch (err) {
       print("Unknown error: $err");
     } finally {
@@ -135,10 +137,10 @@ class _PeriodicChecker<T> implements BotState<T> {
   }
 
   @override
-  Stream<T> get stream => _state.stream;
+  Stream<T?> get stream => _state.stream;
 
   @override
-  void update(T value) {
+  void update(T? value) {
     _state.add(value);
     lastValue = value;
   }

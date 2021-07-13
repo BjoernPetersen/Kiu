@@ -24,9 +24,9 @@ class _QueueListState extends State<QueueList> {
   List<SongEntry> _history = [];
   List<SongEntry> _queue = [];
   final AccessManager accessManager = service<AccessManager>();
-  Function _tokenListener;
-  StreamSubscription _historySubscription;
-  StreamSubscription _queueSubscription;
+  late Function() _tokenListener;
+  late StreamSubscription _historySubscription;
+  late StreamSubscription _queueSubscription;
 
   @override
   void initState() {
@@ -49,17 +49,17 @@ class _QueueListState extends State<QueueList> {
     super.dispose();
   }
 
-  _onQueueChange(List<SongEntry> queue) {
+  _onQueueChange(List<SongEntry>? queue) {
     if (_queue != queue)
       setState(() {
-        _queue = queue;
+        _queue = queue ?? [];
       });
   }
 
-  _onHistoryChange(List<SongEntry> history) {
+  _onHistoryChange(List<SongEntry>? history) {
     if (_history != history)
       setState(() {
-        _history = history;
+        _history = history ?? [];
       });
   }
 

@@ -24,7 +24,7 @@ enum Permission {
   EXIT,
 }
 
-Permission parsePermission(dynamic value) {
+Permission? parsePermission(dynamic value) {
   switch (value) {
     case 'skip':
       return Permission.SKIP;

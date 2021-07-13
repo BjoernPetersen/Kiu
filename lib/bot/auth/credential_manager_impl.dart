@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class CredentialManagerImpl implements CredentialManager {
-  Future<Database> _db;
+  late Future<Database> _db;
 
   CredentialManagerImpl() {
     _db = init();
@@ -29,7 +29,7 @@ class CredentialManagerImpl implements CredentialManager {
   }
 
   @override
-  Future<String> getRefreshToken(Bot bot) async {
+  Future<String?> getRefreshToken(Bot bot) async {
     final db = await _db;
     final result = await db.query(
       "Tokens",
@@ -40,7 +40,7 @@ class CredentialManagerImpl implements CredentialManager {
     if (result.isEmpty) {
       return null;
     } else {
-      return result.first['token'];
+      return result.first['token'] as String;
     }
   }
 

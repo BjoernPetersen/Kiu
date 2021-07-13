@@ -12,7 +12,7 @@ class BotPage extends StatefulWidget {
 }
 
 class _BotPageState extends State<BotPage> {
-  DiscoveryController controller;
+  late DiscoveryController controller;
 
   @override
   void initState() {

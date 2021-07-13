@@ -5,13 +5,12 @@ import 'package:kiu/view/common.dart';
 
 class BasicAwarenessBody extends StatefulWidget {
   final Widget child;
-  final Set<Requirement> require;
+  final Set<Requirement>? require;
 
   const BasicAwarenessBody({
-    Key key,
-    @required this.child,
+    required this.child,
     this.require,
-  }) : super(key: key);
+  }) : super();
 
   @override
   _BasicAwarenessBodyState createState() => _BasicAwarenessBodyState();

@@ -10,8 +10,8 @@ class BotStatusIcon extends StatefulWidget {
 }
 
 class _BotStatusIconState extends State<BotStatusIcon> {
-  BotConnectionState _state;
-  StreamSubscription<BotConnectionState> _sub;
+  BotConnectionState? _state;
+  late StreamSubscription<BotConnectionState?> _sub;
 
   @override
   void initState() {

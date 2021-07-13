@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:kiu/bot/auth/access_manager.dart';
 
 class LoginErrorState {
-  final _controller = StreamController<RefreshTokenException>.broadcast();
+  final _controller = StreamController<RefreshTokenException?>.broadcast();
 
-  Stream<RefreshTokenException> get stream => _controller.stream;
+  Stream<RefreshTokenException?> get stream => _controller.stream;
 
   void update(RefreshTokenException value) {
     _controller.add(value);

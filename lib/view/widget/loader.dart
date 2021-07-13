@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Loader extends StatelessWidget {
-  final String text;
+  final String? text;
 
-  const Loader({Key key, this.text}) : super(key: key);
+  const Loader({this.text}) : super();
 
   @override
   Widget build(BuildContext context) => Center(
@@ -20,6 +20,7 @@ class Loader extends StatelessWidget {
       child: CircularProgressIndicator(),
     );
 
+    final text = this.text;
     if (text == null) {
       return [loader];
     } else {

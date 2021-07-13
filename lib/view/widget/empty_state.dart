@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
 
 class EmptyState extends StatelessWidget {
-  final Image image;
+  final Image? image;
   final String text;
 
   const EmptyState({
-    Key key,
     this.image,
-    @required this.text,
-  }) : super(key: key);
-
-  List<Widget> createChildren() {
-    final message = Text(text);
-    if (image != null) {
-      return [image, message];
-    } else {
-      return [message];
-    }
-  }
+    required this.text,
+  }) : super();
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: createChildren(),
-        ),
-      );
+  Widget build(BuildContext context) {
+    final image = this.image;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (image != null) image,
+          Text(text),
+        ],
+      ),
+    );
+  }
 }

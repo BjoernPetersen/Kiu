@@ -10,7 +10,7 @@ class DiscoveryController {
   Function onUpdate = () => {};
   bool _isLoading = false;
   List<Bot> _found = [];
-  StreamSubscription _sub;
+  StreamSubscription? _sub;
 
   bool get isLoading => _isLoading;
 
@@ -31,7 +31,7 @@ class DiscoveryController {
   }
 
   void dispose() {
-    _sub.cancel();
+    _sub?.cancel();
   }
 
   Future<void> setIp(NavigatorState nav, String ip) async {

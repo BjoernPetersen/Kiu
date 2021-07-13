@@ -7,10 +7,9 @@ class BotCard extends StatelessWidget {
   final Function() onTap;
 
   const BotCard({
-    Key key,
-    @required this.bot,
-    @required this.onTap,
-  }) : super(key: key);
+    required this.bot,
+    required this.onTap,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class BotCard extends StatelessWidget {
       future: bot.version,
       builder: (ctx, AsyncSnapshot<BotInfo> snapshot) {
         if (snapshot.hasData) {
-          return Text(snapshot.data.botName);
+          return Text(snapshot.data!.botName);
         } else if (snapshot.hasError) {
           return Text(ctx.messages.bot.errorInfo);
         } else {

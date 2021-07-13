@@ -3,12 +3,11 @@ import 'package:kiu/view/widget/discovery/discovery_controller.dart';
 import 'package:provider/provider.dart';
 
 class DiscoveryRefreshButton extends StatelessWidget {
-  final double size;
+  final double? size;
 
   const DiscoveryRefreshButton({
-    Key key,
     this.size,
-  }) : super(key: key);
+  }) : super();
 
   @override
   Widget build(BuildContext context) => IconButton(

@@ -13,8 +13,8 @@ class VolumeControl extends StatefulWidget {
 }
 
 class _VolumeControlState extends State<VolumeControl> {
-  Volume _volume;
-  StreamSubscription _sub;
+  late Volume _volume;
+  late StreamSubscription _sub;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _VolumeControlState extends State<VolumeControl> {
     this._volume = state.lastValue ?? Volume.unsupported();
     this._sub = state.stream.listen((value) {
       setState(() {
-        _volume = value;
+        _volume = value ?? Volume.unsupported();
       });
     });
   }
@@ -67,7 +67,7 @@ class _VolumeControlState extends State<VolumeControl> {
     }
   }
 
-  bool _canChange([AccessManager connectionManager]) {
+  bool _canChange([AccessManager? connectionManager]) {
     final manager = connectionManager ?? service<AccessManager>();
     return manager.hasPermission(Permission.CHANGE_VOLUME);
   }
@@ -91,7 +91,7 @@ class _VolumeControlState extends State<VolumeControl> {
       bot.setVolume(volume);
       service<LiveState>().volumeState.update(Volume.supported(volume));
     } catch (err) {
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Could not set volume: $err"),
         duration: Duration(seconds: 5),
         action: SnackBarAction(

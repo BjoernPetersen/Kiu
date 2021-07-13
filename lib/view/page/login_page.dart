@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
 
-    _name.text = Preference.username.getString();
+    _name.text = Preference.username.getString() ?? "";
 
     _name.addListener(() => setState(() {
           _nameError = InputError.none;
@@ -180,7 +180,7 @@ enum InputError { none, blank, wrong, conflict }
 
 extension on InputError {
   // ignore: missing_return
-  String text(InputLoginMessages messages) {
+  String? text(InputLoginMessages messages) {
     switch (this) {
       case InputError.none:
         return null;

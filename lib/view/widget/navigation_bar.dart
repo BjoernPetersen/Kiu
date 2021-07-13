@@ -7,31 +7,34 @@ import 'package:kiu/view/routing/unanimated_route.dart';
 
 class NavigationBar extends StatelessWidget {
   final BottomCategory category;
-  final Function() onClick;
+  final Function()? onClick;
 
   const NavigationBar(this.category, {this.onClick}) : super();
 
   @override
-  Widget build(BuildContext context) => BottomNavigationBar(
-        currentIndex: category.index,
-        type: BottomNavigationBarType.fixed,
-        // TODO remove sublist when favorites are implemented
-        items: BottomCategory.values
-            .sublist(0, 3)
-            .map((category) => BottomNavigationBarItem(
-                  icon: category.icon,
-                  activeIcon: category.activeIcon,
-                  title: Text(category.text(context.messages.page)),
-                ))
-            .toList(growable: false),
-        onTap: (index) {
-          final category = BottomCategory.values[index];
-          if (category == this.category && onClick != null)
-            onClick();
-          else
-            category.goTo(context);
-        },
-      );
+  Widget build(BuildContext context) {
+    final onClick = this.onClick;
+    return BottomNavigationBar(
+      currentIndex: category.index,
+      type: BottomNavigationBarType.fixed,
+      // TODO remove sublist when favorites are implemented
+      items: BottomCategory.values
+          .sublist(0, 3)
+          .map((category) => BottomNavigationBarItem(
+                icon: category.icon,
+                activeIcon: category.activeIcon,
+                title: Text(category.text(context.messages.page)),
+              ))
+          .toList(growable: false),
+      onTap: (index) {
+        final category = BottomCategory.values[index];
+        if (category == this.category && onClick != null)
+          onClick();
+        else
+          category.goTo(context);
+      },
+    );
+  }
 }
 
 enum BottomCategory { queue, suggestions, search, favorites }
@@ -72,7 +75,7 @@ extension on BottomCategory {
     }
   }
 
-  goTo(BuildContext context) {
+  void goTo(BuildContext context) {
     final nav = Navigator.of(context);
     while (nav.canPop()) {
       nav.pop();

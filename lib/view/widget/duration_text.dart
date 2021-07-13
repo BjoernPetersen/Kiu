@@ -4,7 +4,7 @@ import 'package:sprintf/sprintf.dart';
 class DurationText extends StatelessWidget {
   final String duration;
 
-  DurationText(int durationSeconds)
+  DurationText(int? durationSeconds)
       : this.duration = _formatDuration(durationSeconds);
 
   @override
@@ -14,7 +14,7 @@ class DurationText extends StatelessWidget {
       );
 }
 
-String _formatDuration(int durationSeconds) {
+String _formatDuration(int? durationSeconds) {
   final duration = Duration(seconds: durationSeconds ?? 0);
   final hours = duration.inHours;
   final minutes = duration.inMinutes % 60;

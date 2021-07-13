@@ -31,7 +31,7 @@ extension PreferenceAccess on Preference {
 
   SharedPreferences _prefs() => service<SharedPreferences>();
 
-  String getString() => _prefs().getString(key);
+  String? getString() => _prefs().getString(key);
 
   Future<bool> remove() => _prefs().remove(key);
 

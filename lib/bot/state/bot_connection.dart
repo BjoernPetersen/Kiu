@@ -14,10 +14,10 @@ const QUESTIONABLE_ERROR_MAX = 5;
 class BotConnection {
   final _errors = _EventCache(retainDuration: ERROR_RETENTION);
   final _successes = _EventCache(retainDuration: SUCCESS_RETENTION);
-  final BotState<Bot> _bot = _ManualState();
+  final BotState<Bot?> _bot = _ManualState();
   final BotState<BotConnectionState> _state = _ManualState();
 
-  ReadOnlyBotState<Bot> get bot => _bot;
+  ReadOnlyBotState<Bot?> get bot => _bot;
 
   ReadOnlyBotState<BotConnectionState> get state => _state;
 
@@ -26,7 +26,7 @@ class BotConnection {
     return BotConnection._(bot);
   }
 
-  BotConnection._(Bot bot) {
+  BotConnection._(Bot? bot) {
     _bot.update(bot);
     _errors.onChange = (_) => _updateState();
     _successes.onChange = (_) => _updateState();
@@ -115,15 +115,15 @@ enum BotConnectionState {
 }
 
 class _ManualState<T> implements BotState<T> {
-  final _state = StreamController<T>.broadcast();
+  final _state = StreamController<T?>.broadcast();
   @override
-  T lastValue;
+  T? lastValue;
 
   @override
-  Stream<T> get stream => _state.stream;
+  Stream<T?> get stream => _state.stream;
 
   @override
-  void update(T value) {
+  void update(T? value) {
     _state.add(value);
     lastValue = value;
   }
@@ -133,7 +133,7 @@ class _ManualState<T> implements BotState<T> {
   }
 }
 
-Bot _loadBot() {
+Bot? _loadBot() {
   final ip = Preference.bot_ip.getString();
   if (ip == null) {
     return null;
@@ -142,7 +142,7 @@ Bot _loadBot() {
   }
 }
 
-Future<void> _saveBot(Bot bot) async {
+Future<void> _saveBot(Bot? bot) async {
   if (bot == null) {
     await Preference.bot_ip.remove();
   } else {

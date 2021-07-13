@@ -2,15 +2,14 @@ import 'package:kiu/view/common.dart';
 
 class LifecycleListener extends StatefulWidget {
   final Widget child;
-  final Function() onResume;
-  final Function() onPause;
+  final void Function()? onResume;
+  final void Function()? onPause;
 
   const LifecycleListener({
-    Key key,
-    @required this.child,
+    required this.child,
     this.onResume,
     this.onPause,
-  }) : super(key: key);
+  }) : super();
 
   @override
   _LifecycleListenerState createState() => _LifecycleListenerState();
@@ -21,12 +20,12 @@ class _LifecycleListenerState extends State<LifecycleListener>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -34,13 +33,15 @@ class _LifecycleListenerState extends State<LifecycleListener>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        if (widget.onResume != null) {
-          widget.onResume();
+        final onResume = widget.onResume;
+        if (onResume != null) {
+          onResume();
         }
         break;
       case AppLifecycleState.paused:
-        if (widget.onPause != null) {
-          widget.onPause();
+        final onPause = widget.onPause;
+        if (onPause != null) {
+          onPause();
         }
         break;
       default:

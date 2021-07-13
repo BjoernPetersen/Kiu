@@ -6,14 +6,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Install flutter
-        run: git clone https://github.com/flutter/flutter.git ~/flutter --branch 1.22.2
-      - name: Add Flutter to PATH
-        run: echo "::add-path::~/flutter/bin"
-      - name: Run flutter doctor
-        run: flutter doctor
       - name: Check out repo
         uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'beta'
+      - name: Run flutter doctor
+        run: flutter doctor
       - name: Get dependencies
         run: flutter pub get
       - name: Save key password
@@ -47,7 +46,7 @@ jobs:
         env:
           console_json: ${{ secrets.google_console_api }}
       - name: Run fastlane
-        run: |
-          cd android
-          export SUPPLY_AAB="app-release.aab"
-          fastlane supply
+        env:
+          SUPPLY_AAB: app-release.aab
+        working_directory: ./android
+        run: bundle exec fastlane supply

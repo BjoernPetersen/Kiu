@@ -19,8 +19,8 @@ class SearchContent extends StatefulWidget {
 }
 
 class _SearchContentState extends State<SearchContent> {
-  String lastQuery;
-  Future<List<Song>> search;
+  String lastQuery = "";
+  late Future<List<Song>?> search;
 
   _SearchContentState();
 
@@ -53,7 +53,7 @@ class _SearchContentState extends State<SearchContent> {
     }
   }
 
-  Future<List<Song>> _search(String query) async {
+  Future<List<Song>?> _search(String query) async {
     if (query.isEmpty) {
       return null;
     }
@@ -65,7 +65,7 @@ class _SearchContentState extends State<SearchContent> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<List<Song>?>(
       future: search,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -85,7 +85,7 @@ class _SearchContentState extends State<SearchContent> {
               },
             );
           } else if (snapshot.hasData) {
-            final data = snapshot.data;
+            final data = snapshot.data!;
             if (data.isEmpty) {
               return EmptyState(text: context.messages.search.empty);
             } else {

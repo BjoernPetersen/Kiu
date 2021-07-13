@@ -4,18 +4,18 @@ import 'package:kiu/bot/state/live_state.dart';
 import 'package:kiu/view/common.dart';
 
 class BotStateBuilder<T> extends StatefulWidget {
-  final Widget Function(BuildContext, T) builder;
-  final BotState<T> state;
+  final Widget Function(BuildContext, T?) builder;
+  final BotState<T?> state;
 
-  const BotStateBuilder({Key key, this.builder, this.state}) : super(key: key);
+  const BotStateBuilder({required this.builder, required this.state}) : super();
 
   @override
   _BotStateBuilderState<T> createState() => _BotStateBuilderState<T>();
 }
 
 class _BotStateBuilderState<T> extends State<BotStateBuilder<T>> {
-  StreamSubscription<T> _sub;
-  T _value;
+  late StreamSubscription<T?> _sub;
+  T? _value;
 
   @override
   void initState() {

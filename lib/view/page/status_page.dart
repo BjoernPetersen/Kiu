@@ -1,4 +1,5 @@
 import 'package:kiu/bot/bot.dart';
+import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/state/bot_connection.dart';
 import 'package:kiu/data/dependency_model.dart';
 import 'package:kiu/view/common.dart';
@@ -12,8 +13,8 @@ class StatusPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bot = service<BotConnection>().bot.lastValue;
-    return Provider(
-      create: (_) => bot,
+    return Provider.value(
+      value: bot,
       child: Scaffold(
         appBar: AppBar(
           title: _getTitleText(context.messages.page, bot),
@@ -25,15 +26,15 @@ class StatusPage extends StatelessWidget {
     );
   }
 
-  Widget _getTitleText(PageMessages messages, Bot bot) {
+  Widget _getTitleText(PageMessages messages, Bot? bot) {
     if (bot == null) {
       return Text(messages.state);
     } else {
-      return FutureBuilder(
+      return FutureBuilder<BotInfo>(
         future: bot.version,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Text(snapshot.data.botName);
+            return Text(snapshot.data!.botName);
           } else {
             return Text(messages.stateOfIp(bot.ip));
           }

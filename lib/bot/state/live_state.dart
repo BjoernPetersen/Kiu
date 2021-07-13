@@ -1,17 +1,17 @@
 import 'package:kiu/bot/model.dart';
 
 abstract class LiveState {
-  BotState<PlayerState> get player;
+  BotState<PlayerState?> get player;
 
-  BotState<List<SongEntry>> get queueState;
+  BotState<List<SongEntry>?> get queueState;
 
-  BotState<List<SongEntry>> get queueHistoryState;
+  BotState<List<SongEntry>?> get queueHistoryState;
 
-  BotState<Volume> get volumeState;
+  BotState<Volume?> get volumeState;
 
-  BotState<List<NamedPlugin>> get provider;
+  BotState<List<NamedPlugin>?> get provider;
 
-  BotState<List<NamedPlugin>> get suggester;
+  BotState<List<NamedPlugin>?> get suggester;
 
   void reset() {
     player.update(null);
@@ -24,11 +24,11 @@ abstract class LiveState {
 }
 
 abstract class ReadOnlyBotState<T> {
-  Stream<T> get stream;
+  Stream<T?> get stream;
 
-  T get lastValue;
+  T? get lastValue;
 }
 
 abstract class BotState<T> extends ReadOnlyBotState<T> {
-  void update(T value);
+  void update(T? value);
 }

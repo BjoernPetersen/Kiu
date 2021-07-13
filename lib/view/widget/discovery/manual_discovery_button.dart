@@ -9,7 +9,7 @@ class ManualDiscoveryButton extends StatelessWidget {
   Future<void> _enterManually(BuildContext context) async {
     final result = await showDialog(
       context: context,
-      child: InputDialog(
+      builder: (context) => InputDialog(
         hint: context.messages.discovery.manual.hint,
       ),
     );

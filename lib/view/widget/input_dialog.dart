@@ -1,7 +1,7 @@
 import 'package:kiu/view/common.dart';
 
 class InputDialog extends StatefulWidget {
-  final String hint;
+  final String? hint;
   final bool obscureText;
 
   InputDialog({this.hint, this.obscureText = false});

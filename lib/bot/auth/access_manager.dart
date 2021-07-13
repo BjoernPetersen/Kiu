@@ -8,7 +8,7 @@ abstract class AccessManager implements PermissionOwner {
 
   Future<BotService> createService();
 
-  Future<LoginResult> login(String username, [String password]);
+  Future<LoginResult> login(String username, [String? password]);
 
   reset();
 }

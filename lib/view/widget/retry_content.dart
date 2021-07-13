@@ -5,10 +5,9 @@ class RetryContent extends StatelessWidget {
   final Function() refresh;
 
   const RetryContent({
-    Key key,
-    @required this.text,
-    @required this.refresh,
-  }) : super(key: key);
+    required this.text,
+    required this.refresh,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {

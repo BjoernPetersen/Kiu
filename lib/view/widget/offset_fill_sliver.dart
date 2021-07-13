@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 class OffsetFillSliver extends SingleChildRenderObjectWidget {
   final double offset;
 
-  OffsetFillSliver({@required this.offset});
+  OffsetFillSliver({required this.offset});
 
   @override
   RenderObject createRenderObject(BuildContext context) {

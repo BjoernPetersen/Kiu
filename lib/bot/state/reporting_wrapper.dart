@@ -17,12 +17,12 @@ class ReportingWrapper implements BotService {
       botConnection.reportSuccess();
       return result;
     } on DioError catch (e) {
-      if (e.type == DioErrorType.RESPONSE) {
-        final code = e.response.statusCode;
+      if (e.type == DioErrorType.response) {
+        final code = e.response!.statusCode!;
         if (code >= 500 && code < 600) {
           botConnection.reportError(e);
         }
-      } else if (e.type != DioErrorType.CANCEL) {
+      } else if (e.type != DioErrorType.cancel) {
         botConnection.reportError(e);
       }
       throw e;
@@ -76,9 +76,9 @@ class ReportingWrapper implements BotService {
 
   @override
   Future<void> removeSuggestion({
-    @Path("suggesterId") String suggesterId,
-    @Query("providerId") String providerId,
-    @Query("songId") String songId,
+    @Path("suggesterId") required String suggesterId,
+    @Query("providerId") required String providerId,
+    @Query("songId") required String songId,
   }) {
     return _report(delegate.removeSuggestion(
       suggesterId: suggesterId,

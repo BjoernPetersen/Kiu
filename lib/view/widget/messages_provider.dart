@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class MessagesProvider extends StatelessWidget {
   final Widget child;
 
-  const MessagesProvider({Key key, @required this.child}) : super(key: key);
+  const MessagesProvider({required this.child}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class MessagesProvider extends StatelessWidget {
     final languageCode = window.locale.languageCode;
     switch (languageCode) {
       case 'de':
-        return Messages_de();
+        return MessagesDe();
       default:
         return Messages();
     }

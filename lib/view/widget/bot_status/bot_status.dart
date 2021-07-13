@@ -13,7 +13,7 @@ class BotStatus extends StatefulWidget {
 class _BotStatusState extends State<BotStatus> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<BotInfo>(
       future: Provider.of<Bot>(context).version,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
@@ -23,7 +23,7 @@ class _BotStatusState extends State<BotStatus> {
               refresh: () => setState(() {}),
             );
           } else if (snapshot.hasData) {
-            return _buildInfo(context, snapshot.data);
+            return _buildInfo(context, snapshot.data!);
           }
         }
         return Loader();
@@ -58,7 +58,7 @@ class _BotStatusState extends State<BotStatus> {
 class _ImplementationInfoView extends StatelessWidget {
   final ImplementationInfo info;
 
-  const _ImplementationInfoView({Key key, this.info}) : super(key: key);
+  const _ImplementationInfoView({required this.info}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +98,7 @@ Widget _buildLink(BuildContext context, String value) {
         if (await canLaunch(value)) {
           await launch(value);
         } else {
-          Scaffold.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(context.messages.state.urlError),
           ));
         }

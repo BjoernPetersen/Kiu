@@ -46,9 +46,9 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _buildScaffold(
     BuildContext context, {
-    Widget bottom,
-    @required Widget title,
-    @required Widget child,
+    PreferredSizeWidget? bottom,
+    required Widget title,
+    required Widget child,
   }) {
     return Scaffold(
       appBar: AppBar(
@@ -91,7 +91,8 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildTabBar(BuildContext context, List<NamedPlugin> providers) {
+  PreferredSizeWidget _buildTabBar(
+      BuildContext context, List<NamedPlugin> providers) {
     return TabBar(
         isScrollable: true,
         tabs: providers
@@ -136,7 +137,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _build(BuildContext context, List<NamedPlugin> providers) {
+  Widget _build(BuildContext context, List<NamedPlugin>? providers) {
     if (providers == null) {
       return _buildLoading(context);
     } else if (providers.isEmpty) {
@@ -149,14 +150,14 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     final providerState = service<LiveState>().provider;
-    return BotStateBuilder(
+    return BotStateBuilder<List<NamedPlugin>>(
       state: providerState,
       builder: _build,
     );
   }
 }
 
-int _indexOf(List<NamedPlugin> list, String id) {
+int _indexOf(List<NamedPlugin> list, String? id) {
   final index = list.indexWhere((it) => it.id == id);
   return index == -1 ? 0 : index;
 }

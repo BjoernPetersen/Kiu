@@ -15,8 +15,8 @@ class PlayerControl extends StatefulWidget {
 }
 
 class _PlayerControlState extends State<PlayerControl> {
-  PlayerState _state;
-  StreamSubscription sub;
+  PlayerState? _state;
+  late StreamSubscription sub;
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _PlayerControlState extends State<PlayerControl> {
     super.dispose();
   }
 
-  void _onStateChange(PlayerState state) {
+  void _onStateChange(PlayerState? state) {
     setState(() {
       _state = state;
     });
@@ -51,9 +51,10 @@ class _PlayerControlState extends State<PlayerControl> {
     switch (type) {
       case PlayerStateType.play:
       case PlayerStateType.pause:
-        return _createControl(_songInfo(state.songEntry), state);
+        return _createControl(_songInfo(state.songEntry!), state);
       case PlayerStateType.stop:
       case PlayerStateType.error:
+      default:
         return _createControl(
           Center(
             child: Text(context.messages.player.stopped),
@@ -111,8 +112,10 @@ class _PlayerControlState extends State<PlayerControl> {
   Widget _createControl(Widget songPart, PlayerState state) {
     double progress = 0.0;
     final song = state.songEntry?.song;
-    if (state.progress != null && song?.duration != null) {
-      progress = state.progress / song.duration;
+    final stateProgress = state.progress;
+    final duration = song?.duration;
+    if (stateProgress != null && duration != null) {
+      progress = stateProgress / duration;
     }
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -120,6 +123,8 @@ class _PlayerControlState extends State<PlayerControl> {
         ExpandablePanel(
           header: songPart,
           expanded: _createControls(state.state),
+          // TODO: is this correct?
+          collapsed: Offstage(),
         ),
         LinearProgressIndicator(value: progress)
       ],

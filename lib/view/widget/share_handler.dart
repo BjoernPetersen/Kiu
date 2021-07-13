@@ -12,7 +12,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 class ShareHandler extends StatefulWidget {
   final Widget child;
 
-  const ShareHandler({Key key, this.child}) : super(key: key);
+  const ShareHandler({required this.child}) : super();
 
   @override
   _ShareHandlerState createState() => _ShareHandlerState();
@@ -20,9 +20,9 @@ class ShareHandler extends StatefulWidget {
 
 class _ShareHandlerState extends State<ShareHandler> {
   bool _isHandlingShares = false;
-  StreamSubscription _shareSub;
+  late StreamSubscription _shareSub;
 
-  Future<bool> _handleShare(String share) async {
+  Future<bool> _handleShare(String? share) async {
     if (share == null) return false;
     final parsed = await extractSharingData(share);
     if (parsed == null) {

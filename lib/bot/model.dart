@@ -5,9 +5,9 @@ part 'model.g.dart';
 @JsonSerializable()
 class Tokens {
   final String accessToken;
-  final String refreshToken;
+  final String? refreshToken;
 
-  Tokens({this.accessToken, this.refreshToken});
+  Tokens({required this.accessToken, this.refreshToken});
 
   factory Tokens.fromJson(Map<String, dynamic> json) => _$TokensFromJson(json);
 }
@@ -18,7 +18,11 @@ class ImplementationInfo {
   final String version;
   final String projectInfo;
 
-  ImplementationInfo({this.name, this.version, this.projectInfo});
+  ImplementationInfo({
+    required this.name,
+    required this.version,
+    required this.projectInfo,
+  });
 
   factory ImplementationInfo.fromJson(Map<String, dynamic> json) =>
       _$ImplementationInfoFromJson(json);
@@ -30,7 +34,10 @@ class BotInfo {
   final String botName;
   final ImplementationInfo implementation;
 
-  BotInfo({this.apiVersion, this.botName, this.implementation});
+  BotInfo(
+      {required this.apiVersion,
+      required this.botName,
+      required this.implementation});
 
   factory BotInfo.fromJson(Map<String, dynamic> json) =>
       _$BotInfoFromJson(json);
@@ -41,7 +48,7 @@ class RegisterCredentials {
   final String name;
   final String userId;
 
-  RegisterCredentials({this.name, this.userId});
+  RegisterCredentials({required this.name, required this.userId});
 
   factory RegisterCredentials.fromJson(Map<String, dynamic> json) =>
       _$RegisterCredentialsFromJson(json);
@@ -53,7 +60,7 @@ class RegisterCredentials {
 class PasswordChange {
   final String newPassword;
 
-  PasswordChange({this.newPassword});
+  PasswordChange({required this.newPassword});
 
   Map<String, dynamic> toJson() => _$PasswordChangeToJson(this);
 }
@@ -63,7 +70,7 @@ class NamedPlugin {
   final String id;
   final String name;
 
-  NamedPlugin({this.id, this.name});
+  NamedPlugin({required this.id, required this.name});
 
   factory NamedPlugin.fromJson(Map<String, dynamic> json) =>
       _$NamedPluginFromJson(json);
@@ -85,16 +92,16 @@ class Song {
   final NamedPlugin provider;
   final String title;
   final String description;
-  final int duration;
-  final String albumArtPath;
+  final int? duration;
+  final String? albumArtPath;
 
   Song({
-    this.id,
-    this.provider,
-    this.title,
-    this.description,
-    this.duration,
-    this.albumArtPath,
+    required this.id,
+    required this.provider,
+    required this.title,
+    required this.description,
+    required this.duration,
+    required this.albumArtPath,
   });
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);
@@ -114,9 +121,9 @@ class Song {
 @JsonSerializable()
 class SongEntry {
   final Song song;
-  final String userName;
+  final String? userName;
 
-  SongEntry({this.song, this.userName});
+  SongEntry({required this.song, required this.userName});
 
   factory SongEntry.fromJson(Map<String, dynamic> json) =>
       _$SongEntryFromJson(json);
@@ -138,7 +145,7 @@ class Volume {
   final int volume;
   final bool isSupported;
 
-  Volume({this.volume, this.isSupported});
+  Volume({required this.volume, required this.isSupported});
 
   Volume.unsupported() : this(volume: 100, isSupported: false);
 
@@ -151,10 +158,14 @@ class Volume {
 class PlayerState {
   @JsonKey(fromJson: _stateFromJson)
   final PlayerStateType state;
-  final SongEntry songEntry;
-  final int progress;
+  final SongEntry? songEntry;
+  final int? progress;
 
-  PlayerState({this.state, this.songEntry, this.progress});
+  PlayerState({
+    required this.state,
+    required this.songEntry,
+    required this.progress,
+  });
 
   factory PlayerState.fromJson(Map<String, dynamic> json) =>
       _$PlayerStateFromJson(json);

@@ -2,17 +2,16 @@ import 'package:kiu/view/common.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final Widget title;
-  final Widget content;
-  final String confirmText;
-  final String cancelText;
+  final Widget? content;
+  final String? confirmText;
+  final String? cancelText;
 
   const ConfirmationDialog({
-    Key key,
-    @required this.title,
+    required this.title,
     this.content,
     this.confirmText,
     this.cancelText,
-  }) : super(key: key);
+  }) : super();
 
   @override
   Widget build(BuildContext context) => AlertDialog(

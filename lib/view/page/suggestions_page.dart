@@ -18,7 +18,8 @@ import 'package:kiu/view/widget/suggestions/suggestions_content.dart';
 import 'overflow.dart';
 
 class SuggestionsPage extends StatelessWidget {
-  Widget _buildTabBar(BuildContext context, List<NamedPlugin> suggesters) {
+  PreferredSizeWidget _buildTabBar(
+      BuildContext context, List<NamedPlugin> suggesters) {
     return TabBar(
         isScrollable: true,
         tabs: suggesters
@@ -33,8 +34,8 @@ class SuggestionsPage extends StatelessWidget {
 
   Widget _buildScaffold(
     BuildContext context, {
-    Widget bottom,
-    @required Widget child,
+    PreferredSizeWidget? bottom,
+    required Widget child,
   }) {
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +93,7 @@ class SuggestionsPage extends StatelessWidget {
     );
   }
 
-  Widget _build(BuildContext context, List<NamedPlugin> suggesters) {
+  Widget _build(BuildContext context, List<NamedPlugin>? suggesters) {
     if (suggesters == null) {
       return _buildLoading(context);
     } else if (suggesters.isEmpty) {
@@ -112,7 +113,7 @@ class SuggestionsPage extends StatelessWidget {
   }
 }
 
-int _indexOf(List<NamedPlugin> list, String id) {
+int _indexOf(List<NamedPlugin> list, String? id) {
   final index = list.indexWhere((it) => it.id == id);
   return index == -1 ? 0 : index;
 }

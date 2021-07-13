@@ -46,9 +46,9 @@ abstract class BotService {
 
   @DELETE("/suggester/{suggesterId}")
   Future<void> removeSuggestion({
-    @Path("suggesterId") String suggesterId,
-    @Query("providerId") String providerId,
-    @Query("songId") String songId,
+    @Path("suggesterId") required String suggesterId,
+    @Query("providerId") required String providerId,
+    @Query("songId") required String songId,
   });
 
   @GET("/provider")
@@ -56,11 +56,15 @@ abstract class BotService {
 
   @GET("/provider/{id}")
   Future<List<Song>> search(
-      @Path("id") String providerId, @Query("query") String query);
+    @Path("id") String providerId,
+    @Query("query") String query,
+  );
 
   @PUT("/player/queue")
   Future<List<SongEntry>> enqueue(
-      @Query("songId") String songId, @Query("providerId") String providerId);
+    @Query("songId") String songId,
+    @Query("providerId") String providerId,
+  );
 
   @DELETE("/player/queue")
   Future<List<SongEntry>> dequeue(
@@ -80,7 +84,7 @@ abstract class BotService {
 }
 
 @Deprecated("For removal")
-String get baseUrl {
+String? get baseUrl {
   final ip = Preference.bot_ip.getString();
   return ip == null ? null : "http://${Preference.bot_ip.getString()}:42945";
 }

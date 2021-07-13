@@ -9,9 +9,9 @@ import 'package:kiu/view/widget/song_tile.dart';
 
 class ResultList extends StatefulWidget {
   final List<Song> results;
-  final Widget Function(BuildContext context, Song song) trailingBuilder;
+  final Widget Function(BuildContext context, Song song)? trailingBuilder;
 
-  const ResultList({@required this.results, this.trailingBuilder}) : super();
+  const ResultList({required this.results, this.trailingBuilder}) : super();
 
   @override
   State<StatefulWidget> createState() => _ResultListState(
@@ -22,9 +22,9 @@ class ResultList extends StatefulWidget {
 
 class _ResultListState extends State<ResultList> {
   final List<Song> results;
-  final Widget Function(BuildContext context, Song song) trailingBuilder;
+  final Widget Function(BuildContext context, Song song)? trailingBuilder;
   Set<Song> queue = {};
-  StreamSubscription queueSubscription;
+  late StreamSubscription queueSubscription;
 
   _ResultListState(this.results, this.trailingBuilder);
 
@@ -38,7 +38,7 @@ class _ResultListState extends State<ResultList> {
     }
     queueSubscription = manager.queueState.stream.listen((queue) {
       setState(() {
-        this.queue = queue.map((it) => it.song).toSet();
+        this.queue = queue?.map((it) => it.song).toSet() ?? {};
       });
     });
   }
@@ -64,6 +64,7 @@ class _ResultListState extends State<ResultList> {
 
   @override
   Widget build(BuildContext context) {
+    final trailingBuilder = this.trailingBuilder;
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (_, index) {

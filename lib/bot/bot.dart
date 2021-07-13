@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:kiu/bot/bot_service.dart';
 import 'package:kiu/bot/model.dart';
 import 'package:kiu/bot/state/reporting_wrapper.dart';
 
 class Bot {
   final String ip;
-  Future<BotInfo> _version;
+  Future<BotInfo>? _version;
 
   Future<BotInfo> get version {
-    if (_version == null) {
+    final cachedVersion = this._version;
+    if (cachedVersion == null) {
       final version = _loadVersion().catchError((e) async {
         print(e);
         _version = null;
@@ -20,7 +20,7 @@ class Bot {
       _version = version;
       return version;
     } else {
-      return _version;
+      return cachedVersion;
     }
   }
 
@@ -32,16 +32,16 @@ class Bot {
     return "http://$ip:42945";
   }
 
-  String albumArtUrl(Song song) {
+  String? albumArtUrl(Song song) {
     final baseUrl = _baseUrl;
     final path = song.albumArtPath;
-    if (baseUrl == null || path == null) return null;
+    if (path == null) return null;
     return "$baseUrl$path";
   }
 
-  Bot({@required this.ip});
+  Bot({required this.ip});
 
-  BotService createService([String authorization]) {
+  BotService createService([String? authorization]) {
     final options = BaseOptions(
       headers: _createHeaders(authorization),
       connectTimeout: 4000,
@@ -50,7 +50,7 @@ class Bot {
     return ReportingWrapper(botService);
   }
 
-  _createHeaders(String authorization) {
+  _createHeaders(String? authorization) {
     if (authorization == null) {
       return null;
     } else {
