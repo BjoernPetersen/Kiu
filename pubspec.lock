@@ -430,10 +430,12 @@ packages:
   multicast_lock:
     dependency: "direct main"
     description:
-      name: multicast_lock
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.5"
+      path: "."
+      ref: HEAD
+      resolved-ref: "80e9c9ce6a7e7557c725976dbee27d826d7d6129"
+      url: "https://github.com/paulosousadias/multicast_lock.git"
+    source: git
+    version: "0.0.7"
   nested:
     dependency: transitive
     description:
@@ -542,9 +544,11 @@ packages:
   progress_dialog:
     dependency: "direct main"
     description:
-      name: progress_dialog
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: b941489a31f3838757a2df1fe0fbdfa348a90531
+      url: "https://github.com/chornthorn/progress_dialog.git"
+    source: git
     version: "1.2.4"
   provider:
     dependency: "direct main"
@@ -792,9 +796,11 @@ packages:
   udp:
     dependency: "direct main"
     description:
-      name: udp
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "26d9d137f772d9ef5284f55316092c5bd00dd5e3"
+      url: "https://github.com/CheshireVillageSoftware/udp.git"
+    source: git
     version: "3.0.3"
   url_launcher:
     dependency: "direct main"

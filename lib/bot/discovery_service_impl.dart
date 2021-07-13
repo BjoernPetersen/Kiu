@@ -28,6 +28,9 @@ class DiscoveryServiceImpl implements DiscoveryService {
       final found = <String>{};
       final listen = receiver.listen(
         (it) {
+          if(it == null) {
+            return;
+          }
           final host = it.address.host;
           if (found.add(host)) {
             controller.add(Bot(ip: host));

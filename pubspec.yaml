@@ -34,8 +34,12 @@ dependencies:
   get_it: ^7.0.0
   intl: ^0.17.0
   json_annotation: ^4.0.0
-  multicast_lock: ^0.0.5
-  progress_dialog: ^1.0.0
+  multicast_lock:
+    git:
+      url: "https://github.com/paulosousadias/multicast_lock.git"
+  progress_dialog:
+    git:
+      url: "https://github.com/chornthorn/progress_dialog.git"
   provider: ^5.0.0
   receive_sharing_intent: ^1.4.1
   reorderables: ^0.4.0
@@ -43,7 +47,9 @@ dependencies:
   shared_preferences: ^2.0.0
   sprintf: ^6.0.0
   sqflite: ^2.0.0
-  udp: ^3.0.0
+  udp:
+    git:
+      url: "https://github.com/CheshireVillageSoftware/udp.git"
   url_launcher: ^6.0.0
   uuid: ^3.0.0
 
